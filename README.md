@@ -8,11 +8,11 @@ This repository concerns a device application for the Air Analyzer project, wher
 
 ## Components used
 For this project I'm using this components:
- - NodeMCU ESP8266 ESP-12F
- - OLED screen by 0.98" in I2C
- - HDC1080 sensor
- - RTC DS3231
- - Push button
+ - NodeMCU ESP8266 ESP-12F;
+ - OLED screen by 0.98" in I2C;
+ - HDC1080 sensor;
+ - RTC DS3231;
+ - Push button.
 
 ### Pinout
 | Pin | What |
