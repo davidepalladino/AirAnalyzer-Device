@@ -1,6 +1,6 @@
 # AirAnalyzer-AndroidApp
 ## Description
-This repository concerns a device application for the Air Analyzer project, where the user can:
+This repository concerns the software of device for the Air Analyzer project, where the user can:
  - see the actual temperature and humidity;
  - change the room ID;
  - change the WiFi connection;
