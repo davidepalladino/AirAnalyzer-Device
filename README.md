@@ -1,4 +1,4 @@
-# AirAnalyzer-AndroidApp
+# AirAnalyzer-Device
 ## Description
 This repository concerns the software of device for the Air Analyzer project, where the user can:
  - see the actual temperature and humidity;
