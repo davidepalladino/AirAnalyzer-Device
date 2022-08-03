@@ -205,11 +205,11 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
-    firmwareUpdateOta.begin(BASE_URL, BASE_PORT, FIRMWARE_URI);
-    if (firmwareUpdateOta.check(VERSION_FIRMWARE)) {
-        screen.showMessagePage(messagePageFirmwareUpdated);
-        ESP.restart();
-    }
+//    firmwareUpdateOta.begin(BASE_URL, BASE_PORT, FIRMWARE_URI);
+//    if (firmwareUpdateOta.check(VERSION_FIRMWARE)) {
+//        screen.showMessagePage(messagePageFirmwareUpdated);
+//        ESP.restart();
+//    }
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Database

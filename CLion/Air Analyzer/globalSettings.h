@@ -1,5 +1,4 @@
 #pragma once
-#define IS_LOCAL true
 
 // Versions
 const String VERSION_FIRMWARE =                                         "3.0.0";
@@ -29,15 +28,10 @@ const uint8_t SIZE_CREDENTIAL_PASSWORD =                                64;
 
 // Server (Database and Updater)
 const uint8_t DATABASE_MINUTES_UPDATE =                                 10;
-#if IS_LOCAL
-    const String BASE_URL =                                             "http://192.168.0.2";
-    const uint16_t BASE_PORT =                                          8008;
-    const String FIRMWARE_URI =                                         "api/airanalyzer/updateDeveloper";
-#else
-    const uint16_t BASE_URL =                                           "http://airanalyzer.servehttp.com";
-    const String BASE_PORT =                                            50208;
-    const String FIRMWARE_URI =                                         "api/airanalyzer/updateClient";
-#endif
+const String BASE_URL =                                                 "airanalyzer.servehttp.com";
+const uint16_t BASE_PORT =                                              444;
+const String FIRMWARE_URI =                                             "api/airanalyzer/updateClient";
+const String FINGERPRINT =                                              "7E:EE:10:13:D8:FE:28:48:4E:E3:AA:77:6B:33:51:33:FE:88:89:79";
 
 // Sensor
 const uint8_t ADDRESS_SENSOR =                                          0x40;

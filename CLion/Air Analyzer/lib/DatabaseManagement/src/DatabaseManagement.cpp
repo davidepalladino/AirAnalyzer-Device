@@ -58,16 +58,40 @@ bool DatabaseManagement::updateRoom() {
 }
 
 uint16_t DatabaseManagement::requestPostLogin() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_LOGIN);
-    httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.POST("username=" + serverUsername + "&" + "password=" + serverPassword);
-    httpJsonResponse = httpClient.getString();
-    httpClient.end();
-    return responseCode;
+    wifiClient.setFingerprint("7E:EE:10:13:D8:FE:28:48:4E:E3:AA:77:6B:33:51:33:FE:88:89:79");
+//    wifiClient.allowSelfSignedCerts();
+    if (!wifiClient.connect(serverAddress, serverPort)) {
+        Serial.println("connection failed");
+        delay(1000);
+    } else {
+//        httpClient.begin(wifiClient, serverAddress, serverPort, API_LOGIN, true);
+//        Serial.println("BEGIN OK");
+        Serial.println("connection OK");
+        delay(1000);
+    }
+
+//    if (httpClient.connected()) {
+//        Serial.println("CONNECTED");
+//        httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
+//        uint16_t responseCode = httpClient.POST("username=" + serverUsername + "&" + "password=" + serverPassword);
+//        Serial.println("POST OK");
+//        httpJsonResponse = httpClient.getString();
+//        httpClient.end();
+//        Serial.println("END OK");
+//        Serial.println(responseCode);
+//        delay(1000);
+//
+//        return responseCode;
+//    } else {
+//        Serial.println("NOT CONNECTED");
+//
+//        delay(1000);
+        return 0;
+//    }
 }
 
 uint16_t DatabaseManagement::requestPostAddRoom() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_ADD_ROOM);
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_ADD_ROOM, true);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
     uint16_t responseCode = httpClient.POST("ID=" + String(roomID));
@@ -76,7 +100,7 @@ uint16_t DatabaseManagement::requestPostAddRoom() {
 }
 
 uint16_t DatabaseManagement::requestPostUpdateLocalIPRoom(const String &localIP) {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_UPDATE_LOCAL_IP_ROOM);
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_UPDATE_LOCAL_IP_ROOM, true);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
     uint16_t responseCode = httpClient.POST("ID=" + String(roomID) + "&LocalIP=" + localIP);
@@ -85,7 +109,7 @@ uint16_t DatabaseManagement::requestPostUpdateLocalIPRoom(const String &localIP)
 }
 
 uint16_t DatabaseManagement::requestPutMeasures(const String &jsonDocumentMeasuresSerialized) {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_SET_MEASURES);
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_SET_MEASURES, true);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/json");
     httpClient.addHeader("Accept", "application/json");
