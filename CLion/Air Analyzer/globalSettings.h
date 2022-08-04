@@ -1,7 +1,7 @@
 #pragma once
 
 // Versions
-const String VERSION_FIRMWARE =                                         "3.0.0";
+const String VERSION_FIRMWARE =                                         "3.0.1";
 const uint8_t VERSION_EEPROM =                                          3;
 
 // EEPROM

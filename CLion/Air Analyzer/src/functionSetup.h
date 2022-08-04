@@ -218,7 +218,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     database.setRoomID(roomID);
     database.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
-    database.begin(BASE_URL, BASE_PORT, 3, FINGERPRINT, DATABASE_MINUTES_UPDATE);
+    database.begin(BASE_URL, BASE_PORT, FINGERPRINT, 3, DATABASE_MINUTES_UPDATE);
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Sensor

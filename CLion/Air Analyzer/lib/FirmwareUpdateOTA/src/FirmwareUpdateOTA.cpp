@@ -8,15 +8,16 @@ void FirmwareUpdateOTA::begin(const String &address, uint16_t port, const String
 
     this->serverAddress = address;
     this->serverPort = port;
-    this->fingerprint = fingerprint;
 
     this->serverUri = uri;
+
+    this->wifiClient.setFingerprint(fingerprint.c_str());
 
     ESPhttpUpdate.rebootOnUpdate(false);
 }
 
 bool FirmwareUpdateOTA::check(const String &version) {
-    t_httpUpdate_return ret = ESPhttpUpdate.update(wiFiClient, serverAddress + ":" + String(serverPort) + "/" + serverUri, version);
+    t_httpUpdate_return ret = ESPhttpUpdate.update(wifiClient, serverAddress + ":" + String(serverPort) + "/" + serverUri, version);
     switch (ret) {
         case HTTP_UPDATE_OK:
             Serial.println("\033[1;92m[FIRMWARE UPDATED]\033[0m");
