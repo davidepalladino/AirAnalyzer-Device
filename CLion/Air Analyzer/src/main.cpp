@@ -177,12 +177,12 @@ void loop() {
     /* Updating the status icons on the screen if there is a change. */
     if (screen.getIsUpdated() != database.getIsUpdated()) {
         screen.setIsUpdated(database.getIsUpdated());
-      screen.showMainPage();
+        screen.showMainPage();
     }  
 
     if (screen.getIsConnected() != WiFi.isConnected()) {
         screen.setIsConnected(WiFi.isConnected());
-      screen.showMainPage();
+        screen.showMainPage();
     } 
 
     /* If there was an error on previous saving of the new room ID into database, there will be a new attempt. */
