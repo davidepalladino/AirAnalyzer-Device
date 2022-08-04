@@ -4,10 +4,10 @@
  * All right reserved.
  *
  * @author Davide Palladino
- * @contact me@davidepalladino.com
- * @website www.davidepalladino.com
- * @version 1.0.0
- * @date 10th August, 2021
+  * @contact davidepalladino@hotmail.com
+  * @website https://davidepalladino.github.io/
+ * @version 1.0.1
+ * @date 4th August, 2022
  *
  * This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -40,9 +40,10 @@
          * @brief This method provides to set the information about the connection to the server.
          * @param address URL for the connection to the server.
          * @param port Port for the connection to the server.
+         * @param fingerprint Fingerprint for HTTPS connection.
          * @param uri URI of the service.
          */
-        void begin(const String &address, uint16_t port, const String &uri);
+        void begin(const String &address, uint16_t port, const String &fingerprint, const String &uri);
 
         /**
          * @brief This method provides to check if there is a new version of firmware.
@@ -52,7 +53,7 @@
         bool check(const String &version);
 
     private:
-        WiFiClient wiFiClient;
+        WiFiClientSecure wifiClient;
         String serverAddress;
         uint16_t serverPort;
         String serverUri;

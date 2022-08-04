@@ -5,8 +5,8 @@
   * All right reserved.
   * 
   * @author Davide Palladino
-  * @contact me@davidepalladino.com
-  * @website www.davidepalladino.com
+  * @contact davidepalladino@hotmail.com
+  * @website https://davidepalladino.github.io/
   * @version 3.0.3
   * @date 23th August, 2021
   * 
