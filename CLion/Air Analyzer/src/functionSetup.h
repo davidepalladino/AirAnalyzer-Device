@@ -189,8 +189,8 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     EEPROM.get(ADDRESS_ROOM_ID, roomID);
     EEPROM.get(ADDRESS_CREDENTIAl_USERNAME, c_credentialUsername);
     EEPROM.get(ADDRESS_CREDENTIAL_PASSWORD, c_credentialPassword);
-    wifiSSID = c_wifiSSID;
-    wifiPassword = c_wifiPassword;
+    wifiSSID = "Redmi di Davide";//c_wifiSSID;
+    wifiPassword = "pippo123";//c_wifiPassword;
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // WiFi

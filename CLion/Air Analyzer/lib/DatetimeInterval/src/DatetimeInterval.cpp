@@ -1,12 +1,13 @@
 #include "DatetimeInterval.h"
 
-DatetimeInterval::DatetimeInterval(NTPClient ntpClient) : ntpClient(ntpClient) {
-}
+DatetimeInterval::DatetimeInterval(NTPClient ntpClient) : ntpClient(ntpClient) { }
 
 void DatetimeInterval::begin(uint8_t totalMinuteUpdate) {
     if (totalMinuteUpdate > 240) {
         totalMinuteUpdate = 240;
     }
+
+    rtc.begin();
 
     /* Calculating the datetime for next update about RTC. */
     timespanDatetimeRTC = TimeSpan(TIMEOUT_CHECK_RTC_DAY, 0, 0, 0);

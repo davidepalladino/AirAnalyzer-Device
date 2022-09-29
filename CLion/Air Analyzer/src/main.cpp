@@ -37,7 +37,7 @@ Button button(PIN_BUTTON, B_PULLUP, TIME_LONG_PRESS);
 Sensor sensor(ADDRESS_SENSOR, HUMIDITY_RESOLUTION, TEMPERATURE_RESOLUTION);
 Screen screen(sensor, PIN_SCL, PIN_SDA);
 
-NTPClient ntpClient(*new WiFiUDP(), 0);
+NTPClient ntpClient(*new WiFiUDP(), (long) 0);
 DatabaseManagement database(sensor, *(new DatetimeInterval(ntpClient)));
 
 String wifiSSID;

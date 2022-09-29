@@ -25,6 +25,8 @@
 #ifndef DATABASEMANAGEMENT_H
     #define DATABASEMANAGEMENT_H
 
+    #include <map>
+
     #include <Arduino.h>
 
     #include <ESP8266WiFi.h>
@@ -112,6 +114,11 @@
             uint8_t roomID;
             uint8_t nAttempts;
             bool isUpdated;
+
+
+            uint16_t requestPost(String uri, std::map<String, String> headers, std::map<String, String> body);
+
+            uint16_t requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body);
 
             /**
              * @brief This method provides to connect to the server for doing the login.

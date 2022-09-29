@@ -39,7 +39,18 @@ bool DatabaseManagement::getIsUpdated() { return isUpdated; }
 bool DatabaseManagement::updateRoom() {
     if (WiFi.status() == WL_CONNECTED) {
         if (login()) {
-            if (requestPostAddRoom() == 200 && requestPostUpdateLocalIPRoom(WiFi.localIP().toString()) == 200) {
+            std::map<String, String> headers;
+            headers.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
+            headers.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
+
+            std::map<String, String> body;
+            body.insert(std::pair<String, String>("number", this->roomID));
+            body.insert(std::pair<String, String>("is_active", 1));
+
+            if (
+                    requestPatch(API_CHANGE_STATUS_ACTIVATION_ROOM, headers, body) == 200
+//                    requestPostUpdateLocalIPRoom(WiFi.localIP().toString()) == 200
+                ) {
                 isUpdated = true;
             } else {
                 isUpdated = false;
@@ -59,40 +70,61 @@ bool DatabaseManagement::updateRoom() {
     }
 }
 
-uint16_t DatabaseManagement::requestPostLogin() {
+uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
     if (!wifiClient.connected()) {
         wifiClient.connect(serverAddress, serverPort);
     } else {
-        httpClient.begin(wifiClient, serverAddress, serverPort, API_LOGIN, true);
+        httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
-            httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            uint16_t responseCode = httpClient.POST("username=" + serverUsername + "&" + "password=" + serverPassword);
+            std::map<String, String>::iterator iteratorHeader;
+            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+            }
+
+            std::map<String, String>::iterator iteratorBody;
+            String bodyString = "";
+            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
+                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
+            }
+
+            uint16_t responseCode = httpClient.POST(bodyString);
             httpJsonResponse = httpClient.getString();
+
             httpClient.end();
 
-            Serial.println("\033[1;93m[RESPONSE FOR " + API_LOGIN + ": " + String(responseCode) + "]\033[0m\n");
+            Serial.println("\033[1;93m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
 
             return responseCode;
         }
-
-        wifiClient.stop();
     }
 
     return 404;
 }
 
-uint16_t DatabaseManagement::requestPostAddRoom() {
+uint16_t DatabaseManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
     if (!wifiClient.connected()) {
         wifiClient.connect(serverAddress, serverPort);
     } else {
-        httpClient.begin(wifiClient, serverAddress, serverPort, API_ADD_ROOM, true);
+        httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
-            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
-            httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            uint16_t responseCode = httpClient.POST("ID=" + String(roomID));
+            std::map<String, String>::iterator iteratorHeader;
+            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+            }
+
+            std::map<String, String>::iterator iteratorBody;
+            String bodyString = "";
+            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
+                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
+            }
+
+            uint16_t responseCode = 200;
+//            uint16_t responseCode = httpClient.PATCH(bodyString);
+//            httpJsonResponse = httpClient.getString();
+
             httpClient.end();
 
-            Serial.println("\033[1;93m[RESPONSE FOR " + API_ADD_ROOM + ": " + String(responseCode) + "]\033[0m\n");
+            Serial.println("\033[1;93m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
 
             return responseCode;
         }
@@ -102,46 +134,46 @@ uint16_t DatabaseManagement::requestPostAddRoom() {
 }
 
 uint16_t DatabaseManagement::requestPostUpdateLocalIPRoom(const String &localIP) {
-    if (!wifiClient.connected()) {
-        wifiClient.connect(serverAddress, serverPort);
-    } else {
-        httpClient.begin(wifiClient, serverAddress, serverPort, API_UPDATE_LOCAL_IP_ROOM, true);
-        if (httpClient.connected()) {
-            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
-            httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            uint16_t responseCode = httpClient.POST("ID=" + String(roomID) + "&LocalIP=" + localIP);
-            httpClient.end();
-
-            Serial.println("\033[1;93m[RESPONSE FOR " + API_UPDATE_LOCAL_IP_ROOM + ": " + String(responseCode) + "]\033[0m\n");
-
-            return responseCode;
-        }
-
-        wifiClient.stop();
-    }
+//    if (!wifiClient.connected()) {
+//        wifiClient.connect(serverAddress, serverPort);
+//    } else {
+//        httpClient.begin(wifiClient, serverAddress, serverPort, API_UPDATE_LOCAL_IP_ROOM, true);
+//        if (httpClient.connected()) {
+//            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
+//            httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
+//            uint16_t responseCode = httpClient.POST("ID=" + String(roomID) + "&LocalIP=" + localIP);
+//            httpClient.end();
+//
+//            Serial.println("\033[1;93m[RESPONSE FOR " + API_UPDATE_LOCAL_IP_ROOM + ": " + String(responseCode) + "]\033[0m\n");
+//
+//            return responseCode;
+//        }
+//
+//        wifiClient.stop();
+//    }
 
     return 404;
 }
 
 uint16_t DatabaseManagement::requestPutMeasures(const String &jsonDocumentMeasuresSerialized) {
-    if (!wifiClient.connected()) {
-        wifiClient.connect(serverAddress, serverPort);
-    } else {
-        httpClient.begin(wifiClient, serverAddress, serverPort, API_SET_MEASURES, true);
-        if (httpClient.connected()) {
-            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
-            httpClient.addHeader("Content-Type", "application/json");
-            httpClient.addHeader("Accept", "application/json");
-            uint16_t responseCode = httpClient.PUT(jsonDocumentMeasuresSerialized);
-            httpClient.end();
-
-            Serial.println("\033[1;93m[RESPONSE FOR " + API_SET_MEASURES + ": " + String(responseCode) + "]\033[0m\n");
-
-            return responseCode;
-        }
-
-        wifiClient.stop();
-    }
+//    if (!wifiClient.connected()) {
+//        wifiClient.connect(serverAddress, serverPort);
+//    } else {
+//        httpClient.begin(wifiClient, serverAddress, serverPort, API_SET_MEASURES, true);
+//        if (httpClient.connected()) {
+//            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
+//            httpClient.addHeader("Content-Type", "application/json");
+//            httpClient.addHeader("Accept", "application/json");
+//            uint16_t responseCode = httpClient.PUT(jsonDocumentMeasuresSerialized);
+//            httpClient.end();
+//
+//            Serial.println("\033[1;93m[RESPONSE FOR " + API_SET_MEASURES + ": " + String(responseCode) + "]\033[0m\n");
+//
+//            return responseCode;
+//        }
+//
+//        wifiClient.stop();
+//    }
 
     return 404;
 }
@@ -153,7 +185,15 @@ bool DatabaseManagement::login() {
     do {
         yield();
 
-        switch (requestPostLogin()) {
+        std::map<String, String> headers;
+        headers.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
+
+        std::map<String, String> body;
+        body.insert(std::pair<String, String>("username", serverUsername));
+        body.insert(std::pair<String, String>("password", serverPassword));
+
+
+        switch (requestPost(API_LOGIN, headers, body)) {
             case 200:
                 /* Storing the token for next purposes. */
                 jsonDocumentLogin["token"]["token_type"] = true;
