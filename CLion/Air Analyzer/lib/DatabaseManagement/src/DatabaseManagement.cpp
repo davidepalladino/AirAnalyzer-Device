@@ -176,14 +176,11 @@ void DatabaseManagement::update() {
 }
 
 uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
-    yield();
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
-    wdt_disable();
     wifiClient.allowSelfSignedCerts();
     wifiClient.connect(serverAddress, serverPort);
-    Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
 
     httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
@@ -212,14 +209,11 @@ uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> he
 }
 
 uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, String body) {
-    yield();
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
-    wdt_disable();
     wifiClient.allowSelfSignedCerts();
     wifiClient.connect(serverAddress, serverPort);
-    Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
 
     httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
@@ -242,14 +236,11 @@ uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> he
 }
 
 uint16_t DatabaseManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
-    yield();
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
-    wdt_disable();
     wifiClient.allowSelfSignedCerts();
     wifiClient.connect(serverAddress, serverPort);
-    Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
 
     httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
