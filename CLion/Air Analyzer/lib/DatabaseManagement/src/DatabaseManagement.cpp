@@ -2,12 +2,6 @@
 
 DatabaseManagement::DatabaseManagement(Sensor &sensor, DatetimeInterval &datetime) : sensor(sensor), datetime(datetime) {
     this->sensor.addObserver(this);
-
-    this->serverPort = 0;
-    this->roomID = 0;
-    this->nAttempts = 0;
-
-    this->isUpdated = true;
 }
 
 void DatabaseManagement::begin(const String &address, uint16_t port, const String &fingerprint, uint8_t nAttempt, uint8_t timeoutMinutes) {
@@ -20,7 +14,7 @@ void DatabaseManagement::begin(const String &address, uint16_t port, const Strin
 
     this->nAttempts = nAttempt;
 
-    this->wifiClient.setFingerprint(fingerprint.c_str());
+    this->isUpdated = true;
 
     while (!updateRoom()) { delay(1000); };
 }
@@ -30,26 +24,34 @@ void DatabaseManagement::setCredentials(const String &serverUsername, const Stri
     this->serverPassword = serverPassword;
 }
 
-void DatabaseManagement::setRoomID(uint8_t roomID) { this->roomID = roomID; }
+void DatabaseManagement::setRoomID(uint8_t roomNumber) { this->roomNumber = roomNumber; }
 
-uint8_t DatabaseManagement::getRoomID() const { return roomID; }
+uint8_t DatabaseManagement::getRoomID() const { return roomNumber; }
 
 bool DatabaseManagement::getIsUpdated() { return isUpdated; }
 
 bool DatabaseManagement::updateRoom() {
     if (WiFi.status() == WL_CONNECTED) {
-        if (login()) {
-            std::map<String, String> headers;
-            headers.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
-            headers.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
+        if (login() == 200) {
+            std::map<String, String> headersChangeStatusActivationRoom;
+            headersChangeStatusActivationRoom.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
+            headersChangeStatusActivationRoom.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
 
-            std::map<String, String> body;
-            body.insert(std::pair<String, String>("number", this->roomID));
-            body.insert(std::pair<String, String>("is_active", 1));
+            std::map<String, String> bodyChangeStatusActivationRoom;
+            bodyChangeStatusActivationRoom.insert(std::pair<String, String>("number", this->roomNumber));
+            bodyChangeStatusActivationRoom.insert(std::pair<String, String>("is_active", 1));
+
+            std::map<String, String> headersChangeLocalIpRoom;
+            headersChangeLocalIpRoom.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
+            headersChangeLocalIpRoom.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
+
+            std::map<String, String> bodyChangeLocalIpRoom;
+            bodyChangeLocalIpRoom.insert(std::pair<String, String>("number", this->roomNumber));
+            bodyChangeLocalIpRoom.insert(std::pair<String, String>("local_ip", (WiFi.localIP().toString())));
 
             if (
-                    requestPatch(API_CHANGE_STATUS_ACTIVATION_ROOM, headers, body) == 200
-//                    requestPostUpdateLocalIPRoom(WiFi.localIP().toString()) == 200
+                    requestPatch(API_CHANGE_STATUS_ACTIVATION_ROOM, headersChangeStatusActivationRoom, bodyChangeStatusActivationRoom) == 200 &&
+                    requestPatch(API_CHANGE_LOCAL_IP_ROOM, headersChangeLocalIpRoom, bodyChangeLocalIpRoom) == 200
                 ) {
                 isUpdated = true;
             } else {
@@ -70,143 +72,34 @@ bool DatabaseManagement::updateRoom() {
     }
 }
 
-uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
-    if (!wifiClient.connected()) {
-        wifiClient.connect(serverAddress, serverPort);
-    } else {
-        httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
-        if (httpClient.connected()) {
-            std::map<String, String>::iterator iteratorHeader;
-            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
-                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
-            }
-
-            std::map<String, String>::iterator iteratorBody;
-            String bodyString = "";
-            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
-                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
-            }
-
-            uint16_t responseCode = httpClient.POST(bodyString);
-            httpJsonResponse = httpClient.getString();
-
-            httpClient.end();
-
-            Serial.println("\033[1;93m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
-
-            return responseCode;
-        }
-    }
-
-    return 404;
-}
-
-uint16_t DatabaseManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
-    if (!wifiClient.connected()) {
-        wifiClient.connect(serverAddress, serverPort);
-    } else {
-        httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
-        if (httpClient.connected()) {
-            std::map<String, String>::iterator iteratorHeader;
-            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
-                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
-            }
-
-            std::map<String, String>::iterator iteratorBody;
-            String bodyString = "";
-            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
-                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
-            }
-
-            uint16_t responseCode = 200;
-//            uint16_t responseCode = httpClient.PATCH(bodyString);
-//            httpJsonResponse = httpClient.getString();
-
-            httpClient.end();
-
-            Serial.println("\033[1;93m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
-
-            return responseCode;
-        }
-    }
-
-    return 404;
-}
-
-uint16_t DatabaseManagement::requestPostUpdateLocalIPRoom(const String &localIP) {
-//    if (!wifiClient.connected()) {
-//        wifiClient.connect(serverAddress, serverPort);
-//    } else {
-//        httpClient.begin(wifiClient, serverAddress, serverPort, API_UPDATE_LOCAL_IP_ROOM, true);
-//        if (httpClient.connected()) {
-//            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
-//            httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-//            uint16_t responseCode = httpClient.POST("ID=" + String(roomID) + "&LocalIP=" + localIP);
-//            httpClient.end();
-//
-//            Serial.println("\033[1;93m[RESPONSE FOR " + API_UPDATE_LOCAL_IP_ROOM + ": " + String(responseCode) + "]\033[0m\n");
-//
-//            return responseCode;
-//        }
-//
-//        wifiClient.stop();
-//    }
-
-    return 404;
-}
-
-uint16_t DatabaseManagement::requestPutMeasures(const String &jsonDocumentMeasuresSerialized) {
-//    if (!wifiClient.connected()) {
-//        wifiClient.connect(serverAddress, serverPort);
-//    } else {
-//        httpClient.begin(wifiClient, serverAddress, serverPort, API_SET_MEASURES, true);
-//        if (httpClient.connected()) {
-//            httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
-//            httpClient.addHeader("Content-Type", "application/json");
-//            httpClient.addHeader("Accept", "application/json");
-//            uint16_t responseCode = httpClient.PUT(jsonDocumentMeasuresSerialized);
-//            httpClient.end();
-//
-//            Serial.println("\033[1;93m[RESPONSE FOR " + API_SET_MEASURES + ": " + String(responseCode) + "]\033[0m\n");
-//
-//            return responseCode;
-//        }
-//
-//        wifiClient.stop();
-//    }
-
-    return 404;
-}
-
-bool DatabaseManagement::login() {
+uint16_t DatabaseManagement::login() {
     uint8_t countAttempts = 1;
+
+    std::map<String, String> headers;
+    headers.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
+
+    std::map<String, String> body;
+    body.insert(std::pair<String, String>("username", serverUsername));
+    body.insert(std::pair<String, String>("password", serverPassword));
 
     /* Login into the server and taking the token. */
     do {
-        yield();
+        Serial.println("Attempts " + String(countAttempts));
+        uint16_t resultStatusCode = requestPost(API_LOGIN, headers, body);
 
-        std::map<String, String> headers;
-        headers.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
-
-        std::map<String, String> body;
-        body.insert(std::pair<String, String>("username", serverUsername));
-        body.insert(std::pair<String, String>("password", serverPassword));
-
-
-        switch (requestPost(API_LOGIN, headers, body)) {
+        switch (resultStatusCode) {
             case 200:
                 /* Storing the token for next purposes. */
-                jsonDocumentLogin["token"]["token_type"] = true;
+                jsonDocumentLogin["token"]["tokenType"] = true;
                 deserializeJson(jsonDocumentLogin, httpJsonResponse);
                 serverToken = (String) jsonDocumentLogin["token"];
-                serverTokenType = (String) jsonDocumentLogin["token_type"];
+                serverTokenType = (String) jsonDocumentLogin["tokenType"];
 
-                return true;
+                return resultStatusCode;
         }
-
     } while (countAttempts++ < nAttempts);
 
-    return false;
+    return 0;
 }
 
 bool DatabaseManagement::addMeasures(const String &timestamp, double temperature, double humidity) {
@@ -216,10 +109,10 @@ bool DatabaseManagement::addMeasures(const String &timestamp, double temperature
     }
 
     JsonObject measures = jsonArrayMeasures.createNestedObject();
-    measures["DateAndTime"] = timestamp;
-    measures["Room"] = roomID;
-    measures["Temperature"] = String(temperature, 2);
-    measures["Humidity"] = String(humidity, 2);
+    measures["when"] = timestamp;
+    measures["room_number"] = roomNumber;
+    measures["temperature"] = String(temperature, 2);
+    measures["humidity"] = String(humidity, 2);
 
     String jsonDocumentMeasuresSerialized;
     serializeJson(jsonArrayMeasures, jsonDocumentMeasuresSerialized);
@@ -229,21 +122,25 @@ bool DatabaseManagement::addMeasures(const String &timestamp, double temperature
      *  or reconnecting in case of error.
      */
     if (WiFi.status() == WL_CONNECTED) {
-        if (login()) {
+        if (login() == 200) {
             if (isUpdated) {
-                requestPostUpdateLocalIPRoom(WiFi.localIP().toString());
+//                requestPostUpdateLocalIPRoom(WiFi.localIP().toString());
             }
 
-            requestPutMeasures(jsonDocumentMeasuresSerialized);
+            std::map<String, String> headers;
+            headers.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
+            headers.insert(std::pair<String, String>("Content-Type", "application/json"));
+
+            requestPost(API_SET_MEASURES, headers, jsonDocumentMeasuresSerialized);
 
             Serial.println("\033[1;92m---------------- [TRANSACTION JSON] ---------------\033[0m");
             for (auto && jsonArrayMeasure : jsonArrayMeasures) {
                 yield();
 
                 JsonObject measure = jsonArrayMeasure.as<JsonObject>();
-                Serial.println("\033[1;92mVALUES AT " + (String) measure["DateAndTime"] + "\033[0m");
-                Serial.println("\t\033[1;97mTEMPERATURE:   " + String(measure["Temperature"]) + "\033[0m");
-                Serial.println("\t\033[1;97mHUMIDITY:      " + String(measure["Humidity"]) + "\033[0m");
+                Serial.println("\033[1;92mVALUES AT " + (String) measure["when"] + "\033[0m");
+                Serial.println("\t\033[1;97mTEMPERATURE:   " + String(measure["temperature"]) + "\033[0m");
+                Serial.println("\t\033[1;97mHUMIDITY:      " + String(measure["humidity"]) + "\033[0m");
             }
             Serial.println("\033[1;92m---------------------------------------------------\033[0m\n");
 
@@ -274,6 +171,109 @@ void DatabaseManagement::update() {
         addMeasures(datetime.getActualTimestamp(), sensor.getTemperature(), sensor.getHumidity());
         datetime.configNextDatetime();
 
-        Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(ESP.getFreeHeap()) + "]\033[0m");
+        Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
     }
+}
+
+uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
+    yield();
+    Serial.println(uri);
+    Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
+
+    wdt_disable();
+    wifiClient.allowSelfSignedCerts();
+    wifiClient.connect(serverAddress, serverPort);
+    Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
+        if (httpClient.connected()) {
+            std::map<String, String>::iterator iteratorHeader;
+            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+            }
+
+            std::map<String, String>::iterator iteratorBody;
+            String bodyString = "";
+            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
+                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
+            }
+
+            uint16_t responseCode = httpClient.POST(bodyString);
+            httpJsonResponse = httpClient.getString();
+
+            httpClient.end();
+
+            Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
+
+            return responseCode;
+        }
+
+    return 0;
+}
+
+uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, String body) {
+    yield();
+    Serial.println(uri);
+    Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
+
+    wdt_disable();
+    wifiClient.allowSelfSignedCerts();
+    wifiClient.connect(serverAddress, serverPort);
+    Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
+        if (httpClient.connected()) {
+            std::map<String, String>::iterator iteratorHeader;
+            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+            }
+
+            uint16_t responseCode = httpClient.POST(body);
+            httpJsonResponse = httpClient.getString();
+
+            httpClient.end();
+
+            Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
+
+            return responseCode;
+        }
+
+    return 0;
+}
+
+uint16_t DatabaseManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
+    yield();
+    Serial.println(uri);
+    Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
+
+    wdt_disable();
+    wifiClient.allowSelfSignedCerts();
+    wifiClient.connect(serverAddress, serverPort);
+    Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
+        if (httpClient.connected()) {
+            std::map<String, String>::iterator iteratorHeader;
+            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+
+                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+            }
+
+            std::map<String, String>::iterator iteratorBody;
+            String bodyString = "";
+            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
+                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
+            }
+
+            uint16_t responseCode = httpClient.PATCH(bodyString);
+            httpJsonResponse = httpClient.getString();
+
+            httpClient.end();
+
+            Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
+
+            return responseCode;
+        }
+
+    return 0;
 }

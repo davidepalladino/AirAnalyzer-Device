@@ -74,9 +74,9 @@
 
             /**
              * @brief This method sets only the room ID. The database will be not updated.
-             * @param roomID Number of room.
+             * @param roomNumber Number of room.
              */
-            void setRoomID(uint8_t roomID);
+            void setRoomID(uint8_t roomNumber);
 
             /**
              * @brief This method gets the room ID.
@@ -102,7 +102,7 @@
             WiFiClientSecure wifiClient;
             HTTPClient httpClient;
             StaticJsonDocument<1024> jsonDocumentLogin;
-            StaticJsonDocument<640> jsonDocumentMeasures;
+            StaticJsonDocument<768> jsonDocumentMeasures;
             JsonArray jsonArrayMeasures;
             String httpJsonResponse;
             String serverAddress;
@@ -111,44 +111,21 @@
             String serverPassword;
             String serverToken;
             String serverTokenType;
-            uint8_t roomID;
+            uint8_t roomNumber;
             uint8_t nAttempts;
             bool isUpdated;
 
-
             uint16_t requestPost(String uri, std::map<String, String> headers, std::map<String, String> body);
 
+            uint16_t requestPost(String uri, std::map<String, String> headers, String body);
+
             uint16_t requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body);
-
-            /**
-             * @brief This method provides to connect to the server for doing the login.
-             * @return HTTP status code.
-             */
-            uint16_t requestPostLogin();
-
-            /**
-             * @brief This method provides to connect to the server for adding the room.
-             * @return HTTP status code.
-             */
-            uint16_t requestPostAddRoom();
-
-            /**
-             * @brief This method provides to connect to the server for updating the actual local IP.
-             * @return HTTP status code.
-             */
-            uint16_t requestPostUpdateLocalIPRoom(const String &localIP);
-
-            /**
-             * @brief This method provides to connect to the server for adding the measures in JSON format.
-             * @return HTTP status code.
-             */
-            uint16_t requestPutMeasures(const String &jsonDocumentMeasuresSerialized);
 
             /**
              * @brief This method provides to login the user.
              * @return Value "true" if there login has been successful; else, value "false".
              */
-            bool login();
+            uint16_t login();
 
             /**
              * @brief This method provides to login the user.
