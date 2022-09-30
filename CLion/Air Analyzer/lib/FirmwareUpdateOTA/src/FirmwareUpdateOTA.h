@@ -1,23 +1,13 @@
 /**
  * @brief This library allows to update of firmware on certain time.
- * Copyright (c) 2020 Davide Palladino.
+ * Copyright (c) 2022 Davide Palladino.
  * All right reserved.
  *
  * @author Davide Palladino
-  * @contact davidepalladino@hotmail.com
-  * @website https://davidepalladino.github.io/
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
  * @version 1.0.1
- * @date 4th August, 2022
- *
- * This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public
- *  License as published by the Free Software Foundation; either
- *  version 3.0 of the License, or (at your option) any later version
- *
- * This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU Lesser General Public License for more details.
+  * @date 30th September, 2022
  *
  */
 

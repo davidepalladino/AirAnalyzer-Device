@@ -9,7 +9,7 @@
 #include <Button.h>
 #include <Sensor.h>
 #include <Screen.h>
-#include <DatabaseManagement.h>
+#include <ApiManagement.h>
 
 #include "../globalSettings.h"
 
@@ -17,9 +17,9 @@
 #define MAX_ROOM_ID 9
 
 void configurationVersion1(Button &button, Screen &screen);
-void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, DatabaseManagement &database);
-void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, DatabaseManagement &database, String &wifiSSID, String &wifiPassword);
-void socketRetrieveCredentials(String jsonRequestSerialized, DatabaseManagement &database);
+void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiManagement &apiManagement);
+void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword);
+void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiManagement);
 void socketSendRoomID(ServerSocketJSON &serverSocket, uint8_t roomID);
 void showBrand(Button &button, Screen &screen, String &version);
 long calculateDelay(long timeStarted, long timeNecessary);
@@ -97,10 +97,10 @@ void configurationVersion1(Button &button, Screen &screen) {
  *  with the Android APP, through a socket communication.
  * @param serverSocket Object to open a server socket.
  * @param screen Screen to visualize the status of upgrade with the messages.
- * @param database Database to set the credentials.
+ * @param apiManagement API object to set the credentials.
  * @warning EEPROM must be already opened.
  */
-void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, DatabaseManagement &database) {
+void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiManagement &apiManagement) {
     char wifiSSID[SIZE_WIFI_SSID];
     char wifiPassword[SIZE_WIFI_PASSWORD];
     uint8_t roomID = 0;
@@ -143,7 +143,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, Datab
         requestCodeSocket = serverSocket.listen();
         switch (requestCodeSocket) {
             case 1:
-                socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), database);
+                socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
                 isCredentialsRetrieved = true;
                 break;
 
@@ -165,12 +165,12 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, Datab
  * @param serverSocket Object to open a server socket.
  * @param sensor Sensor to initialize.
  * @param screen Screen to visualize the status of loading with the messages.
- * @param database Database to initialize.
+ * @param apiManagement API object to initialize.
  * @param wifiSSID Object to store the SSID of WiFi.
  * @param wifiPassword Object to store the password of WiFi.
  * @warning EEPROM must be already opened.
  */
-void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, DatabaseManagement &database, String &wifiSSID, String &wifiPassword) {
+void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword) {
     unsigned long timeStartedLoadingMessage;
     float percentageLoadingMessage = (float) 100 / (((float) sizeof(loadingPageMessages) / sizeof(loadingPageMessages[0])) - 1);
     uint8_t iLoadingMessages = 0;
@@ -212,13 +212,13 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     }
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
-    // Database
+    // API
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
-    database.setRoomID(roomID);
-    database.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
-    database.begin(BASE_URL, BASE_PORT, FINGERPRINT, 3, DATABASE_MINUTES_UPDATE);
+    apiManagement.setRoomNumber(roomID);
+    apiManagement.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
+    apiManagement.begin(BASE_URL, BASE_PORT, FINGERPRINT, 3, API_MINUTES_UPDATE_MEASURES);
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Sensor
@@ -229,10 +229,11 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Screen
+    // Screen
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     screen.setRoomID(roomID);
     screen.setIsConnected(WiFi.isConnected());
-    screen.setIsUpdated(database.getIsUpdated());
+    screen.setIsUpdated(apiManagement.getIsUpdated());
 }
 
 /**
@@ -260,10 +261,10 @@ void forceConnectWiFi(const String &wifiSSID, const String &wifiPassword, uint8_
 /**
  * @brief This procedures provides to store the user credential, contained into JSON message, to the EEPROM.
  * @param jsonRequestSerialized JSON message necessary to deserialize.
- * @param database Database to set the credentials.
+ * @param apiManagement API object to set the credentials.
  * @warning EEPROM must be already opened.
  */
-void socketRetrieveCredentials(String jsonRequestSerialized, DatabaseManagement &database) {
+void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiManagement) {
     StaticJsonDocument<SIZE_JSON_DOCUMENT> jsonDocumentRequest;
     deserializeJson(jsonDocumentRequest, jsonRequestSerialized);
 
@@ -276,7 +277,7 @@ void socketRetrieveCredentials(String jsonRequestSerialized, DatabaseManagement 
     EEPROM.put(ADDRESS_CREDENTIAL_PASSWORD, c_password);
     EEPROM.commit();
 
-    database.setCredentials(String(c_username), String(c_password));
+    apiManagement.setCredentials(String(c_username), String(c_password));
 }
 
 /**

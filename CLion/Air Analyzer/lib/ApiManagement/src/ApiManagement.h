@@ -1,29 +1,19 @@
  /**
-  * @brief This library allows to manage the database with API REST, for the Air Analyzer purposes.
+  * @brief This library allows to manage the apiManagement with API REST, for the Air Analyzer purposes.
   * The class is an observer where updates own status when is notified by the subject class.
-  * Copyright (c) 2020 Davide Palladino.
+  * Copyright (c) 2022 Davide Palladino.
   * All right reserved.
   * 
   * @author Davide Palladino
   * @contact davidepalladino@hotmail.com
   * @website https://davidepalladino.github.io/
-  * @version 2.0.3
-  * @date 4th August, 2022
-  *
-  * This library is free software; you can redistribute it and/or
-  *  modify it under the terms of the GNU General Public
-  *  License as published by the Free Software Foundation; either
-  *  version 3.0 of the License, or (at your option) any later version
-  * 
-  * This library is distributed in the hope that it will be useful,
-  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
-  *  GNU Lesser General Public License for more details.
+  * @version 3.0.0
+  * @date 30th September, 2022
   * 
   */
 
-#ifndef DATABASEMANAGEMENT_H
-    #define DATABASEMANAGEMENT_H
+#ifndef APIMANAGEMENT_H
+    #define APIMANAGEMENT_H
 
     #include <map>
 
@@ -38,11 +28,11 @@
     #include <DatetimeInterval.h>
     #include <Sensor.h>
 
-    #include "API.h"
+    #include "ApiRoute.h"
 
     class Sensor;
 
-    class DatabaseManagement : private AbstractObserver {
+    class ApiManagement : private AbstractObserver {
         friend class AbstractSubject;
 
         public:
@@ -51,7 +41,7 @@
              * @param sensor Subject object that will notify.
              * @param datetime Object to check and set the datetime.
              */
-            DatabaseManagement(Sensor &sensor, DatetimeInterval &datetime);
+            ApiManagement(Sensor &sensor, DatetimeInterval &datetime);
 
             /**
              * @brief This method provides to set Datetime object, the JSON array and the information about the
@@ -61,28 +51,28 @@
              * @param fingerprint Fingerprint for HTTPS connection.
              * @param nAttempts Number of attempts for login. Default value is "0".
              * @param timeoutMinutes Minutes for every update. Default value is "10".
-             * @warning Previously will have to be called the "setCredentials()" method, because "begin()" stores the room ID into database; so it needs the credentials.
+             * @warning Previously will have to be called the "setCredentials()" method, because "begin()" stores the room ID into apiManagement; so it needs the credentials.
              */
             void begin(const String &address, uint16_t port, const String &fingerprint, uint8_t nAttempts = 0, uint8_t timeoutMinutes = 10);
 
             /**
              * This method provides to set the credentials of user.
-             * @param username Username about the user for managing the own database.
-             * @param password Password about the user for managing the own database.
+             * @param username Username about the user for managing the own apiManagement.
+             * @param password Password about the user for managing the own apiManagement.
              */
             void setCredentials(const String &username, const String &password);
 
             /**
-             * @brief This method sets only the room ID. The database will be not updated.
+             * @brief This method sets only the room ID. The apiManagement will be not updated.
              * @param roomNumber Number of room.
              */
-            void setRoomID(uint8_t roomNumber);
+            void setRoomNumber(uint8_t roomNumber);
 
             /**
              * @brief This method gets the room ID.
              * @return Number of room.
              */
-            uint8_t getRoomID() const;
+            uint8_t getRoomNumber() const;
 
             /**
              * @brief This method gets the status indicator about the error on update.
@@ -115,10 +105,31 @@
             uint8_t nAttempts;
             bool isUpdated;
 
+            /**
+             * This method provides to execute a POST request to a specicif URI.
+             * @param uri URI for the request.
+             * @param headers Header in format Key => Value.
+             * @param body Body in format Key => Value.
+             * @return HTTP Status Code.
+             */
             uint16_t requestPost(String uri, std::map<String, String> headers, std::map<String, String> body);
 
+            /**
+             * This method provides to execute a POST request to a specicif URI.
+             * @param uri URI for the request.
+             * @param headers Header in format Key => Value.
+             * @param body Body in format String.
+             * @return HTTP Status Code.
+             */
             uint16_t requestPost(String uri, std::map<String, String> headers, String body);
 
+            /**
+             * This method provides to execute a PATCH request to a specicif URI.
+             * @param uri URI for the request.
+             * @param headers Header in format Key => Value.
+             * @param body Body in format Key => Value.
+             * @return HTTP Status Code.
+             */
             uint16_t requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body);
 
             /**
@@ -134,7 +145,7 @@
             bool addMeasures(const String &timestamp, double temperature, double humidity);
 
             /**
-             * @brief This method insert the actual values into database.
+             * @brief This method insert the actual values into apiManagement.
              */
             void update();
     };

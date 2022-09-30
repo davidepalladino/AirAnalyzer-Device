@@ -1,10 +1,10 @@
-#include <DatabaseManagement.h>
+#include <ApiManagement.h>
 
-DatabaseManagement::DatabaseManagement(Sensor &sensor, DatetimeInterval &datetime) : sensor(sensor), datetime(datetime) {
+ApiManagement::ApiManagement(Sensor &sensor, DatetimeInterval &datetime) : sensor(sensor), datetime(datetime) {
     this->sensor.addObserver(this);
 }
 
-void DatabaseManagement::begin(const String &address, uint16_t port, const String &fingerprint, uint8_t nAttempt, uint8_t timeoutMinutes) {
+void ApiManagement::begin(const String &address, uint16_t port, const String &fingerprint, uint8_t nAttempt, uint8_t timeoutMinutes) {
     Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
     this->datetime.begin(timeoutMinutes > 240 ? 240 : timeoutMinutes);
     this->jsonArrayMeasures = jsonDocumentMeasures.to<JsonArray>();
@@ -19,18 +19,18 @@ void DatabaseManagement::begin(const String &address, uint16_t port, const Strin
     while (!updateRoom()) { delay(1000); };
 }
 
-void DatabaseManagement::setCredentials(const String &serverUsername, const String &serverPassword) {
+void ApiManagement::setCredentials(const String &serverUsername, const String &serverPassword) {
     this->serverUsername = serverUsername;
     this->serverPassword = serverPassword;
 }
 
-void DatabaseManagement::setRoomID(uint8_t roomNumber) { this->roomNumber = roomNumber; }
+void ApiManagement::setRoomNumber(uint8_t roomNumber) { this->roomNumber = roomNumber; }
 
-uint8_t DatabaseManagement::getRoomID() const { return roomNumber; }
+uint8_t ApiManagement::getRoomNumber() const { return roomNumber; }
 
-bool DatabaseManagement::getIsUpdated() { return isUpdated; }
+bool ApiManagement::getIsUpdated() { return isUpdated; }
 
-bool DatabaseManagement::updateRoom() {
+bool ApiManagement::updateRoom() {
     if (WiFi.status() == WL_CONNECTED) {
         if (login() == 200) {
             std::map<String, String> headersChangeStatusActivationRoom;
@@ -57,22 +57,19 @@ bool DatabaseManagement::updateRoom() {
             } else {
                 isUpdated = false;
             }
-
-            return isUpdated;
         } else {
             isUpdated = false;
-            return isUpdated;
         }
     } else if (WiFi.status() == WL_DISCONNECTED) {
         isUpdated = false;
-        return isUpdated;
     } else {
         isUpdated = false;
-        return isUpdated;
     }
+
+    return isUpdated;
 }
 
-uint16_t DatabaseManagement::login() {
+uint16_t ApiManagement::login() {
     uint8_t countAttempts = 1;
 
     std::map<String, String> headers;
@@ -102,7 +99,7 @@ uint16_t DatabaseManagement::login() {
     return 0;
 }
 
-bool DatabaseManagement::addMeasures(const String &timestamp, double temperature, double humidity) {
+bool ApiManagement::addMeasures(const String &timestamp, double temperature, double humidity) {
     /* Creating the JSON body. */
     if (jsonArrayMeasures.size() == 5) {
         jsonArrayMeasures.remove(0);
@@ -154,7 +151,7 @@ bool DatabaseManagement::addMeasures(const String &timestamp, double temperature
             return isUpdated;
         }
     } else if (WiFi.status() == WL_DISCONNECTED) {
-        Serial.println("\033[1;91m[WIFI ERROR FROM DatabaseManagement]\033[0m");
+        Serial.println("\033[1;91m[WIFI ERROR FROM ApiManagement]\033[0m");
 
         isUpdated = false;
         return isUpdated;
@@ -164,7 +161,7 @@ bool DatabaseManagement::addMeasures(const String &timestamp, double temperature
     }
 }
 
-void DatabaseManagement::update() {
+void ApiManagement::update() {
     if (datetime.checkDatetime()) {
         Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
 
@@ -175,7 +172,7 @@ void DatabaseManagement::update() {
     }
 }
 
-uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
+uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
@@ -208,7 +205,7 @@ uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> he
     return 0;
 }
 
-uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> headers, String body) {
+uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers, String body) {
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
@@ -235,7 +232,7 @@ uint16_t DatabaseManagement::requestPost(String uri, std::map<String, String> he
     return 0;
 }
 
-uint16_t DatabaseManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
+uint16_t ApiManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 

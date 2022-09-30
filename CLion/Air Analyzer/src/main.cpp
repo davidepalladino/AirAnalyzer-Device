@@ -1,14 +1,14 @@
  /**
   * This software allows to manage the hardware of "Air Analyzer". Specifically, you can read the values about temperature and humidity, 
-  *  storing them into database for extern analysis.
+  *  storing them into apiManagement for extern analysis.
   * Copyright (c) 2020 Davide Palladino. 
   * All right reserved.
   * 
   * @author Davide Palladino
-  * @contact me@davidepalladino.com
-  * @website www.davidepalladino.com
-  * @version 3.0.0
-  * @date 9th August, 2021
+  * @contact davidepalladino@hotmail.com
+  * @website https://davidepalladino.github.io/
+  * @version 4.0.0
+  * @date 30th September, 2022
   * 
   */
 
@@ -26,7 +26,7 @@
 #include <Sensor.h>
 #include <Screen.h>
 #include <DatetimeInterval.h>
-#include <DatabaseManagement.h>
+#include <ApiManagement.h>
 #include <FirmwareUpdateOTA.h>
 
 #include "functionSetup.h"  // This includes "globalSettings.h" too.
@@ -38,7 +38,7 @@ Sensor sensor(ADDRESS_SENSOR, HUMIDITY_RESOLUTION, TEMPERATURE_RESOLUTION);
 Screen screen(sensor, PIN_SCL, PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-DatabaseManagement database(sensor, *(new DatetimeInterval(ntpClient)));
+ApiManagement apiManagement(sensor, *(new DatetimeInterval(ntpClient)));
 
 String wifiSSID;
 String wifiPassword;
@@ -68,7 +68,7 @@ void setup() {
         /* Else if is a first or the second version, will be launched the upgrade to version 3. */
         case 1:
         case 2:
-            configurationVersion3(serverSocket, screen, database);
+            configurationVersion3(serverSocket, screen, apiManagement);
 
             /*
              * Showing a message of complete.
@@ -78,7 +78,7 @@ void setup() {
             delay(TIME_MESSAGE);
 
         default:
-            configurationLoad(firmwareUpdate, serverSocket,sensor, screen, database, wifiSSID, wifiPassword);
+            configurationLoad(firmwareUpdate, serverSocket, sensor, screen, apiManagement, wifiSSID, wifiPassword);
     }
     EEPROM.end();
 }
@@ -98,7 +98,7 @@ void loop() {
                     screen.showMessagePage(messagePageSocketRequest);
 
                     EEPROM.begin(SIZE_EEPROM);
-                    socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), database);
+                    socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
                     EEPROM.end();
 
                     delay(calculateDelay((long) timeStartedMessage, TIME_MESSAGE));
@@ -149,34 +149,34 @@ void loop() {
         }
       }
     } else if (resultButton == 1) {
-      if (database.getRoomID() == MAX_ROOM_ID) {
-        database.setRoomID(MIN_ROOM_ID);
+      if (apiManagement.getRoomNumber() == MAX_ROOM_ID) {
+          apiManagement.setRoomNumber(MIN_ROOM_ID);
       } else {
-        database.setRoomID(database.getRoomID() + 1);
+          apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
       }
-      screen.setRoomID(database.getRoomID());
+      screen.setRoomID(apiManagement.getRoomNumber());
       screen.showMainPage();
 
       timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
     }
 
-    /* Saving on EEPROM and updating the database only if the time is elapsed. */
+    /* Saving on EEPROM and updating the apiManagement only if the time is elapsed. */
     if ((timeoutSaveEEPROM < millis()) && (timeoutSaveEEPROM != 0)) {
       timeoutSaveEEPROM = 0;
 
-      errorSavingDatabase = !database.updateRoom();
+      errorSavingDatabase = !apiManagement.updateRoom();
 
       EEPROM.begin(SIZE_EEPROM);
-      if (EEPROM.read(ADDRESS_ROOM_ID) != database.getRoomID()) {
-        EEPROM.write(ADDRESS_ROOM_ID, database.getRoomID());
+      if (EEPROM.read(ADDRESS_ROOM_ID) != apiManagement.getRoomNumber()) {
+        EEPROM.write(ADDRESS_ROOM_ID, apiManagement.getRoomNumber());
         EEPROM.commit();
       }
       EEPROM.end();
     }
 
     /* Updating the status icons on the screen if there is a change. */
-    if (screen.getIsUpdated() != database.getIsUpdated()) {
-        screen.setIsUpdated(database.getIsUpdated());
+    if (screen.getIsUpdated() != apiManagement.getIsUpdated()) {
+        screen.setIsUpdated(apiManagement.getIsUpdated());
         screen.showMainPage();
     }  
 
@@ -185,9 +185,9 @@ void loop() {
         screen.showMainPage();
     } 
 
-    /* If there was an error on previous saving of the new room ID into database, there will be a new attempt. */
+    /* If there was an error on previous saving of the new room ID into apiManagement, there will be a new attempt. */
     if (errorSavingDatabase) {
-      errorSavingDatabase = !database.updateRoom();
+      errorSavingDatabase = !apiManagement.updateRoom();
     }       
 
     sensor.check();
