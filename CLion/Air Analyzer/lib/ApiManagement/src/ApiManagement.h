@@ -48,12 +48,11 @@
              *  connection to the server, with the timeout (in minutes) for every update.
              * @param address URL for the connection to the server.
              * @param port Port for the connection to the server.
-             * @param fingerprint Fingerprint for HTTPS connection.
              * @param nAttempts Number of attempts for login. Default value is "0".
              * @param timeoutMinutes Minutes for every update. Default value is "10".
              * @warning Previously will have to be called the "setCredentials()" method, because "begin()" stores the room ID into apiManagement; so it needs the credentials.
              */
-            void begin(const String &address, uint16_t port, const String &fingerprint, uint8_t nAttempts = 0, uint8_t timeoutMinutes = 10);
+            void begin(const String &address, uint16_t port, uint8_t nAttempts = 0, uint8_t timeoutMinutes = 10);
 
             /**
              * This method provides to set the credentials of user.
@@ -89,7 +88,7 @@
         private:
             Sensor &sensor;
             DatetimeInterval &datetime;
-            WiFiClientSecure wifiClient;
+            WiFiClient wifiClient;
             HTTPClient httpClient;
             StaticJsonDocument<1024> jsonDocumentLogin;
             StaticJsonDocument<768> jsonDocumentMeasures;

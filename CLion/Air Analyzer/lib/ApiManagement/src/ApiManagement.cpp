@@ -4,7 +4,7 @@ ApiManagement::ApiManagement(Sensor &sensor, DatetimeInterval &datetime) : senso
     this->sensor.addObserver(this);
 }
 
-void ApiManagement::begin(const String &address, uint16_t port, const String &fingerprint, uint8_t nAttempt, uint8_t timeoutMinutes) {
+void ApiManagement::begin(const String &address, uint16_t port, uint8_t nAttempt, uint8_t timeoutMinutes) {
     Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
     this->datetime.begin(timeoutMinutes > 240 ? 240 : timeoutMinutes);
     this->jsonArrayMeasures = jsonDocumentMeasures.to<JsonArray>();
@@ -176,9 +176,6 @@ uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
-    wifiClient.allowSelfSignedCerts();
-    wifiClient.connect(serverAddress, serverPort);
-
     httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
             std::map<String, String>::iterator iteratorHeader;
@@ -209,9 +206,6 @@ uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
 
-    wifiClient.allowSelfSignedCerts();
-    wifiClient.connect(serverAddress, serverPort);
-
     httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {
             std::map<String, String>::iterator iteratorHeader;
@@ -235,9 +229,6 @@ uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers
 uint16_t ApiManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
     Serial.println(uri);
     Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
-
-    wifiClient.allowSelfSignedCerts();
-    wifiClient.connect(serverAddress, serverPort);
 
     httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
         if (httpClient.connected()) {

@@ -3,15 +3,13 @@
 FirmwareUpdateOTA::FirmwareUpdateOTA() {
 }
 
-void FirmwareUpdateOTA::begin(const String &address, uint16_t port, const String &fingerprint, const String &uri) {
+void FirmwareUpdateOTA::begin(const String &address, uint16_t port, const String &uri) {
     Serial.println("\033[1;92m-------------------- [FIRMWARE] -------------------\033[0m");
 
     this->serverAddress = address;
     this->serverPort = port;
 
     this->serverUri = uri;
-
-    this->wifiClient.setFingerprint(fingerprint.c_str());
 
     ESPhttpUpdate.rebootOnUpdate(false);
 }

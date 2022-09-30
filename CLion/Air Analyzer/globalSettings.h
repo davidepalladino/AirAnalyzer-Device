@@ -29,8 +29,7 @@ const uint8_t SIZE_CREDENTIAL_PASSWORD =                                64;
 // Server (Database and Updater)
 const uint8_t API_MINUTES_UPDATE_MEASURES =                                 1;
 const String BASE_URL =                                                 "airanalyzer.servehttp.com";
-const uint16_t BASE_PORT =                                              444;
-const String FINGERPRINT =                                              "7E:EE:10:13:D8:FE:28:48:4E:E3:AA:77:6B:33:51:33:FE:88:89:79";
+const uint16_t BASE_PORT =                                              81;
 const String FIRMWARE_URI =                                             "api/firmware/getLatest";
 
 // Sensor

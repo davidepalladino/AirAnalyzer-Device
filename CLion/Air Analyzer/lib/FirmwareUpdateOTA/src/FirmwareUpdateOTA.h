@@ -30,10 +30,9 @@
          * @brief This method provides to set the information about the connection to the server.
          * @param address URL for the connection to the server.
          * @param port Port for the connection to the server.
-         * @param fingerprint Fingerprint for HTTPS connection.
          * @param uri URI of the service.
          */
-        void begin(const String &address, uint16_t port, const String &fingerprint, const String &uri);
+        void begin(const String &address, uint16_t port, const String &uri);
 
         /**
          * @brief This method provides to check if there is a new version of firmware.
@@ -43,7 +42,7 @@
         bool check(const String &version);
 
     private:
-        WiFiClientSecure wifiClient;
+        WiFiClient wifiClient;
         String serverAddress;
         uint16_t serverPort;
         String serverUri;
