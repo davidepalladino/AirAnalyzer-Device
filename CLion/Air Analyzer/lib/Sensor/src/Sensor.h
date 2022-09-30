@@ -32,7 +32,7 @@
     class Sensor : private AbstractSubject {
         public:
             friend class Screen;
-            friend class DatabaseManagement;
+            friend class ApiManagement;
 
             /** 
              * @brief This constructor creates the object setting only the type of sensor in DHT family and the pin.
