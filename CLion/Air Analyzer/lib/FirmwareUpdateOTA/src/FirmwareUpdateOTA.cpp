@@ -10,10 +10,14 @@ void FirmwareUpdateOTA::begin(const String &address, uint16_t port, const String
 
     this->serverUri = uri;
 
+    this->wifiClient.setFingerprint("7E:EE:10:13:D8:FE:28:48:4E:E3:AA:77:6B:33:51:33:FE:88:89:79");
+
     ESPhttpUpdate.rebootOnUpdate(false);
 }
 
 bool FirmwareUpdateOTA::check(const String &version) {
+    wifiClient.connect(serverAddress, serverPort);
+
     t_httpUpdate_return ret = ESPhttpUpdate.update(wifiClient, serverAddress + ":" + String(serverPort) + "/" + serverUri, version);
     switch (ret) {
         case HTTP_UPDATE_OK:

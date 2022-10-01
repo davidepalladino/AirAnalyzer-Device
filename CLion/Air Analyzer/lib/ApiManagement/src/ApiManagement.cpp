@@ -16,6 +16,8 @@ void ApiManagement::begin(const String &address, uint16_t port, uint8_t nAttempt
 
     this->isUpdated = true;
 
+    this->wifiClient.setFingerprint("7E:EE:10:13:D8:FE:28:48:4E:E3:AA:77:6B:33:51:33:FE:88:89:79");
+
     while (!updateRoom()) { delay(1000); };
 }
 
@@ -143,9 +145,11 @@ void ApiManagement::update() {
 }
 
 int ApiManagement::requestLogin() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_LOGIN);
+    wifiClient.connect(serverAddress, serverPort);
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_LOGIN, true);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
+    int responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
     httpJsonResponse = httpClient.getString();
     httpClient.end();
 
@@ -155,10 +159,12 @@ int ApiManagement::requestLogin() {
 }
 
 int ApiManagement::requestChangeStatusActivationRoom() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_CHANGE_STATUS_ACTIVATION_ROOM);
+    wifiClient.connect(serverAddress, serverPort);
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_CHANGE_STATUS_ACTIVATION_ROOM, true);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
+    int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_CHANGE_STATUS_ACTIVATION_ROOM + ": " + String(responseCode) + "]\033[0m\n");
@@ -167,10 +173,12 @@ int ApiManagement::requestChangeStatusActivationRoom() {
 }
 
 int ApiManagement::requestChangeLocalIpRoom(const String &localIP) {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_CHANGE_LOCAL_IP_ROOM);
+    wifiClient.connect(serverAddress, serverPort);
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_CHANGE_LOCAL_IP_ROOM, true);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
+    int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_CHANGE_LOCAL_IP_ROOM + ": " + String(responseCode) + "]\033[0m\n");
@@ -179,11 +187,13 @@ int ApiManagement::requestChangeLocalIpRoom(const String &localIP) {
 }
 
 int ApiManagement::requestSetMeasures(const String &jsonDocumentMeasuresSerialized) {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_SET_MEASURES);
+    wifiClient.connect(serverAddress, serverPort);
+
+    httpClient.begin(wifiClient, serverAddress, serverPort, API_SET_MEASURES, true);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/json");
     httpClient.addHeader("Accept", "application/json");
-    uint16_t responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
+    int responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_SET_MEASURES + ": " + String(responseCode) + "]\033[0m\n");

@@ -42,7 +42,7 @@
         bool check(const String &version);
 
     private:
-        WiFiClient wifiClient;
+        WiFiClientSecure wifiClient;
         String serverAddress;
         uint16_t serverPort;
         String serverUri;

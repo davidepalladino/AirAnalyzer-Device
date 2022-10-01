@@ -88,7 +88,7 @@
         private:
             Sensor &sensor;
             DatetimeInterval &datetime;
-            WiFiClient wifiClient;
+            WiFiClientSecure wifiClient;
             HTTPClient httpClient;
             StaticJsonDocument<512> jsonDocumentLogin;
             StaticJsonDocument<768> jsonDocumentMeasures;
