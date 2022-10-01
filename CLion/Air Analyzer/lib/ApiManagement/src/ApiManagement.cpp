@@ -145,7 +145,7 @@ void ApiManagement::update() {
 int ApiManagement::requestLogin() {
     httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_LOGIN);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
+    int responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
     httpJsonResponse = httpClient.getString();
     httpClient.end();
 
@@ -158,7 +158,7 @@ int ApiManagement::requestChangeStatusActivationRoom() {
     httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_CHANGE_STATUS_ACTIVATION_ROOM);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
+    int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_CHANGE_STATUS_ACTIVATION_ROOM + ": " + String(responseCode) + "]\033[0m\n");
@@ -170,7 +170,7 @@ int ApiManagement::requestChangeLocalIpRoom(const String &localIP) {
     httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_CHANGE_LOCAL_IP_ROOM);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    uint16_t responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
+    int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_CHANGE_LOCAL_IP_ROOM + ": " + String(responseCode) + "]\033[0m\n");
@@ -183,7 +183,7 @@ int ApiManagement::requestSetMeasures(const String &jsonDocumentMeasuresSerializ
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/json");
     httpClient.addHeader("Accept", "application/json");
-    uint16_t responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
+    int responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_SET_MEASURES + ": " + String(responseCode) + "]\033[0m\n");
