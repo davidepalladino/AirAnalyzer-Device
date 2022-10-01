@@ -105,37 +105,34 @@
             bool isUpdated;
 
             /**
-             * This method provides to execute a POST request to a specicif URI.
-             * @param uri URI for the request.
-             * @param headers Header in format Key => Value.
-             * @param body Body in format Key => Value.
-             * @return HTTP Status Code.
+             * @brief This method provides to connect to the server for doing the login.
+             * @return HTTP status code.
              */
-            int requestPost(String uri, std::map<String, String> headers, std::map<String, String> body);
+            int requestLogin();
 
             /**
-             * This method provides to execute a POST request to a specicif URI.
-             * @param uri URI for the request.
-             * @param headers Header in format Key => Value.
-             * @param body Body in format String.
-             * @return HTTP Status Code.
+             * @brief This method provides to connect to the server for adding the room.
+             * @return HTTP status code.
              */
-            int requestPost(String uri, std::map<String, String> headers, String body);
+            int requestChangeStatusActivationRoom();
 
             /**
-             * This method provides to execute a PATCH request to a specicif URI.
-             * @param uri URI for the request.
-             * @param headers Header in format Key => Value.
-             * @param body Body in format Key => Value.
-             * @return HTTP Status Code.
+             * @brief This method provides to connect to the server for updating the actual local IP.
+             * @return HTTP status code.
              */
-            int requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body);
+            int requestChangeLocalIpRoom(const String &localIP);
+
+            /**
+             * @brief This method provides to connect to the server for adding the measures in JSON format.
+             * @return HTTP status code.
+             */
+            int requestSetMeasures(const String &jsonDocumentMeasuresSerialized);
 
             /**
              * @brief This method provides to login the user.
              * @return Value "true" if there login has been successful; else, value "false".
              */
-            uint16_t login();
+            int login();
 
             /**
              * @brief This method provides to login the user.
