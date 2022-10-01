@@ -90,7 +90,7 @@
             DatetimeInterval &datetime;
             WiFiClient wifiClient;
             HTTPClient httpClient;
-            StaticJsonDocument<1024> jsonDocumentLogin;
+            StaticJsonDocument<512> jsonDocumentLogin;
             StaticJsonDocument<768> jsonDocumentMeasures;
             JsonArray jsonArrayMeasures;
             String httpJsonResponse;
@@ -111,7 +111,7 @@
              * @param body Body in format Key => Value.
              * @return HTTP Status Code.
              */
-            uint16_t requestPost(String uri, std::map<String, String> headers, std::map<String, String> body);
+            int requestPost(String uri, std::map<String, String> headers, std::map<String, String> body);
 
             /**
              * This method provides to execute a POST request to a specicif URI.
@@ -120,7 +120,7 @@
              * @param body Body in format String.
              * @return HTTP Status Code.
              */
-            uint16_t requestPost(String uri, std::map<String, String> headers, String body);
+            int requestPost(String uri, std::map<String, String> headers, String body);
 
             /**
              * This method provides to execute a PATCH request to a specicif URI.
@@ -129,7 +129,7 @@
              * @param body Body in format Key => Value.
              * @return HTTP Status Code.
              */
-            uint16_t requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body);
+            int requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body);
 
             /**
              * @brief This method provides to login the user.

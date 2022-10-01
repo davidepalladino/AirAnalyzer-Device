@@ -27,8 +27,8 @@ const uint8_t SIZE_CREDENTIAL_USERNAME =                                20;
 const uint8_t SIZE_CREDENTIAL_PASSWORD =                                64;
 
 // Server (Database and Updater)
-const uint8_t API_MINUTES_UPDATE_MEASURES =                                 1;
-const String BASE_URL =                                                 "airanalyzer.servehttp.com";
+const uint8_t API_MINUTES_UPDATE_MEASURES =                             1;
+const String BASE_URL =                                                 "http://airanalyzer.servehttp.com";
 const uint16_t BASE_PORT =                                              81;
 const String FIRMWARE_URI =                                             "api/firmware/getLatest";
 

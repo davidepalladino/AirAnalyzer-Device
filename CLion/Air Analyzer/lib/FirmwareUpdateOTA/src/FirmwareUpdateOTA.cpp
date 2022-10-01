@@ -1,7 +1,6 @@
 #include "FirmwareUpdateOTA.h"
 
-FirmwareUpdateOTA::FirmwareUpdateOTA() {
-}
+FirmwareUpdateOTA::FirmwareUpdateOTA() { }
 
 void FirmwareUpdateOTA::begin(const String &address, uint16_t port, const String &uri) {
     Serial.println("\033[1;92m-------------------- [FIRMWARE] -------------------\033[0m");

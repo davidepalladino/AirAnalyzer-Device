@@ -33,19 +33,19 @@ bool ApiManagement::getIsUpdated() { return isUpdated; }
 bool ApiManagement::updateRoom() {
     if (WiFi.status() == WL_CONNECTED) {
         if (login() == 200) {
-            std::map<String, String> headersChangeStatusActivationRoom;
+            static std::map<String, String> headersChangeStatusActivationRoom;
             headersChangeStatusActivationRoom.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
             headersChangeStatusActivationRoom.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
 
-            std::map<String, String> bodyChangeStatusActivationRoom;
+            static std::map<String, String> bodyChangeStatusActivationRoom;
             bodyChangeStatusActivationRoom.insert(std::pair<String, String>("number", this->roomNumber));
             bodyChangeStatusActivationRoom.insert(std::pair<String, String>("is_active", 1));
 
-            std::map<String, String> headersChangeLocalIpRoom;
+            static std::map<String, String> headersChangeLocalIpRoom;
             headersChangeLocalIpRoom.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
             headersChangeLocalIpRoom.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
 
-            std::map<String, String> bodyChangeLocalIpRoom;
+            static std::map<String, String> bodyChangeLocalIpRoom;
             bodyChangeLocalIpRoom.insert(std::pair<String, String>("number", this->roomNumber));
             bodyChangeLocalIpRoom.insert(std::pair<String, String>("local_ip", (WiFi.localIP().toString())));
 
@@ -57,6 +57,11 @@ bool ApiManagement::updateRoom() {
             } else {
                 isUpdated = false;
             }
+
+            headersChangeStatusActivationRoom.clear();
+            bodyChangeStatusActivationRoom.clear();
+            headersChangeLocalIpRoom.clear();
+            bodyChangeLocalIpRoom.clear();
         } else {
             isUpdated = false;
         }
@@ -72,18 +77,18 @@ bool ApiManagement::updateRoom() {
 uint16_t ApiManagement::login() {
     uint8_t countAttempts = 1;
 
-    std::map<String, String> headers;
+    static std::map<String, String> headers;
     headers.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
 
-    std::map<String, String> body;
+    static std::map<String, String> body;
     body.insert(std::pair<String, String>("username", serverUsername));
     body.insert(std::pair<String, String>("password", serverPassword));
 
     /* Login into the server and taking the token. */
     do {
-        Serial.println("Attempts " + String(countAttempts));
-        uint16_t resultStatusCode = requestPost(API_LOGIN, headers, body);
+        yield();
 
+        uint16_t resultStatusCode = requestPost(API_LOGIN, headers, body);
         switch (resultStatusCode) {
             case 200:
                 /* Storing the token for next purposes. */
@@ -92,9 +97,15 @@ uint16_t ApiManagement::login() {
                 serverToken = (String) jsonDocumentLogin["token"];
                 serverTokenType = (String) jsonDocumentLogin["tokenType"];
 
+                headers.clear();
+                body.clear();
+
                 return resultStatusCode;
         }
     } while (countAttempts++ < nAttempts);
+
+    headers.clear();
+    body.clear();
 
     return 0;
 }
@@ -121,14 +132,35 @@ bool ApiManagement::addMeasures(const String &timestamp, double temperature, dou
     if (WiFi.status() == WL_CONNECTED) {
         if (login() == 200) {
             if (isUpdated) {
-//                requestPostUpdateLocalIPRoom(WiFi.localIP().toString());
+                static std::map<String, String> headersChangeLocalIpRoom;
+                headersChangeLocalIpRoom.insert(std::pair<String, String>("Content-Type", "application/x-www-form-urlencoded"));
+                headersChangeLocalIpRoom.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
+
+                static std::map<String, String> bodyChangeLocalIpRoom;
+                bodyChangeLocalIpRoom.insert(std::pair<String, String>("number", this->roomNumber));
+                bodyChangeLocalIpRoom.insert(std::pair<String, String>("local_ip", (WiFi.localIP().toString())));
+
+                Serial.println(3);
+
+                requestPatch(API_CHANGE_LOCAL_IP_ROOM, headersChangeLocalIpRoom, bodyChangeLocalIpRoom);
+
+                headersChangeLocalIpRoom.clear();
+                bodyChangeLocalIpRoom.clear();
             }
 
-            std::map<String, String> headers;
-            headers.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
-            headers.insert(std::pair<String, String>("Content-Type", "application/json"));
+            Serial.println(4);
 
-            requestPost(API_SET_MEASURES, headers, jsonDocumentMeasuresSerialized);
+            static std::map<String, String> headersMeasures;
+            headersMeasures.insert(std::pair<String, String>("Authorization", serverTokenType + " " + serverToken));
+            headersMeasures.insert(std::pair<String, String>("Content-Type", "application/json"));
+
+            Serial.println(5);
+
+            requestPost(API_SET_MEASURES, headersMeasures, jsonDocumentMeasuresSerialized);
+
+            headersMeasures.clear();
+
+            Serial.println(6);
 
             Serial.println("\033[1;92m---------------- [TRANSACTION JSON] ---------------\033[0m");
             for (auto && jsonArrayMeasure : jsonArrayMeasures) {
@@ -168,91 +200,74 @@ void ApiManagement::update() {
         addMeasures(datetime.getActualTimestamp(), sensor.getTemperature(), sensor.getHumidity());
         datetime.configNextDatetime();
 
-        Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(EspClass::getFreeHeap()) + "]\033[0m");
+        Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(ESP.getFreeHeap()) + "]\033[0m");
     }
 }
 
-uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
-    Serial.println(uri);
-    Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
+int ApiManagement::requestPost(String uri, std::map<String, String> headers, std::map<String, String> body) {
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + uri);
 
-    httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
-        if (httpClient.connected()) {
-            std::map<String, String>::iterator iteratorHeader;
-            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
-                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
-            }
+    std::map<String, String>::iterator iteratorHeader;
+    for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+        httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+    }
 
-            std::map<String, String>::iterator iteratorBody;
-            String bodyString = "";
-            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
-                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
-            }
+    String bodyString = "";
+    std::map<String, String>::iterator iteratorBody;
+    for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
+        bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
+    }
 
-            uint16_t responseCode = httpClient.POST(bodyString);
-            httpJsonResponse = httpClient.getString();
+    bodyString = bodyString.substring(0, bodyString.length() - 1);
 
-            httpClient.end();
+    int responseCode = httpClient.POST(bodyString);
+    httpJsonResponse = httpClient.getString();
 
-            Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
+    httpClient.end();
 
-            return responseCode;
-        }
+    Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
 
-    return 0;
+    return responseCode;
 }
 
-uint16_t ApiManagement::requestPost(String uri, std::map<String, String> headers, String body) {
-    Serial.println(uri);
-    Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
+int ApiManagement::requestPost(String uri, std::map<String, String> headers, String body) {
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + uri);
 
-    httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
-        if (httpClient.connected()) {
-            std::map<String, String>::iterator iteratorHeader;
-            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
-                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
-            }
+    std::map<String, String>::iterator iteratorHeader;
+    for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+        httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+    }
 
-            uint16_t responseCode = httpClient.POST(body);
-            httpJsonResponse = httpClient.getString();
+    int responseCode = httpClient.POST(body);
+    httpJsonResponse = httpClient.getString();
 
-            httpClient.end();
+    httpClient.end();
 
-            Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
+    Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
 
-            return responseCode;
-        }
-
-    return 0;
+    return responseCode;
 }
 
-uint16_t ApiManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
-    Serial.println(uri);
-    Serial.println(String("wifiClient.status() ") + String(wifiClient.status()));
+int ApiManagement::requestPatch(String uri, std::map<String, String> headers, std::map<String, String> body) {
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + uri);
 
-    httpClient.begin(wifiClient, serverAddress, serverPort, uri, true);
-        if (httpClient.connected()) {
-            std::map<String, String>::iterator iteratorHeader;
-            for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+    std::map<String, String>::iterator iteratorHeader;
+    for (iteratorHeader = headers.begin(); iteratorHeader != headers.end(); ++iteratorHeader ) {
+        httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
+    }
 
-                httpClient.addHeader(iteratorHeader->first, iteratorHeader->second);
-            }
+    String bodyString = "";
+    std::map<String, String>::iterator iteratorBody;
+    for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
+        bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
+    }
 
-            std::map<String, String>::iterator iteratorBody;
-            String bodyString = "";
-            for (iteratorBody = body.begin(); iteratorBody != body.end(); ++iteratorBody ) {
-                bodyString += iteratorBody->first + "=" +  iteratorBody->second + "&";
-            }
+    int responseCode = httpClient.PATCH(bodyString);
+    httpJsonResponse = httpClient.getString();
 
-            uint16_t responseCode = httpClient.PATCH(bodyString);
-            httpJsonResponse = httpClient.getString();
+    httpClient.end();
 
-            httpClient.end();
+    Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
 
-            Serial.println("\033[1;96m[RESPONSE FOR " + uri + ": " + String(responseCode) + "]\033[0m\n");
-
-            return responseCode;
-        }
-
-    return 0;
+    return responseCode;
 }
