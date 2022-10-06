@@ -21,5 +21,6 @@ For this project I'm using this components:
 | D2 | SDA (for OLED, HDC1080 and DS3231) |
 | D5 | Push button |
 
-## Image
-<img src="https://www.davidepalladino.com/wp-content/uploads/2022/02/Air-Analyzer-Device-v3.0.0-scaled.jpg" alt="Home image" width="400px" height="auto">
+## Related posts
+* [Air Analyzer v2.0.3](https://davidepalladino.github.io/2021/07/12/Air-Analyzer-v2-0-3/)
+* [Air Analyzer v3.0.0](https://davidepalladino.github.io/2022/02/13/Air-Analyzer-v3-0-0/)
