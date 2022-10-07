@@ -198,6 +198,7 @@ void loop() {
       errorSavingDatabase = !apiManagement.updateRoom();
     }
 
+    /* Clearing the screen only if the time is elapsed. */
     if ((timeoutStandbyScreen < millis()) && (timeoutStandbyScreen != 0)) {
         timeoutStandbyScreen = 0;
 
