@@ -13,8 +13,8 @@
 
 #include "../globalSettings.h"
 
-#define MIN_ROOM_ID 1
-#define MAX_ROOM_ID 9
+#define MIN_ROOM_NUMBER 1
+#define MAX_ROOM_NUMBER 9
 
 void configurationVersion1(Button &button, Screen &screen);
 void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiManagement &apiManagement);
@@ -39,20 +39,20 @@ void configurationVersion1(Button &button, Screen &screen) {
     resetEEPROM(SIZE_EEPROM);
 
     // Room ID
-    uint8_t roomID = MIN_ROOM_ID;
+    uint8_t roomID = MIN_ROOM_NUMBER;
     do {
         yield();
 
         resultButton = button.checkPress();
         if (resultButton == 1) {
-            if (roomID == MAX_ROOM_ID) {
-                roomID = MIN_ROOM_ID;
+            if (roomID == MAX_ROOM_NUMBER) {
+                roomID = MIN_ROOM_NUMBER;
             } else {
                 roomID++;
             }
         }
 
-        screen.setRoomID(roomID);
+        screen.setRoomNumber(roomID);
         screen.showInstallationRoomIDPage(installationRoomIDPageMessages);
     } while (resultButton != -1);
 
@@ -175,7 +175,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     float percentageLoadingMessage = (float) 100 / (((float) sizeof(loadingPageMessages) / sizeof(loadingPageMessages[0])) - 1);
     uint8_t iLoadingMessages = 0;
 
-    uint8_t roomID = MIN_ROOM_ID;
+    uint8_t roomID = MIN_ROOM_NUMBER;
     char c_wifiSSID[SIZE_WIFI_SSID];
     char c_wifiPassword[SIZE_WIFI_PASSWORD];
     char c_credentialUsername[SIZE_CREDENTIAL_USERNAME];
@@ -229,9 +229,8 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Screen
-    // Screen
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
-    screen.setRoomID(roomID);
+    screen.setRoomNumber(roomID);
     screen.setIsConnected(WiFi.isConnected());
     screen.setIsUpdated(apiManagement.getIsUpdated());
 }
