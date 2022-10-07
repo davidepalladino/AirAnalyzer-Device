@@ -45,6 +45,7 @@ String wifiPassword;
 uint8_t requestCodeSocket = 0;
 int8_t resultButton = 0;
 unsigned long timeoutSaveEEPROM = 0;
+unsigned long timeoutStandbyScreen = 0;
 bool errorSavingDatabase = false;
 
 void setup() {
@@ -116,7 +117,7 @@ void loop() {
     /* 
      * Checking the status of button and execution the right action:
      *  - "-1" to execute WPS connection;
-     *  - "1" to change the room ID.
+     *  - "1" to show the screen or change the room number, if the screen is already turned on.
      */
     resultButton = button.checkPress();
     if (resultButton == -1) {
@@ -149,15 +150,22 @@ void loop() {
         }
       }
     } else if (resultButton == 1) {
-      if (apiManagement.getRoomNumber() == MAX_ROOM_ID) {
-          apiManagement.setRoomNumber(MIN_ROOM_ID);
-      } else {
-          apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
-      }
-      screen.setRoomID(apiManagement.getRoomNumber());
-      screen.showMainPage();
+      if (screen.getIsViewable()) {
+          if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
+              apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
+          } else {
+              apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
+          }
+          screen.setRoomNumber(apiManagement.getRoomNumber());
+          screen.showMainPage();
 
-      timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
+          timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
+      } else {
+          screen.setIsViewable(true);
+          screen.showMainPage();
+
+          timeoutStandbyScreen = millis() + TIME_TO_STANBY;
+      }
     }
 
     /* Saving on EEPROM and updating the apiManagement only if the time is elapsed. */
@@ -188,7 +196,14 @@ void loop() {
     /* If there was an error on previous saving of the new room ID into apiManagement, there will be a new attempt. */
     if (errorSavingDatabase) {
       errorSavingDatabase = !apiManagement.updateRoom();
-    }       
+    }
+
+    if ((timeoutStandbyScreen < millis()) && (timeoutStandbyScreen != 0)) {
+        timeoutStandbyScreen = 0;
+
+        screen.clear();
+        screen.setIsViewable(false);
+    }
 
     sensor.check();
 }

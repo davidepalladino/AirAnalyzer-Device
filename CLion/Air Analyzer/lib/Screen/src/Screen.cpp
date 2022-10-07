@@ -4,7 +4,7 @@ Screen::Screen(Sensor& sensor, uint8_t pinSCL, uint8_t pinSDA) : sensor(sensor) 
     sensor.addObserver(this);
     screen = new U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C (U8G2_R0, pinSCL, pinSDA);
 
-    roomID = 0;
+    roomNumber = 0;
 
     isConnected = true;
     isUpdated = false;
@@ -12,7 +12,7 @@ Screen::Screen(Sensor& sensor, uint8_t pinSCL, uint8_t pinSDA) : sensor(sensor) 
 
 void Screen::begin() { screen->begin(); }
 
-void Screen::setRoomID(uint8_t roomID) { this->roomID = roomID; }
+void Screen::setRoomNumber(uint8_t roomNumber) { this->roomNumber = roomNumber; }
 
 void Screen::setIsConnected(bool isConnected) { this->isConnected = isConnected; }
 
@@ -22,6 +22,9 @@ void Screen::setIsUpdated(bool isUpdated) { this->isUpdated = isUpdated; }
 
 bool Screen::getIsUpdated() { return isUpdated; }
 
+void Screen::setIsViewable(bool isViewable) { this->isViewable = isViewable; }
+
+bool Screen::getIsViewable() { return isViewable; }
 
 
 // INSTALLATION and CONFIGURATION VIEWS
@@ -96,6 +99,8 @@ void Screen::showMainPage() {
     } while (screen->nextPage());
 }
 
+void Screen::clear() { screen->clear(); }
+
 void Screen::showMessagePage(const String &message) {
     screen->firstPage();
     do {
@@ -137,12 +142,12 @@ void Screen::drawMessage(uint8_t positionX, uint8_t positionY, const String &mes
 void Screen::drawRoomID() {
     screen->drawCircle(positionCircleRoomID[0], positionCircleRoomID[1], radiusCircleRoomID, U8G2_DRAW_ALL);
     screen->setFont(u8g2_font_smart_patrol_nbp_tf);
-    if (roomID == 1) {
+    if (roomNumber == 1) {
         screen->setCursor(positionValueRoomID[0], positionValueRoomID[2]);
     } else {
         screen->setCursor(positionValueRoomID[1], positionValueRoomID[2]);
     }
-    screen->print(roomID); 
+    screen->print(roomNumber);
 }
 
 void Screen::drawTemperature() {
@@ -178,5 +183,7 @@ void Screen::drawUpdateStatus() {
 }
 
 void Screen::update() {
-    showMainPage();    
+    if (isViewable) {
+        showMainPage();
+    }
 }

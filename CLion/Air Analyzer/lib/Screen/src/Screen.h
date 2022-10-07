@@ -7,8 +7,8 @@
   * @author Davide Palladino
   * @contact davidepalladino@hotmail.com
   * @website https://davidepalladino.github.io/
-  * @version 1.4.2
-  * @date 30th September, 2022
+  * @version 1.5.0
+  * @date 7th October, 2022
   * 
   */
 
@@ -47,9 +47,9 @@
 
             /**
              * @brief This method sets the room ID.
-             * @param roomID Number of room.
+             * @param roomNumber Number of room.
              */
-            void setRoomID(uint8_t roomID);
+            void setRoomNumber(uint8_t roomNumber);
 
             /**
              * @brief This method sets the status indicator about the WiFi connection.
@@ -75,9 +75,21 @@
              */
             bool getIsUpdated();
 
+            /**
+             * @brief This method sets the status of screen, if can be rendered or not.
+             * @param isViewable Value "true" if the screen can be rendered.
+             */
+            void setIsViewable(bool isViewable);
+
+            /**
+             * @brief This method gets the status of screen, if can be rendered or not.
+             * @return
+             */
+            bool getIsViewable();
 
 
-            // INSTALLATION and CONFIGURATION VIEWS
+
+        // INSTALLATION and CONFIGURATION VIEWS
             /**
              * @brief This methods shows an installation page about the room ID.
              * @param messages Array of three messages to visualize.
@@ -122,6 +134,11 @@
             void showMainPage();
 
             /**
+             * @brief This method clear the page with all contents.
+             */
+            void clear();
+
+            /**
              * @brief This method shows a simple page with a simple row of message at the center.
              * @param message The specific row message to visualize.
              * @warning The row of message shall be of maximum 18 character. Other characters may be lost at right of screen.
@@ -138,9 +155,10 @@
         private:
             U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C *screen;
             Sensor &sensor;
-            uint8_t roomID;
+            uint8_t roomNumber;
             bool isConnected;
             bool isUpdated;
+            bool isViewable;
 
             /** 
              * @brief This method draws the brand.
