@@ -47,4 +47,4 @@ const uint8_t PIN_SDA =                                                 19;
 const uint16_t TIME_LOGO = TIME_LONG_PRESS + 1000;
 const uint16_t TIME_LOADING_MESSAGE =                                   3000;
 const uint16_t TIME_MESSAGE =                                           5000;
-const uint16_t TIME_TO_STANBY =                                         5000;
+const uint16_t TIME_TO_STANDBY =                                        5000;

@@ -47,6 +47,7 @@ int8_t resultButton = 0;
 unsigned long timeoutSaveEEPROM = 0;
 unsigned long timeoutStandbyScreen = 0;
 bool errorSavingDatabase = false;
+bool isNextMeasure = false;
 
 void setup() {
     Serial.begin(BAUDRATE);
@@ -164,7 +165,7 @@ void loop() {
           screen.setIsViewable(true);
           screen.showMainPage();
 
-          timeoutStandbyScreen = millis() + TIME_TO_STANBY;
+          timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
       }
     }
 
@@ -206,5 +207,11 @@ void loop() {
         screen.setIsViewable(false);
     }
 
-    sensor.check();
+    /* Waiting the first measure to set the first standby. */
+    if (sensor.check() && !isNextMeasure) {
+        isNextMeasure = true;
+
+        /* Preparing the next standby for the screen. */
+        timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
+    }
 }

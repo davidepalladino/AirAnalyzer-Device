@@ -8,6 +8,7 @@ Screen::Screen(Sensor& sensor, uint8_t pinSCL, uint8_t pinSDA) : sensor(sensor) 
 
     isConnected = true;
     isUpdated = false;
+    isViewable = true;
 }
 
 void Screen::begin() { screen->begin(); }
