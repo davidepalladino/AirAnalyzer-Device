@@ -7,8 +7,8 @@
   * @author Davide Palladino
   * @contact davidepalladino@hotmail.com
   * @website https://davidepalladino.github.io/
-  * @version 4.0.0
-  * @date 30th September, 2022
+  * @version 4.1.0
+  * @date 8th October, 2022
   * 
   */
 
@@ -122,65 +122,67 @@ void loop() {
      */
     resultButton = button.checkPress();
     if (resultButton == -1) {
-      char c_wifiSSID[SIZE_WIFI_SSID];
-      char c_wifiPassword[SIZE_WIFI_PASSWORD];
+        char c_wifiSSID[SIZE_WIFI_SSID];
+        char c_wifiPassword[SIZE_WIFI_PASSWORD];
 
-      screen.showMessagePage(messagePageSearchingMessage);
+        screen.showMessagePage(messagePageSearchingMessage);
 
-      bool result = WiFi.beginWPSConfig(); 
-      if (result) {
-        if (WiFi.SSID().length() > 0) {
-          wifiSSID = WiFi.SSID();
-          wifiSSID.toCharArray(c_wifiSSID, SIZE_WIFI_SSID);
-          wifiPassword = WiFi.psk();
-          wifiPassword.toCharArray(c_wifiPassword, SIZE_WIFI_PASSWORD);
+        bool result = WiFi.beginWPSConfig();
+        if (result) {
+            if (WiFi.SSID().length() > 0) {
+                wifiSSID = WiFi.SSID();
+                wifiSSID.toCharArray(c_wifiSSID, SIZE_WIFI_SSID);
+                wifiPassword = WiFi.psk();
+                wifiPassword.toCharArray(c_wifiPassword, SIZE_WIFI_PASSWORD);
 
-          EEPROM.begin(SIZE_EEPROM);
-          EEPROM.put(ADDRESS_WIFI_SSID, c_wifiSSID);
-          EEPROM.put(ADDRESS_WIFI_PASSWORD, c_wifiPassword);
-          EEPROM.commit();
-          EEPROM.end();
+                EEPROM.begin(SIZE_EEPROM);
+                EEPROM.put(ADDRESS_WIFI_SSID, c_wifiSSID);
+                EEPROM.put(ADDRESS_WIFI_PASSWORD, c_wifiPassword);
+                EEPROM.commit();
+                EEPROM.end();
 
-          screen.showMessagePage(messagePageSuccessfulMessage);
-          delay(TIME_MESSAGE);
-        } else {
-          WiFi.begin(wifiSSID, wifiPassword);
+                screen.showMessagePage(messagePageSuccessfulMessage);
+                delay(TIME_MESSAGE);
+            } else {
+                WiFi.begin(wifiSSID, wifiPassword);
 
-          screen.showMessagePage(messagePageErrorMessages);
-          delay(TIME_MESSAGE);
+                screen.showMessagePage(messagePageErrorMessages);
+                delay(TIME_MESSAGE);
+                timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
+            }
         }
-      }
     } else if (resultButton == 1) {
-      if (screen.getIsViewable()) {
-          if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
-              apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
-          } else {
-              apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
-          }
-          screen.setRoomNumber(apiManagement.getRoomNumber());
-          screen.showMainPage();
+        if (screen.getIsViewable()) {
+            if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
+                apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
+            } else {
+                apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
+            }
+            screen.setRoomNumber(apiManagement.getRoomNumber());
+            screen.showMainPage();
 
-          timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
-      } else {
-          screen.setIsViewable(true);
-          screen.showMainPage();
+            timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
+            timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
+        } else {
+            screen.setIsViewable(true);
+            screen.showMainPage();
 
-          timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
-      }
+            timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
+        }
     }
 
     /* Saving on EEPROM and updating the apiManagement only if the time is elapsed. */
     if ((timeoutSaveEEPROM < millis()) && (timeoutSaveEEPROM != 0)) {
-      timeoutSaveEEPROM = 0;
+        timeoutSaveEEPROM = 0;
 
-      errorSavingDatabase = !apiManagement.updateRoom();
+        errorSavingDatabase = !apiManagement.updateRoom();
 
-      EEPROM.begin(SIZE_EEPROM);
-      if (EEPROM.read(ADDRESS_ROOM_ID) != apiManagement.getRoomNumber()) {
-        EEPROM.write(ADDRESS_ROOM_ID, apiManagement.getRoomNumber());
-        EEPROM.commit();
-      }
-      EEPROM.end();
+        EEPROM.begin(SIZE_EEPROM);
+            if (EEPROM.read(ADDRESS_ROOM_ID) != apiManagement.getRoomNumber()) {
+            EEPROM.write(ADDRESS_ROOM_ID, apiManagement.getRoomNumber());
+            EEPROM.commit();
+        }
+        EEPROM.end();
     }
 
     /* Updating the status icons on the screen if there is a change. */
@@ -196,7 +198,7 @@ void loop() {
 
     /* If there was an error on previous saving of the new room ID into apiManagement, there will be a new attempt. */
     if (errorSavingDatabase) {
-      errorSavingDatabase = !apiManagement.updateRoom();
+        errorSavingDatabase = !apiManagement.updateRoom();
     }
 
     /* Clearing the screen only if the time is elapsed. */
