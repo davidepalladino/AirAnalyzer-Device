@@ -28,7 +28,7 @@ const uint8_t SIZE_CREDENTIAL_PASSWORD =                                64;
 
 // Server (Database and Updater)
 const uint8_t API_MINUTES_UPDATE_MEASURES =                             10;
-const String BASE_URL =                                                 "http://airanalyzer.shadowmoses.ovh";
+const String BASE_URL =                                                 "https://airanalyzer.shadowmoses.ovh";
 const uint16_t BASE_PORT =                                              443;
 const String FIRMWARE_URI =                                             "api/firmware/getLatest";
 
