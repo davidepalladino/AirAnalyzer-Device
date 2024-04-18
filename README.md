@@ -7,7 +7,7 @@ This repository concerns the software of device for the Air Analyzer project, wh
  - reset the device.
 
 ## Components used
-For this project I'm using this components:
+For this project I'm using these components:
  - NodeMCU ESP8266 ESP-12F;
  - OLED screen by 0.98" in I2C;
  - HDC1080 sensor;
