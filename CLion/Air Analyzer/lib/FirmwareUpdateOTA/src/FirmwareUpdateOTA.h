@@ -1,16 +1,3 @@
-/**
- * @brief This library allows to update of firmware on certain time.
- * Copyright (c) 2022 Davide Palladino.
- * All right reserved.
- *
- * @author Davide Palladino
- * @contact davidepalladino@hotmail.com
- * @website https://davidepalladino.github.io/
- * @version 2.0.0
- * @date 23rd January 2025
- *
- */
-
 #ifndef FIRMWAREUPDATEOTA_H
 #define FIRMWAREUPDATEOTA_H
 
@@ -25,6 +12,12 @@
  *
  * This class allows an ESP8266-based system to check for and download firmware updates
  * from a specified server.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 2.0.0
+ * @date 23rd January 2025
  */
 class FirmwareUpdateOTA {
     public:
