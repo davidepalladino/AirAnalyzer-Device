@@ -12,40 +12,51 @@
  */
 
 #ifndef FIRMWAREUPDATEOTA_H
-    #define FIRMWAREUPDATEOTA_H
+#define FIRMWAREUPDATEOTA_H
 
-    #include <Arduino.h>
-    #include <ESP8266WiFi.h>
-    #include <ESP8266HTTPClient.h>
-    #include <ESP8266httpUpdate.h>
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266httpUpdate.h>
 
-    const String FIRMWARE_UPDATE_OTA_BASE_URL = "http://airanalyzer.shadowmoses.ovh";
-    constexpr uint16_t FIRMWARE_UPDATE_OTA_BASE_PORT = 80;
-    const String FIRMWARE_UPDATE_OTA_URI_GET_LATEST = "api/firmware/getLatest";
+/**
+ * @class FirmwareUpdateOTA
+ * @brief Handles over-the-air firmware updates.
+ *
+ * This class allows an ESP8266-based system to check for and download firmware updates
+ * from a specified server.
+ */
+class FirmwareUpdateOTA {
+    public:
+        /**
+         * @brief Constructs a FirmwareUpdateOTA object.
+         *
+         * @param address The server address hosting the firmware.
+         * @param port The server port to connect to.
+         */
+        FirmwareUpdateOTA(const String& address, const uint16_t port);
 
-    class FirmwareUpdateOTA {
-        public:
-            /**
-             * @brief This constructor creates the object only.
-             */
-            FirmwareUpdateOTA();
+        /**
+         * @brief Initializes the connection settings for the update server.
+         *
+         * This method should be called before checking for updates.
+         */
+        void begin();
 
-            /**
-             * @brief This method provides to set the information about the connection to the server.
-             */
-            void begin();
+        /**
+         * @brief Checks for a new firmware version on the server.
+         *
+         * Compares the current firmware version with the server version and determines if an update is available.
+         *
+         * @param version The current firmware version.
+         * @param uri The URI path to check for updates.
+         * @return True if an update is available, false otherwise.
+         */
+        bool check(const String &version, const String &uri);
 
-            /**
-             * @brief This method provides to check if there is a new version of firmware.
-             * @param version Actual version of firmware.
-             * @return
-             */
-            bool check(const String &version);
-
-        private:
-            WiFiClient wifiClient;
-            String serverAddress;
-            uint16_t serverPort;
-            String serverUri;
-    };
+    private:
+        WiFiClient wifiClient; /**< Client for handling HTTP connections. */
+        String address; /**< Server address for firmware updates. */
+        uint16_t port; /**< Port number for server communication. */
+};
 #endif

@@ -41,3 +41,8 @@ const uint16_t TIME_TO_STANDBY =                                        5000;
 // Rooms
 const uint8_t MIN_ROOM_NUMBER =                                         1;
 const uint8_t MAX_ROOM_NUMBER =                                         9;
+
+// FirmwareUpdateOta
+const String FIRMWARE_UPDATE_OTA_BASE_URL =                             "http://airanalyzer.shadowmoses.ovh";
+constexpr uint16_t FIRMWARE_UPDATE_OTA_BASE_PORT =                      80;
+const String FIRMWARE_UPDATE_OTA_URI_GET_LATEST =                       "api/firmware/getLatest";

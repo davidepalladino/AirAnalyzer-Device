@@ -31,7 +31,7 @@
 
 #include "functionSetup.h"  // This includes "globalSettings.h" too.
 
-FirmwareUpdateOTA firmwareUpdate;
+FirmwareUpdateOTA firmwareUpdate(FIRMWARE_UPDATE_OTA_BASE_URL, FIRMWARE_UPDATE_OTA_BASE_PORT);
 ServerSocketJSON serverSocket;
 Button button(BUTTON_PIN, B_PULLUP, BUTTON_TIME_LONG_PRESS);
 Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RESOLUTION);

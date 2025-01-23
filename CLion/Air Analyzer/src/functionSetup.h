@@ -204,7 +204,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     timeStartedLoadingMessage = millis();
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     firmwareUpdateOta.begin();
-    if (firmwareUpdateOta.check(VERSION_FIRMWARE)) {
+    if (firmwareUpdateOta.check(VERSION_FIRMWARE, FIRMWARE_UPDATE_OTA_URI_GET_LATEST)) {
         screen.showMessagePage(messagePageFirmwareUpdated);
         ESP.restart();
     }
