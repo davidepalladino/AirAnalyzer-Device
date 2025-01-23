@@ -27,7 +27,7 @@
 #include <DatetimeInterval.h>
 #include <Sensor.h>
 
-#include <ApiConsts.h>
+#include <ApiManagementConsts.h>
 
 class Sensor;
 
