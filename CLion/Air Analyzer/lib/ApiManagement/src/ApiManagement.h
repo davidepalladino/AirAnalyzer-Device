@@ -51,6 +51,7 @@ class ApiManagement : private AbstractObserver {
          * @param uriRoomChangeLocalIp URI for updating room local IP.
          * @param uriMeasureSet URI for submitting measurement data.
          * @param maxAttempts Maximum number of connection attempts.
+         * @param minutesUpdate Timeout (in minutes) for each update.
          */
         ApiManagement(
             Sensor &sensor,
@@ -61,15 +62,15 @@ class ApiManagement : private AbstractObserver {
             const String& uriRoomChangeStatusActivation,
             const String& uriRoomChangeLocalIp,
             const String& uriMeasureSet,
-            uint8_t maxAttempts
+            uint8_t maxAttempts,
+            uint16_t minutesUpdate
         );
 
         /**
          * @brief Initializes the API management system with update intervals.
-         * @param minutesUpdate Timeout (in minutes) for each update.
          * @warning Call "setCredentials()" first to store the room ID in the API.
          */
-        void begin(uint16_t minutesUpdate);
+        void begin();
 
         /**
          * @brief Sets user credentials.
@@ -112,6 +113,7 @@ class ApiManagement : private AbstractObserver {
         String uriRoomChangeLocalIp;
         String uriMeasureSet;
         uint8_t maxAttempts;
+        uint8_t minutesUpdate;
         String username;
         String password;
         String token;

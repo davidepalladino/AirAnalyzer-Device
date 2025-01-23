@@ -9,7 +9,8 @@ ApiManagement::ApiManagement(
     const String& uriRoomChangeStatusActivation,
     const String& uriRoomChangeLocalIp,
     const String& uriMeasureSet,
-    uint8_t maxAttempts
+    uint8_t maxAttempts,
+    uint16_t minutesUpdate
 ) : sensor(sensor), datetime(datetime) {
     this->address = address;
     this->port = port;
@@ -18,11 +19,12 @@ ApiManagement::ApiManagement(
     this->uriRoomChangeLocalIp = uriRoomChangeLocalIp;
     this->uriMeasureSet = uriMeasureSet;
     this->maxAttempts = maxAttempts;
+    this->minutesUpdate = minutesUpdate;
 
     this->sensor.addObserver(this);
 }
 
-void ApiManagement::begin(uint16_t minutesUpdate) {
+void ApiManagement::begin() {
     Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
     this->datetime.begin(minutesUpdate > 240 ? 240 : minutesUpdate);
     this->jsonArrayMeasures = jsonDocumentMeasures.to<JsonArray>();
