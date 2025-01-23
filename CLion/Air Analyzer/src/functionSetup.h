@@ -14,9 +14,6 @@
 
 #include "../globalSettings.h"
 
-#define MIN_ROOM_NUMBER 1
-#define MAX_ROOM_NUMBER 9
-
 void configurationVersion1(Button &button, Screen &screen);
 void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiManagement &apiManagement);
 void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword);

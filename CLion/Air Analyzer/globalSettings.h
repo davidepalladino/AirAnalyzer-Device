@@ -22,18 +22,22 @@ const uint8_t SIZE_WIFI_SSID =                                          33;
 const uint8_t SIZE_WIFI_PASSWORD =                                      64;
 
 // Sensor
-const uint8_t ADDRESS_SENSOR =                                          0x40;
-const HDC1080_MeasurementResolution HUMIDITY_RESOLUTION =               HDC1080_RESOLUTION_14BIT;
-const HDC1080_MeasurementResolution TEMPERATURE_RESOLUTION =            HDC1080_RESOLUTION_14BIT;
+const uint8_t SENSOR_ADDRESS =                                          0x40;
+const HDC1080_MeasurementResolution SENSOR_HUMIDITY_RESOLUTION =        HDC1080_RESOLUTION_14BIT;
+const HDC1080_MeasurementResolution SENSOR_TEMPERATURE_RESOLUTION =     HDC1080_RESOLUTION_14BIT;
 
 // Button
-const uint8_t PIN_BUTTON =                                              D5;
-const int16_t TIME_LONG_PRESS =                                         3000;
+const uint8_t BUTTON_PIN =                                              D5;
+const int16_t BUTTON_TIME_LONG_PRESS =                                  3000;
 
 // OLED screen
-const uint8_t PIN_SCL =                                                 20;
-const uint8_t PIN_SDA =                                                 19;
-const uint16_t TIME_LOGO = TIME_LONG_PRESS + 1000;
+const uint8_t SCREEN_PIN_SCL =                                          20;
+const uint8_t SCREEN_PIN_SDA =                                          19;
+const uint16_t TIME_LOGO =                                              BUTTON_TIME_LONG_PRESS + 1000;
 const uint16_t TIME_LOADING_MESSAGE =                                   3000;
 const uint16_t TIME_MESSAGE =                                           5000;
 const uint16_t TIME_TO_STANDBY =                                        5000;
+
+// Rooms
+const uint8_t MIN_ROOM_NUMBER =                                         1;
+const uint8_t MAX_ROOM_NUMBER =                                         9;

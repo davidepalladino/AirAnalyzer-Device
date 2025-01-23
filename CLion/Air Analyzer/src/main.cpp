@@ -1,16 +1,16 @@
- /**
-  * This software allows to manage the hardware of "Air Analyzer". Specifically, you can read the values about temperature and humidity, 
-  *  storing them into apiManagement for extern analysis.
-  * Copyright (c) 2020 Davide Palladino. 
-  * All right reserved.
-  * 
-  * @author Davide Palladino
-  * @contact davidepalladino@hotmail.com
-  * @website https://davidepalladino.github.io/
-  * @version 4.1.0
-  * @date 8th October, 2022
-  * 
-  */
+/**
+ * This software allows to manage the hardware of "Air Analyzer". Specifically, you can read the values about temperature and humidity,
+ *  storing them into apiManagement for extern analysis.
+ * Copyright (c) 2020 Davide Palladino.
+ * All right reserved.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 4.1.0
+ * @date 23rd January 2025
+ *
+ */
 
 #include <Arduino.h>
 
@@ -33,9 +33,9 @@
 
 FirmwareUpdateOTA firmwareUpdate;
 ServerSocketJSON serverSocket;
-Button button(PIN_BUTTON, B_PULLUP, TIME_LONG_PRESS);
-Sensor sensor(ADDRESS_SENSOR, HUMIDITY_RESOLUTION, TEMPERATURE_RESOLUTION);
-Screen screen(sensor, PIN_SCL, PIN_SDA);
+Button button(BUTTON_PIN, B_PULLUP, BUTTON_TIME_LONG_PRESS);
+Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RESOLUTION);
+Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
 ApiManagement apiManagement(sensor, *(new DatetimeInterval(ntpClient)));
