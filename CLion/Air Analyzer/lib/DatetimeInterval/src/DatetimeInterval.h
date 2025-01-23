@@ -5,7 +5,7 @@
  * This library manages the time intervals by comparing the actual time stored in the RTC module
  * with the NTP-synchronized time, ensuring periodic updates.
  *
- * Copyright (c) 2022 Davide Palladino.
+ * Copyright (c) 2025 Davide Palladino.
  * All rights reserved.
  *
  * @author Davide Palladino

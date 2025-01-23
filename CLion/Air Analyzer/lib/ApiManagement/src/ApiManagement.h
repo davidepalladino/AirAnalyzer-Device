@@ -5,7 +5,7 @@
  * This library allows managing API REST interactions by acting as an observer,
  * updating its state when notified by the subject class.
  *
- * Copyright (c) 2022 Davide Palladino.
+ * Copyright (c) 2025 Davide Palladino.
  * All rights reserved.
  *
  * @author Davide Palladino

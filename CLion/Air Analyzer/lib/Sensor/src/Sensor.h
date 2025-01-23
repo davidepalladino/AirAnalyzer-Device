@@ -5,7 +5,7 @@
  * This library supports both DHT and HDC sensor types, allowing the system to monitor temperature and humidity.
  * The Sensor class acts as a subject, notifying observers when new data is available via the check method.
  *
- * Copyright (c) 2022 Davide Palladino.
+ * Copyright (c) 2025 Davide Palladino.
  * All rights reserved.
  *
  * @author Davide Palladino
