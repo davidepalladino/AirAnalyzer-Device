@@ -38,7 +38,17 @@ Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RES
 Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-ApiManagement apiManagement(sensor, *(new DatetimeInterval(ntpClient)));
+ApiManagement apiManagement(
+    sensor,
+    *(new DatetimeInterval(ntpClient)),
+    API_MANAGEMENT_BASE_URL,
+    API_MANAGEMENT_BASE_PORT,
+    API_MANAGEMENT_URI_USER_LOGIN,
+    API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION,
+    API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP,
+    API_MANAGEMENT_URI_MEASURE_SET,
+    API_MANAGEMENT_MAX_ATTEMPTS
+);
 
 String wifiSSID;
 String wifiPassword;

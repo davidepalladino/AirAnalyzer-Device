@@ -1,151 +1,175 @@
 /**
- * @brief This library allows to manage the apiManagement with API REST, for the Air Analyzer purposes.
- * The class is an observer where updates own status when is notified by the subject class.
+ * @file ApiManagement.h
+ * @brief Provides functionality to manage API REST interactions for the Air Analyzer.
+ *
+ * This library allows managing API REST interactions by acting as an observer,
+ * updating its state when notified by the subject class.
+ *
  * Copyright (c) 2022 Davide Palladino.
- * All right reserved.
+ * All rights reserved.
  *
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 3.0.1
+ * @version 4.0.0
  * @date 23rd January 2025
- *
  */
 
 #ifndef APIMANAGEMENT_H
-    #define APIMANAGEMENT_H
+#define APIMANAGEMENT_H
 
-    #include <map>
+#include <map>
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
+#include <AbstractObserver.h>
+#include <DatetimeInterval.h>
+#include <Sensor.h>
 
-    #include <Arduino.h>
+class Sensor;
 
-    #include <ESP8266WiFi.h>
-    #include <ESP8266HTTPClient.h>
+/**
+ * @class ApiManagement
+ * @brief Manages API interactions for the Air Analyzer system.
+ *
+ * This class connects to a REST API server, performing operations such as user login,
+ * updating room status, and sending measurement data.
+ */
+class ApiManagement : private AbstractObserver {
+    friend class AbstractSubject;
 
-    #include <ArduinoJson.h>
+    public:
+        /**
+         * @brief Constructs an ApiManagement object and sets the subject class.
+         * @param sensor Subject object that will notify.
+         * @param datetime Object to check and set the datetime.
+         * @param address API server address.
+         * @param port API server port.
+         * @param uriUserLogin URI for user login.
+         * @param uriRoomChangeStatusActivation URI for changing room activation status.
+         * @param uriRoomChangeLocalIp URI for updating room local IP.
+         * @param uriMeasureSet URI for submitting measurement data.
+         * @param maxAttempts Maximum number of connection attempts.
+         */
+        ApiManagement(
+            Sensor &sensor,
+            DatetimeInterval &datetime,
+            const String& address,
+            uint16_t port,
+            const String& uriUserLogin,
+            const String& uriRoomChangeStatusActivation,
+            const String& uriRoomChangeLocalIp,
+            const String& uriMeasureSet,
+            uint8_t maxAttempts
+        );
 
-    #include <AbstractObserver.h>
-    #include <DatetimeInterval.h>
-    #include <Sensor.h>
+        /**
+         * @brief Initializes the API management system with update intervals.
+         * @param minutesUpdate Timeout (in minutes) for each update.
+         * @warning Call "setCredentials()" first to store the room ID in the API.
+         */
+        void begin(uint16_t minutesUpdate);
 
-    const String API_MANAGEMENT_BASE_URL = "http://airanalyzer.shadowmoses.ovh";
-    constexpr uint16_t API_MANAGEMENT_BASE_PORT = 80;
-    constexpr uint8_t API_MANAGEMENT_MINUTES_UPDATE_MEASURES = 10;
-    constexpr uint8_t API_MANAGEMENT_MAX_ATTEMPTS = 10;
-    const String API_MANAGEMENT_URI_USER_LOGIN = "api/user/login";
-    const String API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION = "api/room/changeStatusActivation";
-    const String API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP = "api/room/changeLocalIP";
-    const String API_MANAGEMENT_URI_MEASURE_SET = "api/measure/set";
+        /**
+         * @brief Sets user credentials.
+         * @param username User's username for API access.
+         * @param password User's password for API access.
+         */
+        void setCredentials(const String &username, const String &password);
 
-    class Sensor;
+        /**
+         * @brief Sets the room ID without updating the API.
+         * @param roomNumber The room number.
+         */
+        void setRoomNumber(uint8_t roomNumber);
 
-    class ApiManagement : private AbstractObserver {
-        friend class AbstractSubject;
+        /**
+         * @brief Gets the current room ID.
+         * @return The room number.
+         */
+        uint8_t getRoomNumber() const;
 
-        public:
-            /**
-             * @brief This constructor creates the object setting subject class.
-             * @param sensor Subject object that will notify.
-             * @param datetime Object to check and set the datetime.
-             */
-            ApiManagement(Sensor &sensor, DatetimeInterval &datetime);
+        /**
+         * @brief Checks if the last update was successful.
+         * @return True if the update was successful, false otherwise.
+         */
+        bool getIsUpdated();
 
-            /**
-             * @brief This method provides to set Datetime object, the JSON array and the information about the
-             *  connection to the server, with the timeout (in minutes) for every update.
-             * @warning Previously will have to be called the "setCredentials()" method, because "begin()" stores the room ID into apiManagement; so it needs the credentials.
-             */
-            void begin();
+        /**
+         * @brief Updates the room with the stored ID and current local IP.
+         * @return True if the update was successful, false otherwise.
+         */
+        bool updateRoom();
 
-            /**
-             * This method provides to set the credentials of user.
-             * @param username Username about the user for managing the own apiManagement.
-             * @param password Password about the user for managing the own apiManagement.
-             */
-            void setCredentials(const String &username, const String &password);
+    private:
+        Sensor &sensor;
+        DatetimeInterval &datetime;
+        String address;
+        uint16_t port;
+        String uriUserLogin;
+        String uriRoomChangeStatusActivation;
+        String uriRoomChangeLocalIp;
+        String uriMeasureSet;
+        uint8_t maxAttempts;
+        String username;
+        String password;
+        String token;
+        String tokenType;
+        uint8_t roomNumber;
+        bool isUpdated;
+        WiFiClient wifiClient;
+        HTTPClient httpClient;
+        String response;
+        StaticJsonDocument<512> jsonDocumentLogin;
+        StaticJsonDocument<768> jsonDocumentMeasures;
+        JsonArray jsonArrayMeasures;
 
-            /**
-             * @brief This method sets only the room ID. The apiManagement will be not updated.
-             * @param roomNumber Number of room.
-             */
-            void setRoomNumber(uint8_t roomNumber);
+        /**
+         * @brief Sends a login request to the server.
+         * @return HTTP status code.
+         */
+        int requestLogin();
 
-            /**
-             * @brief This method gets the room ID.
-             * @return Number of room.
-             */
-            uint8_t getRoomNumber() const;
+        /**
+         * @brief Sends a request to change the room activation status.
+         * @return HTTP status code.
+         */
+        int requestChangeStatusActivationRoom();
 
-            /**
-             * @brief This method gets the status indicator about the error on update.
-             * @return Value "true" if the update has been successful; else, value "false".
-             */
-            bool getIsUpdated();
+        /**
+         * @brief Sends a request to update the local IP of the room.
+         * @param localIP The current local IP address.
+         * @return HTTP status code.
+         */
+        int requestChangeLocalIpRoom(const String &localIP);
 
-            /**
-             * @brief This method provides to update the room with the ID set (with "setRoom()") and the current local IP.
-             * @return Value "true" if the update has been successful; else, value "false".
-             */
-            bool updateRoom();
+        /**
+         * @brief Sends measurement data to the server.
+         * @param jsonDocumentMeasuresSerialized Serialized JSON of measurements.
+         * @return HTTP status code.
+         */
+        int requestSetMeasures(const String &jsonDocumentMeasuresSerialized);
 
-        private:
-            Sensor &sensor;
-            DatetimeInterval &datetime;
-            WiFiClient wifiClient;
-            HTTPClient httpClient;
-            StaticJsonDocument<512> jsonDocumentLogin;
-            StaticJsonDocument<768> jsonDocumentMeasures;
-            JsonArray jsonArrayMeasures;
-            String httpJsonResponse;
-            String serverAddress;
-            uint16_t serverPort;
-            String serverUsername;
-            String serverPassword;
-            String serverToken;
-            String serverTokenType;
-            uint8_t roomNumber;
-            uint8_t nAttempts;
-            bool isUpdated;
+        /**
+         * @brief Handles the login process.
+         * @return True if login was successful, false otherwise.
+         */
+        int login();
 
-            /**
-             * @brief This method provides to connect to the server for doing the login.
-             * @return HTTP status code.
-             */
-            int requestLogin();
+        /**
+         * @brief Adds measurement data.
+         * @param timestamp Measurement timestamp.
+         * @param temperature Temperature value.
+         * @param humidity Humidity value.
+         * @return True if the data was successfully added, false otherwise.
+         */
+        bool addMeasures(const String &timestamp, double temperature, double humidity);
 
-            /**
-             * @brief This method provides to connect to the server for adding the room.
-             * @return HTTP status code.
-             */
-            int requestChangeStatusActivationRoom();
+        /**
+         * @brief Updates the current status with new values.
+         */
+        void update();
+};
 
-            /**
-             * @brief This method provides to connect to the server for updating the actual local IP.
-             * @return HTTP status code.
-             */
-            int requestChangeLocalIpRoom(const String &localIP);
-
-            /**
-             * @brief This method provides to connect to the server for adding the measures in JSON format.
-             * @return HTTP status code.
-             */
-            int requestSetMeasures(const String &jsonDocumentMeasuresSerialized);
-
-            /**
-             * @brief This method provides to login the user.
-             * @return Value "true" if there login has been successful; else, value "false".
-             */
-            int login();
-
-            /**
-             * @brief This method provides to login the user.
-             * @return Value "true" if there login has been successful; else, value "false".
-             */
-            bool addMeasures(const String &timestamp, double temperature, double humidity);
-
-            /**
-             * @brief This method insert the actual values into apiManagement.
-             */
-            void update();
-    };
-#endif
+#endif // APIMANAGEMENT_H
