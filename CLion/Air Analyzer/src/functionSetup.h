@@ -179,8 +179,8 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     uint8_t roomID = MIN_ROOM_NUMBER;
     char c_wifiSSID[SIZE_WIFI_SSID];
     char c_wifiPassword[SIZE_WIFI_PASSWORD];
-    char c_credentialUsername[SIZE_CREDENTIAL_USERNAME];
-    char c_credentialPassword[SIZE_CREDENTIAL_PASSWORD];
+    char c_credentialUsername[SERVER_SOCKET_SIZE_USERNAME];
+    char c_credentialPassword[SERVER_SOCKET_SIZE_PASSWORD];
 
     // EEPROM
     timeStartedLoadingMessage = millis();
@@ -265,13 +265,13 @@ void forceConnectWiFi(const String &wifiSSID, const String &wifiPassword, uint8_
  * @warning EEPROM must be already opened.
  */
 void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiManagement) {
-    StaticJsonDocument<SIZE_JSON_DOCUMENT> jsonDocumentRequest;
+    StaticJsonDocument<SERVER_SOCKET_SIZE_JSON> jsonDocumentRequest;
     deserializeJson(jsonDocumentRequest, jsonRequestSerialized);
 
-    char c_username[SIZE_CREDENTIAL_USERNAME];
-    char c_password[SIZE_CREDENTIAL_PASSWORD];
-    static_cast<String>(jsonDocumentRequest[FIELD_MESSAGE][FIELD_MESSAGE_USERNAME]).toCharArray(c_username, SIZE_CREDENTIAL_USERNAME);
-    static_cast<String>(jsonDocumentRequest[FIELD_MESSAGE][FIELD_MESSAGE_PASSWORD]).toCharArray(c_password, SIZE_CREDENTIAL_PASSWORD);
+    char c_username[SERVER_SOCKET_SIZE_USERNAME];
+    char c_password[SERVER_SOCKET_SIZE_PASSWORD];
+    static_cast<String>(jsonDocumentRequest[SERVER_SOCKET_FIELD_MESSAGE][SERVER_SOCKET_FIELD_MESSAGE_USERNAME]).toCharArray(c_username, SERVER_SOCKET_SIZE_USERNAME);
+    static_cast<String>(jsonDocumentRequest[SERVER_SOCKET_FIELD_MESSAGE][SERVER_SOCKET_FIELD_MESSAGE_PASSWORD]).toCharArray(c_password, SERVER_SOCKET_SIZE_PASSWORD);
 
     EEPROM.put(ADDRESS_CREDENTIAl_USERNAME, c_username);
     EEPROM.put(ADDRESS_CREDENTIAL_PASSWORD, c_password);
@@ -288,7 +288,7 @@ void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiM
  */
 void socketSendRoomID(ServerSocketJSON &serverSocket, uint8_t roomID) {
     if (serverSocket.isAttached()) {
-        StaticJsonDocument<SIZE_JSON_DOCUMENT> jsonDocumentRequest;
+        StaticJsonDocument<SERVER_SOCKET_SIZE_JSON> jsonDocumentRequest;
         jsonDocumentRequest["RoomID"] = roomID;
 
         String jsonRequestSerialized;
