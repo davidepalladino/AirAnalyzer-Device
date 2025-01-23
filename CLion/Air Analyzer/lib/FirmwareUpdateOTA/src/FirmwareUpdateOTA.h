@@ -4,7 +4,7 @@
  *
  * This library facilitates OTA firmware updates by connecting to a specified server and checking for new versions.
  *
- * Copyright (c) 2024 Davide Palladino.
+ * Copyright (c) 2022 Davide Palladino.
  * All rights reserved.
  *
  * @author Davide Palladino
