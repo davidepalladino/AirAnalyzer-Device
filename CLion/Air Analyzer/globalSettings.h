@@ -56,3 +56,7 @@ const String API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP =              "api/roo
 const String API_MANAGEMENT_URI_MEASURE_SET =                           "api/measure/set";
 constexpr uint8_t API_MANAGEMENT_MAX_ATTEMPTS =                         10;
 constexpr uint8_t API_MANAGEMENT_MINUTES_UPDATE_MEASURES =              10;
+
+// DateInterval
+const uint8_t DATE_INTERVAL_TIMEOUT_RTC_CHECK_DAY =                     14;
+const uint16_t DATE_INTERVAL_TIMEOUT_NTP_CHECK_MILLISECONDS =           5000; // Timeout to check the datetime from NTP.

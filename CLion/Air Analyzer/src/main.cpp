@@ -40,7 +40,7 @@ Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
 ApiManagement apiManagement(
     sensor,
-    *(new DatetimeInterval(ntpClient)),
+    *(new DatetimeInterval(ntpClient, DATE_INTERVAL_TIMEOUT_RTC_CHECK_DAY, DATE_INTERVAL_TIMEOUT_NTP_CHECK_MILLISECONDS)),
     API_MANAGEMENT_BASE_URL,
     API_MANAGEMENT_BASE_PORT,
     API_MANAGEMENT_URI_USER_LOGIN,
