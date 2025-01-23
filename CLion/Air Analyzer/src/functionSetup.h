@@ -269,8 +269,8 @@ void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiM
 
     char c_username[SIZE_CREDENTIAL_USERNAME];
     char c_password[SIZE_CREDENTIAL_PASSWORD];
-    ((String) jsonDocumentRequest["Message"]["Username"]).toCharArray(c_username, SIZE_CREDENTIAL_USERNAME);
-    ((String) jsonDocumentRequest["Message"]["Password"]).toCharArray(c_password, SIZE_CREDENTIAL_PASSWORD);
+    static_cast<String>(jsonDocumentRequest[FIELD_MESSAGE][FIELD_MESSAGE_USERNAME]).toCharArray(c_username, SIZE_CREDENTIAL_USERNAME);
+    static_cast<String>(jsonDocumentRequest[FIELD_MESSAGE][FIELD_MESSAGE_PASSWORD]).toCharArray(c_password, SIZE_CREDENTIAL_PASSWORD);
 
     EEPROM.put(ADDRESS_CREDENTIAl_USERNAME, c_username);
     EEPROM.put(ADDRESS_CREDENTIAL_PASSWORD, c_password);

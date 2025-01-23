@@ -21,11 +21,6 @@ const uint32_t BAUDRATE =                                               115200;
 const uint8_t SIZE_WIFI_SSID =                                          33;
 const uint8_t SIZE_WIFI_PASSWORD =                                      64;
 
-// Socket
-const uint32_t PORT_SERVER_SOCKET =                                     60000;
-const uint8_t SIZE_CREDENTIAL_USERNAME =                                20;
-const uint8_t SIZE_CREDENTIAL_PASSWORD =                                64;
-
 // Server (Database and Updater)
 const uint8_t API_MINUTES_UPDATE_MEASURES =                             10;
 const String BASE_URL =                                                 "http://airanalyzer.shadowmoses.ovh";

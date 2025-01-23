@@ -79,7 +79,7 @@ uint8_t ServerSocketJSON::listen() {
 
                 client.flush();
 
-                return jsonDocumentRequest["Request code"];
+                return jsonDocumentRequest[FIELD_REQUEST_CODE];
             }
         }
     }

@@ -3,7 +3,7 @@
  * The structure of JSON message will have to be:
  * {
  *  "Request code": <number between 0 and 255>,
- *  "Message": { <JSON nested> }
+ *  "message": { <JSON nested> }
  * }
  *
  * Copyright (c) 2022 Davide Palladino.
@@ -12,8 +12,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 1.0.0
- * @date 30th September, 2022
+ * @version 1.0.1
+ * @date 23rd January 2025
  *
  * @include ArduinoJson v6.18.2.
  *
@@ -29,7 +29,14 @@
         #include "ArduinoJson.h"
     #endif
 
-    const uint16_t SIZE_JSON_DOCUMENT = 512;
+    constexpr uint32_t PORT_SERVER_SOCKET = 60000;
+    constexpr uint16_t SIZE_JSON_DOCUMENT = 512;
+    constexpr uint8_t SIZE_CREDENTIAL_USERNAME = 20;
+    constexpr uint8_t SIZE_CREDENTIAL_PASSWORD = 64;
+    const String FIELD_REQUEST_CODE = "request_code";
+    const String FIELD_MESSAGE = "message";
+    const String FIELD_MESSAGE_USERNAME = "username";
+    const String FIELD_MESSAGE_PASSWORD = "password";
 
     class ServerSocketJSON {
         public:
@@ -94,7 +101,7 @@
 
             /**
              * @brief This method provides to get the last JSON message from client, to deserialize.
-             * @return Field "Message" of JSON message to deserialize.
+             * @return Field "message" of JSON message to deserialize.
              */
             String getJsonRequestSerialized();
 
