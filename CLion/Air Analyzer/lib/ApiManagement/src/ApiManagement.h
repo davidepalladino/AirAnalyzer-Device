@@ -27,6 +27,8 @@
 #include <DatetimeInterval.h>
 #include <Sensor.h>
 
+#include <ApiConsts.h>
+
 class Sensor;
 
 /**
@@ -44,33 +46,16 @@ class ApiManagement : private AbstractObserver {
          * @brief Constructs an ApiManagement object and sets the subject class.
          * @param sensor Subject object that will notify.
          * @param datetime Object to check and set the datetime.
-         * @param address API server address.
-         * @param port API server port.
-         * @param uriUserLogin URI for user login.
-         * @param uriRoomChangeStatusActivation URI for changing room activation status.
-         * @param uriRoomChangeLocalIp URI for updating room local IP.
-         * @param uriMeasureSet URI for submitting measurement data.
-         * @param maxAttempts Maximum number of connection attempts.
-         * @param minutesUpdate Timeout (in minutes) for each update.
          */
-        ApiManagement(
-            Sensor &sensor,
-            DatetimeInterval &datetime,
-            const String& address,
-            uint16_t port,
-            const String& uriUserLogin,
-            const String& uriRoomChangeStatusActivation,
-            const String& uriRoomChangeLocalIp,
-            const String& uriMeasureSet,
-            uint8_t maxAttempts,
-            uint16_t minutesUpdate
-        );
+        ApiManagement(Sensor &sensor, DatetimeInterval &datetime);
 
         /**
          * @brief Initializes the API management system with update intervals.
+         * @param maxAttempts Maximum number of connection attempts.
+         * @param timeoutMinutes Timeout (in minutes) for each update.
          * @warning Call "setCredentials()" first to store the room ID in the API.
          */
-        void begin();
+        void begin(uint8_t maxAttempts = 0, uint8_t timeoutMinutes = 10);
 
         /**
          * @brief Sets user credentials.
@@ -106,26 +91,21 @@ class ApiManagement : private AbstractObserver {
     private:
         Sensor &sensor;
         DatetimeInterval &datetime;
-        String address;
-        uint16_t port;
-        String uriUserLogin;
-        String uriRoomChangeStatusActivation;
-        String uriRoomChangeLocalIp;
-        String uriMeasureSet;
-        uint8_t maxAttempts;
-        uint8_t minutesUpdate;
-        String username;
-        String password;
-        String token;
-        String tokenType;
-        uint8_t roomNumber;
-        bool isUpdated;
         WiFiClient wifiClient;
         HTTPClient httpClient;
-        String response;
         StaticJsonDocument<512> jsonDocumentLogin;
         StaticJsonDocument<768> jsonDocumentMeasures;
         JsonArray jsonArrayMeasures;
+        String httpJsonResponse;
+        String serverAddress;
+        uint16_t serverPort;
+        String serverUsername;
+        String serverPassword;
+        String serverToken;
+        String serverTokenType;
+        uint8_t roomNumber;
+        uint8_t maxAttempts;
+        bool isUpdated;
 
         /**
          * @brief Sends a login request to the server.
