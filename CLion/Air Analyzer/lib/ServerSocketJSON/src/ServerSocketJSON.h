@@ -1,112 +1,121 @@
 /**
- * @brief This library allows the device to work like server socket, exchanging JSON messages.
- * The structure of JSON message will have to be:
+ * @file ServerSocketJSON.h
+ * @brief This library allows the device to function as a server socket, exchanging JSON messages.
+ *
+ * The structure of the JSON message is expected to be:
  * {
  *  "Request code": <number between 0 and 255>,
  *  "message": { <JSON nested> }
  * }
  *
- * Copyright (c) 2022 Davide Palladino.
- * All right reserved.
+ * Copyright (c) 2025 Davide Palladino.
+ * All rights reserved.
  *
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 1.0.2
+ * @version 2.0.1
  * @date 23rd January 2025
  *
  * @include ArduinoJson v6.18.2.
- *
  */
 
 #ifndef SERVERSOCKETJSON_H
-    #define SERVERSOCKETJSON_H
+#define SERVERSOCKETJSON_H
 
-    #include <Arduino.h>
-    #include <ESP8266WiFi.h>
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
 
-    #ifndef ARDUINO_JSON
-        #include "ArduinoJson.h"
-    #endif
+#ifndef ARDUINO_JSON
+    #include "ArduinoJson.h"
+#endif
 
-    constexpr uint32_t SERVER_SOCKET_PORT = 60000;
-    constexpr uint16_t SERVER_SOCKET_SIZE_JSON = 512;
-    constexpr uint8_t SERVER_SOCKET_SIZE_USERNAME = 20;
-    constexpr uint8_t SERVER_SOCKET_SIZE_PASSWORD = 64;
-    const String SERVER_SOCKET_FIELD_REQUEST_CODE = "request_code";
-    const String SERVER_SOCKET_FIELD_MESSAGE = "message";
-    const String SERVER_SOCKET_FIELD_MESSAGE_USERNAME = "username";
-    const String SERVER_SOCKET_FIELD_MESSAGE_PASSWORD = "password";
+/**
+ * @class ServerSocketJSON
+ * @brief A class that represents a server socket for handling JSON messages with a client.
+ *
+ * This class allows the device to act as a server, receiving and sending JSON messages to a client via Wi-Fi.
+ * It provides methods for attaching/detaching clients, checking server/client status, and communicating using JSON format.
+ */
+class ServerSocketJSON {
+    public:
+        /**
+         * @brief Constructor to initialize the server socket with a specified port.
+         * @param port The port to open for the server.
+         */
+        ServerSocketJSON(uint16_t port);
 
-    class ServerSocketJSON {
-        public:
-            /**
-             * @brief This constructor provides to initialize the object.
-             */
-            ServerSocketJSON();
+        /**
+         * @brief Initializes the server socket and begins listening for clients.
+         *
+         * This method opens the server socket on the specified port and connects to Wi-Fi if not already connected.
+         * @return True if the server was successfully opened, false if there was an issue (e.g., Wi-Fi not connected).
+         */
+        bool begin();
 
-            /**
-             * @brief This method opens the server socket on a PORT_SERVER_SOCKET port.
-             * @return Value "true" if the server is opened; else, value "false". In this case the reason might be a not
-             *  connection of Wi-Fi, or the server already connected.
-             */
-            bool begin();
+        /**
+         * @brief Closes the server and any client connections.
+         */
+        void end();
 
-            /**
-             * @brief This method closes the server and client connections.
-             */
-            void end();
+        /**
+         * @brief Attaches a client to the server.
+         *
+         * If no client is currently attached, this method will establish a connection with the first available client.
+         * @return True if a client was successfully attached, false if the server or Wi-Fi is not connected, or if a client is already attached.
+         */
+        bool attachClient();
 
-            /**
-             * @brief This method provides to attach the client, if someone is not already attached.
-             * @return Value "true" if the attaching has been successful; else value "false" to indicate that the attaching
-             *  has been not successful for several reason like the server and/or WiFi not connected, or there is another client attached.
-             */
-            bool attachClient();
+        /**
+         * @brief Detaches the currently attached client.
+         *
+         * If a client is attached, it will be disconnected, freeing up the server for other clients.
+         * @return True if a client was successfully detached, false if no client is currently attached.
+         */
+        bool detachClient();
 
-            /**
-             * @brief This method provides to detach the client connected.
-             * @return Value "true" if the detaching has been successful; else value "false" to indicate that the detaching
-             *  has been not successful because there is not client attached.
-             */
+        /**
+         * @brief Checks whether the server is connected and ready to accept connections.
+         * @return True if the server is connected, false if Wi-Fi or the server is not connected.
+         */
+        bool isConnected();
 
-            bool detachClient();
+        /**
+         * @brief Checks whether a client is currently connected.
+         * @return True if a client is attached, false otherwise.
+         */
+        bool isAttached();
 
-            /**
-             * @brief This method provides to check the server connection.
-             * @return Value "true" if the server is connected; else value "false" to indicate that the server is not connected
-             *  because there is not connection of WiFi.
-             */
-            bool isConnected();
+        /**
+         * @brief Listens for a JSON message from the attached client.
+         *
+         * This method listens for incoming messages from the client, deserializing the JSON structure.
+         * @return A StaticJsonDocument containing the JSON message received.
+         */
+        StaticJsonDocument<512> listen();
 
-            /**
-             * @brief This method provides to check if there is a client connected.
-             * @return Value "true" if there is a client connected; else, value "false".
-             */
-            bool isAttached();
+        /**
+         * @brief Sends a JSON message to the attached client.
+         *
+         * This method sends a JSON-serialized message to the client. The message must follow the expected JSON structure.
+         * @param message The JSON message to send to the client.
+         * @return True if the message was successfully sent, false if the server or Wi-Fi connection is not active.
+         */
+        bool speak(const String &message);
 
-            /**
-             * @brief This method provides to listen a client JSON message.
-             * @return Value of "Request code" contained on JSON message.
-             */
-            uint8_t listen();
+        /**
+         * @brief Retrieves the last serialized JSON message received from the client.
+         *
+         * This method returns the last received message in its raw serialized form as a string.
+         * @return A string containing the raw JSON message received from the client.
+         */
+        String getJsonRequestSerialized();
 
-            /**
-             * @brief This method provides to send a specific JSON message to client.
-             * @param message JSON Message to send to client.
-             * @return Value "true" if the JSON message has been sent; else, value "false" to indicate a server and/or WiFi not connected.
-             */
-            bool speak(String &message);
+    private:
+        WiFiServer *server;           ///< Pointer to the WiFiServer instance.
+        WiFiClient client;            ///< WiFiClient instance to interact with the client.
+        String jsonRequestSerialized; ///< Holds the serialized JSON request.
+        uint16_t port;                ///< Port number for the server socket.
+};
 
-            /**
-             * @brief This method provides to get the last JSON message from client, to deserialize.
-             * @return Field "message" of JSON message to deserialize.
-             */
-            String getJsonRequestSerialized();
-
-        private:
-            WiFiServer *server;
-            WiFiClient client;
-            String jsonRequestSerialized;
-    };
 #endif

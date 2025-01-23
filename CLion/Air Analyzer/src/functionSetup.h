@@ -138,7 +138,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     while (!isCredentialsRetrieved) {
         serverSocket.attachClient();
 
-        requestCodeSocket = serverSocket.listen();
+        requestCodeSocket = serverSocket.listen()[SERVER_SOCKET_FIELD_REQUEST_CODE];
         switch (requestCodeSocket) {
             case 1:
                 socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
@@ -262,7 +262,7 @@ void forceConnectWiFi(const String &wifiSSID, const String &wifiPassword, uint8_
  * @warning EEPROM must be already opened.
  */
 void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiManagement) {
-    StaticJsonDocument<SERVER_SOCKET_SIZE_JSON> jsonDocumentRequest;
+    StaticJsonDocument<512> jsonDocumentRequest;
     deserializeJson(jsonDocumentRequest, jsonRequestSerialized);
 
     char c_username[SERVER_SOCKET_SIZE_USERNAME];
@@ -285,7 +285,7 @@ void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiM
  */
 void socketSendRoomID(ServerSocketJSON &serverSocket, uint8_t roomID) {
     if (serverSocket.isAttached()) {
-        StaticJsonDocument<SERVER_SOCKET_SIZE_JSON> jsonDocumentRequest;
+        StaticJsonDocument<512> jsonDocumentRequest;
         jsonDocumentRequest["RoomID"] = roomID;
 
         String jsonRequestSerialized;

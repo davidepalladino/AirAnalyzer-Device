@@ -1,12 +1,13 @@
 #include "ServerSocketJSON.h"
 
-ServerSocketJSON::ServerSocketJSON() {
+ServerSocketJSON::ServerSocketJSON(uint16_t port) {
     this->server = nullptr;
+    this->port = port;
 }
 
 bool ServerSocketJSON::begin() {
     if (!isConnected()) {
-        server = new WiFiServer(SERVER_SOCKET_PORT);
+        server = new WiFiServer(port);
         server->begin();
 
         return true;
@@ -67,27 +68,27 @@ bool ServerSocketJSON::isAttached() {
     return false;
 }
 
-uint8_t ServerSocketJSON::listen() {
+StaticJsonDocument<512> ServerSocketJSON::listen() {
+    StaticJsonDocument<512> jsonDocumentRequest;
+
     if (server != nullptr && isConnected() && isAttached()) {
         if (client.connected() && client.available() > 0) {
             jsonRequestSerialized = client.readString();
 
             if (!jsonRequestSerialized.isEmpty()) {
                 /* Deserializing the JSON to get the request code. */
-                StaticJsonDocument<SERVER_SOCKET_SIZE_JSON> jsonDocumentRequest;
                 deserializeJson(jsonDocumentRequest, jsonRequestSerialized);
 
                 client.flush();
 
-                return jsonDocumentRequest[SERVER_SOCKET_FIELD_REQUEST_CODE];
             }
         }
     }
 
-    return 0;
+    return jsonDocumentRequest;
 }
 
-bool ServerSocketJSON::speak(String &message) {
+bool ServerSocketJSON::speak(const String &message) {
     if (server != nullptr && isConnected() && isAttached()) {
         client.println(message);
         client.flush();

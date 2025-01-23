@@ -32,7 +32,7 @@
 #include "functionSetup.h"  // This includes "globalSettings.h" too.
 
 FirmwareUpdateOTA firmwareUpdate(FIRMWARE_UPDATE_OTA_BASE_URL, FIRMWARE_UPDATE_OTA_BASE_PORT, FIRMWARE_UPDATE_OTA_URI_GET_LATEST);
-ServerSocketJSON serverSocket;
+ServerSocketJSON serverSocket(SERVER_SOCKET_PORT);
 Button button(BUTTON_PIN, B_PULLUP, BUTTON_TIME_LONG_PRESS);
 Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RESOLUTION);
 Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
@@ -101,7 +101,7 @@ void loop() {
     if (serverSocket.isConnected()) {
         serverSocket.attachClient();
 
-        requestCodeSocket = serverSocket.listen();
+        requestCodeSocket = serverSocket.listen()[SERVER_SOCKET_FIELD_REQUEST_CODE];
         if (requestCodeSocket > 0) {
             unsigned long timeStartedMessage;
 
