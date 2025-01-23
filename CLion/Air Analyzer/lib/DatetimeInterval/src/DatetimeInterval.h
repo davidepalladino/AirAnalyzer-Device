@@ -1,16 +1,15 @@
- /**
-  * @brief This library allows to manage an interval of time between the actual (stored on RTC module and get with NTP object)
-  * and the next set. 
-  * Copyright (c) 2022 Davide Palladino.
-  * All right reserved.
-  * 
-  * @author Davide Palladino
-  * @contact davidepalladino@hotmail.com
-  * @website https://davidepalladino.github.io/
-  * @version 3.0.3
-  * @date 30th September, 2022
-  * 
-  */
+/**
+ * @brief This library allows to manage an interval of time between the actual (stored on RTC module and get with NTP object)
+ * and the next set.
+ * Copyright (c) 2022 Davide Palladino.
+ * All right reserved.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 3.0.4
+ * @date 23rd January 2025
+ */
 
 #ifndef DATETIMEINTERVAL_H
     #define DATETIMEINTERVAL_H
@@ -24,8 +23,8 @@
 
     #include <ctime>
 
-    #define TIMEOUT_CHECK_RTC_DAY 14
-    #define TIMEOUT_CHECK_NTP_MILLISECONDS 5000                                            // Timeout to check the datetime from NTP.
+    const uint8_t TIMEOUT_CHECK_RTC_DAY = 14;
+    const uint16_t TIMEOUT_CHECK_NTP_MILLISECONDS = 5000;                                            // Timeout to check the datetime from NTP.
 
     class DatetimeInterval {
         public:
