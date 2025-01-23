@@ -34,7 +34,7 @@ class FirmwareUpdateOTA {
          * @param address The server address hosting the firmware.
          * @param port The server port to connect to.
          */
-        FirmwareUpdateOTA(const String& address, const uint16_t port);
+        FirmwareUpdateOTA(const String& address, uint16_t port);
 
         /**
          * @brief Initializes the connection settings for the update server.
