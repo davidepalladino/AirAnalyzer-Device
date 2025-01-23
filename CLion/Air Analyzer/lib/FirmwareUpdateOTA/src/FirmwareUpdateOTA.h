@@ -24,28 +24,28 @@
     const String FIRMWARE_UPDATE_OTA_URI_GET_LATEST = "api/firmware/getLatest";
 
     class FirmwareUpdateOTA {
-    public:
-        /**
-         * @brief This constructor creates the object only.
-         */
-        FirmwareUpdateOTA();
+        public:
+            /**
+             * @brief This constructor creates the object only.
+             */
+            FirmwareUpdateOTA();
 
-        /**
-         * @brief This method provides to set the information about the connection to the server.
-         */
-        void begin();
+            /**
+             * @brief This method provides to set the information about the connection to the server.
+             */
+            void begin();
 
-        /**
-         * @brief This method provides to check if there is a new version of firmware.
-         * @param version Actual version of firmware.
-         * @return
-         */
-        bool check(const String &version);
+            /**
+             * @brief This method provides to check if there is a new version of firmware.
+             * @param version Actual version of firmware.
+             * @return
+             */
+            bool check(const String &version);
 
-    private:
-        WiFiClient wifiClient;
-        String serverAddress;
-        uint16_t serverPort;
-        String serverUri;
+        private:
+            WiFiClient wifiClient;
+            String serverAddress;
+            uint16_t serverPort;
+            String serverUri;
     };
 #endif
