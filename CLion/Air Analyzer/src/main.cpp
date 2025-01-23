@@ -112,7 +112,7 @@ void loop() {
         }
     } else {
         serverSocket.end();
-        serverSocket.begin(PORT_SERVER_SOCKET);
+        serverSocket.begin();
     }
 
     /* 

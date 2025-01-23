@@ -136,7 +136,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     forceConnectWiFi(String(wifiSSID), String(wifiPassword), roomID);
     screen.showUpgradeVersionThreePage(upgradeConfigurationToVersionTwoMessages, WiFi.localIP().toString());
 
-    serverSocket.begin(PORT_SERVER_SOCKET);
+    serverSocket.begin();
     while (!isCredentialsRetrieved) {
         serverSocket.attachClient();
 
@@ -198,7 +198,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     timeStartedLoadingMessage = millis();
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     forceConnectWiFi(wifiSSID, wifiPassword, roomID);
-    serverSocket.begin(PORT_SERVER_SOCKET);
+    serverSocket.begin();
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // FIRMWARE

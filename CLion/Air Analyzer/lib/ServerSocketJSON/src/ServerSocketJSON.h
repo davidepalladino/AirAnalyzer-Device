@@ -12,7 +12,7 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 1.0.1
+ * @version 1.0.2
  * @date 23rd January 2025
  *
  * @include ArduinoJson v6.18.2.
@@ -46,12 +46,11 @@
             ServerSocketJSON();
 
             /**
-             * @brief This method opens the server socket on a specific port.
-             * @param port Number of port where the clients will be able to connect.
+             * @brief This method opens the server socket on a PORT_SERVER_SOCKET port.
              * @return Value "true" if the server is opened; else, value "false". In this case the reason might be a not
-             *  connection of WiFi, or the server already connected.
+             *  connection of Wi-Fi, or the server already connected.
              */
-            bool begin(uint16_t port);
+            bool begin();
 
             /**
              * @brief This method closes the server and client connections.

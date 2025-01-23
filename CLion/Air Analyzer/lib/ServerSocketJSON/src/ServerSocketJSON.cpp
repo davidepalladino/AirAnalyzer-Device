@@ -4,9 +4,9 @@ ServerSocketJSON::ServerSocketJSON() {
     this->server = nullptr;
 }
 
-bool ServerSocketJSON::begin(uint16_t port) {
+bool ServerSocketJSON::begin() {
     if (!isConnected()) {
-        server = new WiFiServer(port);
+        server = new WiFiServer(PORT_SERVER_SOCKET);
         server->begin();
 
         return true;
