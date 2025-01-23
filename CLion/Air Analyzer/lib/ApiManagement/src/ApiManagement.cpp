@@ -114,6 +114,7 @@ bool ApiManagement::addMeasures(const String &timestamp, double temperature, dou
             isUpdated = true;
             return isUpdated;
         }
+
         isUpdated = false;
         return isUpdated;
     }
