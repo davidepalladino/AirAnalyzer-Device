@@ -6,7 +6,7 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 1.0.2
+ * @version 2.0.0
  * @date 23rd January 2025
  *
  */
@@ -33,8 +33,9 @@ class FirmwareUpdateOTA {
          *
          * @param address The server address hosting the firmware.
          * @param port The server port to connect to.
+         * @param uriGetLatest The URI path to check for updates.
          */
-        FirmwareUpdateOTA(const String& address, uint16_t port);
+        FirmwareUpdateOTA(const String& address, uint16_t port, const String &uriGetLatest);
 
         /**
          * @brief Initializes the connection settings for the update server.
@@ -49,14 +50,14 @@ class FirmwareUpdateOTA {
          * Compares the current firmware version with the server version and determines if an update is available.
          *
          * @param version The current firmware version.
-         * @param uri The URI path to check for updates.
          * @return True if an update is available, false otherwise.
          */
-        bool check(const String &version, const String &uri);
+        bool check(const String &version);
 
     private:
         WiFiClient wifiClient; /**< Client for handling HTTP connections. */
         String address; /**< Server address for firmware updates. */
         uint16_t port; /**< Port number for server communication. */
+        String uriGetLatest; /**< URI path to check for firmware updates. */
 };
 #endif
