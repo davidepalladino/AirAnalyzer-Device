@@ -6,7 +6,7 @@ ServerSocketJSON::ServerSocketJSON() {
 
 bool ServerSocketJSON::begin() {
     if (!isConnected()) {
-        server = new WiFiServer(PORT_SERVER_SOCKET);
+        server = new WiFiServer(SERVER_SOCKET_PORT);
         server->begin();
 
         return true;
@@ -74,12 +74,12 @@ uint8_t ServerSocketJSON::listen() {
 
             if (!jsonRequestSerialized.isEmpty()) {
                 /* Deserializing the JSON to get the request code. */
-                StaticJsonDocument<SIZE_JSON_DOCUMENT> jsonDocumentRequest;
+                StaticJsonDocument<SERVER_SOCKET_SIZE_JSON> jsonDocumentRequest;
                 deserializeJson(jsonDocumentRequest, jsonRequestSerialized);
 
                 client.flush();
 
-                return jsonDocumentRequest[FIELD_REQUEST_CODE];
+                return jsonDocumentRequest[SERVER_SOCKET_FIELD_REQUEST_CODE];
             }
         }
     }

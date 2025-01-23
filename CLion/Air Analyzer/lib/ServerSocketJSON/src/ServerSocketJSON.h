@@ -29,14 +29,14 @@
         #include "ArduinoJson.h"
     #endif
 
-    constexpr uint32_t PORT_SERVER_SOCKET = 60000;
-    constexpr uint16_t SIZE_JSON_DOCUMENT = 512;
-    constexpr uint8_t SIZE_CREDENTIAL_USERNAME = 20;
-    constexpr uint8_t SIZE_CREDENTIAL_PASSWORD = 64;
-    const String FIELD_REQUEST_CODE = "request_code";
-    const String FIELD_MESSAGE = "message";
-    const String FIELD_MESSAGE_USERNAME = "username";
-    const String FIELD_MESSAGE_PASSWORD = "password";
+    constexpr uint32_t SERVER_SOCKET_PORT = 60000;
+    constexpr uint16_t SERVER_SOCKET_SIZE_JSON = 512;
+    constexpr uint8_t SERVER_SOCKET_SIZE_USERNAME = 20;
+    constexpr uint8_t SERVER_SOCKET_SIZE_PASSWORD = 64;
+    const String SERVER_SOCKET_FIELD_REQUEST_CODE = "request_code";
+    const String SERVER_SOCKET_FIELD_MESSAGE = "message";
+    const String SERVER_SOCKET_FIELD_MESSAGE_USERNAME = "username";
+    const String SERVER_SOCKET_FIELD_MESSAGE_PASSWORD = "password";
 
     class ServerSocketJSON {
         public:
