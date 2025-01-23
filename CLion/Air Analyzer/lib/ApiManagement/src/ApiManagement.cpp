@@ -4,12 +4,10 @@ ApiManagement::ApiManagement(Sensor &sensor, DatetimeInterval &datetime) : senso
     this->sensor.addObserver(this);
 }
 
-void ApiManagement::begin(uint8_t maxAttempts, uint8_t timeoutMinutes) {
+void ApiManagement::begin() {
     Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
-    this->datetime.begin(timeoutMinutes > 240 ? 240 : timeoutMinutes);
+    this->datetime.begin(API_MANAGEMENT_MINUTES_UPDATE_MEASURES);
     this->jsonArrayMeasures = jsonDocumentMeasures.to<JsonArray>();
-
-    this->maxAttempts = maxAttempts;
 
     this->isUpdated = true;
 
@@ -65,7 +63,7 @@ int ApiManagement::login() {
 
                 return resultStatusCode;
         }
-    } while (countAttempts++ < maxAttempts);
+    } while (countAttempts++ < API_MANAGEMENT_MAX_ATTEMPTS);
 
     return 0;
 }

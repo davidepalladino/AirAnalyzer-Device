@@ -216,7 +216,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     apiManagement.setRoomNumber(roomID);
     apiManagement.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
-    apiManagement.begin(API_MANAGEMENT_MAX_ATTEMPTS, API_MANAGEMENT_MINUTES_UPDATE_MEASURES);
+    apiManagement.begin();
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Sensor

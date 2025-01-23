@@ -51,11 +51,9 @@ class ApiManagement : private AbstractObserver {
 
         /**
          * @brief Initializes the API management system with update intervals.
-         * @param maxAttempts Maximum number of connection attempts.
-         * @param timeoutMinutes Timeout (in minutes) for each update.
          * @warning Call "setCredentials()" first to store the room ID in the API.
          */
-        void begin(uint8_t maxAttempts = 0, uint8_t timeoutMinutes = 10);
+        void begin();
 
         /**
          * @brief Sets user credentials.
@@ -104,7 +102,6 @@ class ApiManagement : private AbstractObserver {
         String serverToken;
         String serverTokenType;
         uint8_t roomNumber;
-        uint8_t maxAttempts;
         bool isUpdated;
 
         /**
