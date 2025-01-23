@@ -1,117 +1,119 @@
- /**
- * @brief This library allows to manage the sensor for the Air Analyzer purposes. You can use DHT or HDC sensor.
- * The class is an subject that could have some observers, that will be notified if
- *  there will be an update, with the "check" method.
+/**
+ * @file Sensor.h
+ * @brief Provides functionality to manage sensors for the Air Analyzer system.
+ *
+ * This library supports both DHT and HDC sensor types, allowing the system to monitor temperature and humidity.
+ * The Sensor class acts as a subject, notifying observers when new data is available via the check method.
+ *
  * Copyright (c) 2022 Davide Palladino.
- * All right reserved.
+ * All rights reserved.
  *
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 1.1.2
+ * @version 2.0.0
  * @date 23rd January 2025
- *
  */
 
 #ifndef SENSOR_H
-    #define SENSOR_H
+#define SENSOR_H
 
-    #include <Arduino.h>
+#include <Arduino.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#include <ClosedCube_HDC1080.h>
+#include <AbstractSubject.h>
+#include <AbstractObserver.h>
+#include <list>
 
-    #include <DHT.h>
-    #include <DHT_U.h>
-    #include <ClosedCube_HDC1080.h>
+const uint16_t TIMEOUT_READ_HDC = 1000; /**< Timeout for reading data from the HDC sensor. */
 
-    #include <AbstractSubject.h>
-    #include <AbstractObserver.h>
+/**
+ * @class Sensor
+ * @brief Manages temperature and humidity sensors, providing data to observers.
+ */
+class Sensor : private AbstractSubject {
+    friend class Screen;
+    friend class ApiManagement;
 
-    #include <list>
+    public:
+        /**
+         * @brief Constructs a Sensor object using a DHT sensor type.
+         * @param pin The GPIO pin where the sensor is connected.
+         * @param type The sensor type (e.g., DHT11, DHT22, AM2301).
+         */
+        Sensor(uint8_t pin, uint8_t type);
 
-    const uint16_t TIMEOUT_READ_HDC = 1000;                                   // Timeout to read the new value from HDC sensor.
+        /**
+         * @brief Constructs a Sensor object using an HDC sensor type.
+         * @param address The I2C address of the sensor.
+         * @param humidityResolution Humidity measurement resolution.
+         * @param temperatureResolution Temperature measurement resolution.
+         */
+        Sensor(uint8_t address, HDC1080_MeasurementResolution humidityResolution, HDC1080_MeasurementResolution temperatureResolution);
 
-    class Sensor : private AbstractSubject {
-        public:
-            friend class Screen;
-            friend class ApiManagement;
+        /** @brief Initializes the sensor. */
+        void begin();
 
-            /** 
-             * @brief This constructor creates the object setting only the type of sensor in DHT family and the pin.
-             * @param pin Pin where is connected the sensor.
-             * @param type Type between "DHT11", "DHT12", "DHT21", "DHT22" and "AM2301".
-             */
-            Sensor(uint8_t pin, uint8_t type);
+        /**
+         * @brief Checks for changes in temperature or humidity and notifies observers if needed.
+         * @return True if a variation is detected, false otherwise.
+         */
+        bool check();
 
-            /** 
-             * @brief This constructor creates the object setting only the type of sensor in HDC family, the I2C address and the resolution for humidity and temperature.
-             * @param address I2C address of the sensor.
-             * @param humidityResolution Value between "HDC1080_RESOLUTION_8BIT", "HDC1080_RESOLUTION_11BIT" and "HDC1080_RESOLUTION_14BIT".
-             * @param temperatureResolution Value between "HDC1080_RESOLUTION_8BIT", "HDC1080_RESOLUTION_11BIT" and "HDC1080_RESOLUTION_14BIT".
-             */
-            Sensor(uint8_t address, HDC1080_MeasurementResolution humidityResolution, HDC1080_MeasurementResolution temperatureResolution);
+        /**
+         * @brief Retrieves the last recorded temperature value.
+         * @return The last measured temperature.
+         */
+        double getTemperature();
 
-            /** 
-             * @brief This method initializes the sensor object.
-             */
-            void begin();
+        /**
+         * @brief Retrieves the last recorded humidity value.
+         * @return The last measured humidity.
+         */
+        double getHumidity();
 
-            /** 
-             * @brief This method checks if there is some variation of temperature or humidity and if there will be, the observers will be notified.
-             * @return Boolean value "true" to indicate if there is a variation; else value "false".
-             */
-            bool check();
+    private:
+        std::list<AbstractObserver*> observers; /**< List of observer objects. */
+        DHT *sensorDHT; /**< Pointer to a DHT sensor instance. */
+        ClosedCube_HDC1080 *sensorHDC; /**< Pointer to an HDC sensor instance. */
+        uint8_t address; /**< I2C address of the sensor. */
+        HDC1080_MeasurementResolution humidityResolution; /**< Humidity resolution setting. */
+        HDC1080_MeasurementResolution temperatureResolution; /**< Temperature resolution setting. */
+        double temperature; /**< Last recorded temperature. */
+        double humidity; /**< Last recorded humidity. */
+        unsigned long endTimeoutHDC; /**< Timeout marker for HDC sensor readings. */
 
-            /** 
-             * @brief This method gets the last value read about the temperature.
-             * @return Last value of temperature read.
-             */
-            double getTemperature();
+        /**
+         * @brief Compares current and previous temperature values to detect changes.
+         * @param temperature The temperature value to compare.
+         * @return True if a variation is detected, false otherwise.
+         */
+        bool checkTemperature(double temperature);
 
-            /** 
-             * @brief This method gets the last value read about the humidity.
-             * @return Last value of humidity read.
-             */
-            double getHumidity();
+        /**
+         * @brief Compares current and previous humidity values to detect changes.
+         * @param humidity The humidity value to compare.
+         * @return True if a variation is detected, false otherwise.
+         */
+        bool checkHumidity(double humidity);
 
-        private:
-            std::list<AbstractObserver* > observers;
-            DHT *sensorDHT;
-            ClosedCube_HDC1080 *sensorHDC;
-            uint8_t address;
-            HDC1080_MeasurementResolution humidityResolution;
-            HDC1080_MeasurementResolution temperatureResolution;
-            double temperature;
-            double humidity;
-            unsigned long endTimeoutHDC;
+        /**
+         * @brief Adds an observer to the notification list.
+         * @param observer Pointer to the observer to be added.
+         */
+        void addObserver(AbstractObserver* observer) override;
 
-            /** 
-             * @brief This method checks if the is some variation of temperature between the object and the parameter.
-             * @param temperature Value to compare.
-             * @return Boolean value "true" to indicate if there is a variation; else "false" value.
-             */
-            bool checkTemperature(double temperature);
+        /**
+         * @brief Removes an observer from the notification list.
+         * @param observer Pointer to the observer to be removed.
+         */
+        void removeObserver(AbstractObserver* observer) override;
 
-            /** 
-             * @brief This method checks if the is some variation of humidity between the object and the parameter.
-             * @param humidity Value to compare.
-             * @return Boolean value "true" to indicate if there is a variation; else "false" value.
-             */
-            bool checkHumidity(double humidity);
+        /**
+         * @brief Notifies all registered observers of data updates.
+         */
+        void notify() override;
+};
 
-            /** 
-             * @brief This method adds an observer.
-             * @param observer Object to add.
-             */
-            void addObserver(AbstractObserver* observer) override;
-
-            /** 
-             * @brief This method remove an observer.
-             * @param observer Object to remove.
-             */
-            void removeObserver(AbstractObserver* observer) override;
-
-            /** 
-             * @brief This method notifies all observers.
-             */
-            void notify() override;
-    };
-#endif
+#endif // SENSOR_H
