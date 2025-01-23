@@ -32,9 +32,6 @@
 
         /**
          * @brief This method provides to set the information about the connection to the server.
-         * @param address URL for the connection to the server.
-         * @param port Port for the connection to the server.
-         * @param uri URI of the service.
          */
         void begin();
 

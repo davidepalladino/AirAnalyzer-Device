@@ -53,10 +53,6 @@
             /**
              * @brief This method provides to set Datetime object, the JSON array and the information about the
              *  connection to the server, with the timeout (in minutes) for every update.
-             * @param address URL for the connection to the server.
-             * @param port Port for the connection to the server.
-             * @param nAttempts Number of attempts for login. Default value is "0".
-             * @param timeoutMinutes Minutes for every update. Default value is "10".
              * @warning Previously will have to be called the "setCredentials()" method, because "begin()" stores the room ID into apiManagement; so it needs the credentials.
              */
             void begin();
