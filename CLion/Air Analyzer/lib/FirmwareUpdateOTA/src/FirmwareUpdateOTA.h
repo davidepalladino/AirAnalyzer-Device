@@ -1,3 +1,19 @@
+/**
+ * @file FirmwareUpdateOTA.h
+ * @brief Provides functionality to update firmware over-the-air (OTA) at specified intervals.
+ *
+ * This library facilitates OTA firmware updates by connecting to a specified server and checking for new versions.
+ *
+ * Copyright (c) 2024 Davide Palladino.
+ * All rights reserved.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 2.0.0
+ * @date 23rd January 2025
+ */
+
 #ifndef FIRMWAREUPDATEOTA_H
 #define FIRMWAREUPDATEOTA_H
 
@@ -12,12 +28,6 @@
  *
  * This class allows an ESP8266-based system to check for and download firmware updates
  * from a specified server.
- *
- * @author Davide Palladino
- * @contact davidepalladino@hotmail.com
- * @website https://davidepalladino.github.io/
- * @version 2.0.0
- * @date 23rd January 2025
  */
 class FirmwareUpdateOTA {
     public:
