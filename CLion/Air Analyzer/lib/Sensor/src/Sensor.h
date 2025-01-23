@@ -1,17 +1,17 @@
  /**
-  * @brief This library allows to manage the sensor for the Air Analyzer purposes. You can use DHT or HDC sensor.
-  * The class is an subject that could have some observers, that will be notified if 
-  *  there will be an update, with the "check" method.
-  * Copyright (c) 2022 Davide Palladino.
-  * All right reserved.
-  * 
-  * @author Davide Palladino
-  * @contact davidepalladino@hotmail.com
-  * @website https://davidepalladino.github.io/
-  * @version 1.1.1
-  * @date 30th September, 2022
-  * 
-  */
+ * @brief This library allows to manage the sensor for the Air Analyzer purposes. You can use DHT or HDC sensor.
+ * The class is an subject that could have some observers, that will be notified if
+ *  there will be an update, with the "check" method.
+ * Copyright (c) 2022 Davide Palladino.
+ * All right reserved.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 1.1.2
+ * @date 23rd January 2025
+ *
+ */
 
 #ifndef SENSOR_H
     #define SENSOR_H
@@ -25,9 +25,9 @@
     #include <AbstractSubject.h>
     #include <AbstractObserver.h>
 
-    #define TIMEOUT_READ_HDC 1000                                   // Timeout to read the new value from HDC sensor.
-
     #include <list>
+
+    const uint16_t TIMEOUT_READ_HDC = 1000;                                   // Timeout to read the new value from HDC sensor.
 
     class Sensor : private AbstractSubject {
         public:
