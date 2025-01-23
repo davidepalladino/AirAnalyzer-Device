@@ -21,12 +21,6 @@ const uint32_t BAUDRATE =                                               115200;
 const uint8_t SIZE_WIFI_SSID =                                          33;
 const uint8_t SIZE_WIFI_PASSWORD =                                      64;
 
-// Server (Database and Updater)
-const uint8_t API_MINUTES_UPDATE_MEASURES =                             10;
-const String BASE_URL =                                                 "http://airanalyzer.shadowmoses.ovh";
-const uint16_t BASE_PORT =                                              80;
-const String FIRMWARE_URI =                                             "api/firmware/getLatest";
-
 // Sensor
 const uint8_t ADDRESS_SENSOR =                                          0x40;
 const HDC1080_MeasurementResolution HUMIDITY_RESOLUTION =               HDC1080_RESOLUTION_14BIT;

@@ -19,6 +19,10 @@
     #include <ESP8266HTTPClient.h>
     #include <ESP8266httpUpdate.h>
 
+    const String FIRMWARE_UPDATE_OTA_BASE_URL = "http://airanalyzer.shadowmoses.ovh";
+    constexpr uint16_t FIRMWARE_UPDATE_OTA_BASE_PORT = 80;
+    const String FIRMWARE_UPDATE_OTA_URI_GET_LATEST = "api/firmware/getLatest";
+
     class FirmwareUpdateOTA {
     public:
         /**
@@ -32,7 +36,7 @@
          * @param port Port for the connection to the server.
          * @param uri URI of the service.
          */
-        void begin(const String &address, uint16_t port, const String &uri);
+        void begin();
 
         /**
          * @brief This method provides to check if there is a new version of firmware.

@@ -10,6 +10,7 @@
 #include <Sensor.h>
 #include <Screen.h>
 #include <ApiManagement.h>
+#include <FirmwareUpdateOTA.h>
 
 #include "../globalSettings.h"
 
@@ -205,7 +206,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
-    firmwareUpdateOta.begin(BASE_URL, BASE_PORT, FIRMWARE_URI);
+    firmwareUpdateOta.begin();
     if (firmwareUpdateOta.check(VERSION_FIRMWARE)) {
         screen.showMessagePage(messagePageFirmwareUpdated);
         ESP.restart();
@@ -218,7 +219,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     apiManagement.setRoomNumber(roomID);
     apiManagement.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
-    apiManagement.begin(BASE_URL, BASE_PORT, 3, API_MINUTES_UPDATE_MEASURES);
+    apiManagement.begin();
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Sensor

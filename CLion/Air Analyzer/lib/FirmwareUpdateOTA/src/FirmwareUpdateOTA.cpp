@@ -2,13 +2,13 @@
 
 FirmwareUpdateOTA::FirmwareUpdateOTA() { }
 
-void FirmwareUpdateOTA::begin(const String &address, uint16_t port, const String &uri) {
+void FirmwareUpdateOTA::begin() {
     Serial.println("\033[1;92m-------------------- [FIRMWARE] -------------------\033[0m");
 
-    this->serverAddress = address;
-    this->serverPort = port;
+    this->serverAddress = FIRMWARE_UPDATE_OTA_BASE_URL;
+    this->serverPort = FIRMWARE_UPDATE_OTA_BASE_PORT;
 
-    this->serverUri = uri;
+    this->serverUri = FIRMWARE_UPDATE_OTA_URI_GET_LATEST;
 
     ESPhttpUpdate.rebootOnUpdate(false);
 }

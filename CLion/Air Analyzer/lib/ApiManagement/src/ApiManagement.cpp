@@ -4,15 +4,15 @@ ApiManagement::ApiManagement(Sensor &sensor, DatetimeInterval &datetime) : senso
     this->sensor.addObserver(this);
 }
 
-void ApiManagement::begin(const String &address, uint16_t port, uint8_t nAttempt, uint8_t timeoutMinutes) {
+void ApiManagement::begin() {
     Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
-    this->datetime.begin(timeoutMinutes > 240 ? 240 : timeoutMinutes);
+    this->datetime.begin(API_MANAGEMENT_MINUTES_UPDATE_MEASURES > 240 ? 240 : API_MANAGEMENT_MINUTES_UPDATE_MEASURES);
     this->jsonArrayMeasures = jsonDocumentMeasures.to<JsonArray>();
 
-    this->serverAddress = address;
-    this->serverPort = port;
+    this->serverAddress = API_MANAGEMENT_BASE_URL;
+    this->serverPort = API_MANAGEMENT_BASE_PORT;
 
-    this->nAttempts = nAttempt;
+    this->nAttempts = API_MANAGEMENT_MAX_ATTEMPTS;
 
     this->isUpdated = true;
 
@@ -143,50 +143,50 @@ void ApiManagement::update() {
 }
 
 int ApiManagement::requestLogin() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_LOGIN);
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_USER_LOGIN);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
     int responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
     httpJsonResponse = httpClient.getString();
     httpClient.end();
 
-    Serial.println("\033[1;96m[RESPONSE FOR " + API_LOGIN + ": " + String(responseCode) + "]\033[0m\n");
+    Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_USER_LOGIN + ": " + String(responseCode) + "]\033[0m\n");
 
     return responseCode;
 }
 
 int ApiManagement::requestChangeStatusActivationRoom() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_CHANGE_STATUS_ACTIVATION_ROOM);
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
     int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
     httpClient.end();
 
-    Serial.println("\033[1;96m[RESPONSE FOR " + API_CHANGE_STATUS_ACTIVATION_ROOM + ": " + String(responseCode) + "]\033[0m\n");
+    Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION + ": " + String(responseCode) + "]\033[0m\n");
 
     return responseCode;
 }
 
 int ApiManagement::requestChangeLocalIpRoom(const String &localIP) {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_CHANGE_LOCAL_IP_ROOM);
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
     int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
     httpClient.end();
 
-    Serial.println("\033[1;96m[RESPONSE FOR " + API_CHANGE_LOCAL_IP_ROOM + ": " + String(responseCode) + "]\033[0m\n");
+    Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP + ": " + String(responseCode) + "]\033[0m\n");
 
     return responseCode;
 }
 
 int ApiManagement::requestSetMeasures(const String &jsonDocumentMeasuresSerialized) {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_SET_MEASURES);
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_MEASURE_SET);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/json");
     httpClient.addHeader("Accept", "application/json");
     int responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
     httpClient.end();
 
-    Serial.println("\033[1;96m[RESPONSE FOR " + API_SET_MEASURES + ": " + String(responseCode) + "]\033[0m\n");
+    Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_MEASURE_SET + ": " + String(responseCode) + "]\033[0m\n");
 
     return responseCode;
 }

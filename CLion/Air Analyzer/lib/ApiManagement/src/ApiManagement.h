@@ -7,8 +7,8 @@
   * @author Davide Palladino
   * @contact davidepalladino@hotmail.com
   * @website https://davidepalladino.github.io/
-  * @version 3.0.0
-  * @date 30th September, 2022
+  * @version 3.0.1
+  * @date 23rd January 2025
   * 
   */
 
@@ -28,7 +28,14 @@
     #include <DatetimeInterval.h>
     #include <Sensor.h>
 
-    #include "ApiRoute.h"
+    const String API_MANAGEMENT_BASE_URL = "http://airanalyzer.shadowmoses.ovh";
+    constexpr uint16_t API_MANAGEMENT_BASE_PORT = 80;
+    constexpr uint8_t API_MANAGEMENT_MINUTES_UPDATE_MEASURES = 10;
+    constexpr uint8_t API_MANAGEMENT_MAX_ATTEMPTS = 10;
+    const String API_MANAGEMENT_URI_USER_LOGIN = "api/user/login";
+    const String API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION = "api/room/changeStatusActivation";
+    const String API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP = "api/room/changeLocalIP";
+    const String API_MANAGEMENT_URI_MEASURE_SET = "api/measure/set";
 
     class Sensor;
 
@@ -52,7 +59,7 @@
              * @param timeoutMinutes Minutes for every update. Default value is "10".
              * @warning Previously will have to be called the "setCredentials()" method, because "begin()" stores the room ID into apiManagement; so it needs the credentials.
              */
-            void begin(const String &address, uint16_t port, uint8_t nAttempts = 0, uint8_t timeoutMinutes = 10);
+            void begin();
 
             /**
              * This method provides to set the credentials of user.
