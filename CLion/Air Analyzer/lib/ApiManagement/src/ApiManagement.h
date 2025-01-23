@@ -1,16 +1,16 @@
- /**
-  * @brief This library allows to manage the apiManagement with API REST, for the Air Analyzer purposes.
-  * The class is an observer where updates own status when is notified by the subject class.
-  * Copyright (c) 2022 Davide Palladino.
-  * All right reserved.
-  * 
-  * @author Davide Palladino
-  * @contact davidepalladino@hotmail.com
-  * @website https://davidepalladino.github.io/
-  * @version 3.0.1
-  * @date 23rd January 2025
-  * 
-  */
+/**
+ * @brief This library allows to manage the apiManagement with API REST, for the Air Analyzer purposes.
+ * The class is an observer where updates own status when is notified by the subject class.
+ * Copyright (c) 2022 Davide Palladino.
+ * All right reserved.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 3.0.1
+ * @date 23rd January 2025
+ *
+ */
 
 #ifndef APIMANAGEMENT_H
     #define APIMANAGEMENT_H

@@ -6,8 +6,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 1.0.1
-  * @date 30th September, 2022
+ * @version 1.0.2
+ * @date 23rd January 2025
  *
  */
 
