@@ -29,9 +29,19 @@ const uint8_t MAX_ROOM_NUMBER =                                         9;
 
 
 // ### LIBRARIES ###
+// Api Management
+const String API_MANAGEMENT_BASE_ADDRESS =                                  "http://airanalyzer.shadowmoses.ovh";
+const uint8_t API_MANAGEMENT_BASE_PORT =                                    80;
+constexpr uint8_t API_MANAGEMENT_MAX_ATTEMPTS =                             3;
+constexpr uint8_t API_MANAGEMENT_MINUTES_UPDATE_MEASURES =                  10;
+
 // Button
 const uint8_t BUTTON_PIN =                                              D5;
 const int16_t BUTTON_TIME_LONG_PRESS =                                  3000;
+
+// Firmware Update OTA
+const String FIRMWARE_UPDATE_OTA_BASE_ADDRESS =                             "http://airanalyzer.shadowmoses.ovh";
+constexpr uint16_t FIRMWARE_UPDATE_OTA_BASE_PORT =                      80;
 
 // Screen
 const uint8_t SCREEN_PIN_SCL =                                          20;

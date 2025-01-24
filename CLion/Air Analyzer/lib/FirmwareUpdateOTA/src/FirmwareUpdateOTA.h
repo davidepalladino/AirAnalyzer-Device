@@ -47,7 +47,7 @@ class FirmwareUpdateOTA {
          *
          * This method should be called before checking for updates.
          */
-        void begin();
+        void begin(const String &address, uint16_t port);
 
         /**
          * @brief Checks for a new firmware version on the server.
@@ -61,5 +61,7 @@ class FirmwareUpdateOTA {
 
     private:
         WiFiClient wifiClient; /**< Client for handling HTTP connections. */
+        String serverAddress;
+        uint16_t serverPort;
 };
 #endif

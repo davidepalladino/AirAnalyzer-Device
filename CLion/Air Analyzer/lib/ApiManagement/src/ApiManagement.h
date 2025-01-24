@@ -53,7 +53,7 @@ class ApiManagement : private AbstractObserver {
          * @brief Initializes the API management system with update intervals.
          * @warning Call "setCredentials()" first to store the room ID in the API.
          */
-        void begin();
+        void begin(const String &address, uint16_t port, uint8_t maxAttempts = 0, uint8_t minutesUpdateMeasures = 10);
 
         /**
          * @brief Sets user credentials.
@@ -102,6 +102,7 @@ class ApiManagement : private AbstractObserver {
         String serverToken;
         String serverTokenType;
         uint8_t roomNumber;
+        uint8_t maxAttempts;
         bool isUpdated;
 
         /**

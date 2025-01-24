@@ -202,7 +202,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
-    firmwareUpdateOta.begin();
+    firmwareUpdateOta.begin(FIRMWARE_UPDATE_OTA_BASE_ADDRESS, FIRMWARE_UPDATE_OTA_BASE_PORT);
     if (firmwareUpdateOta.check(VERSION_FIRMWARE)) {
         screen.showMessagePage(messagePageFirmwareUpdated);
         ESP.restart();
@@ -215,7 +215,7 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     apiManagement.setRoomNumber(roomID);
     apiManagement.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
-    apiManagement.begin();
+    apiManagement.begin(API_MANAGEMENT_BASE_ADDRESS, API_MANAGEMENT_BASE_PORT, API_MANAGEMENT_MAX_ATTEMPTS, API_MANAGEMENT_MINUTES_UPDATE_MEASURES);
     delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
 
     // Sensor
