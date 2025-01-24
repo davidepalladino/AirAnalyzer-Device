@@ -10,7 +10,6 @@
 #include <Sensor.h>
 #include <Screen.h>
 #include <ApiManagement.h>
-#include <FirmwareUpdateOTA.h>
 
 #include "../globalSettings.h"
 
