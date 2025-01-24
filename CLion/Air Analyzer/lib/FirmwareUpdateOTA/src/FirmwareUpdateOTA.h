@@ -22,6 +22,8 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 
+#include "FirmwareUpdateOTAConsts.h"
+
 /**
  * @class FirmwareUpdateOTA
  * @brief Handles over-the-air firmware updates.
@@ -38,7 +40,7 @@ class FirmwareUpdateOTA {
          * @param port The server port to connect to.
          * @param uriGetLatest The URI path to check for updates.
          */
-        FirmwareUpdateOTA(const String& address, uint16_t port, const String &uriGetLatest);
+        FirmwareUpdateOTA();
 
         /**
          * @brief Initializes the connection settings for the update server.
@@ -59,8 +61,5 @@ class FirmwareUpdateOTA {
 
     private:
         WiFiClient wifiClient; /**< Client for handling HTTP connections. */
-        String address; /**< Server address for firmware updates. */
-        uint16_t port; /**< Port number for server communication. */
-        String uriGetLatest; /**< URI path to check for firmware updates. */
 };
 #endif

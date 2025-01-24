@@ -33,11 +33,6 @@ const uint8_t MAX_ROOM_NUMBER =                                         9;
 const uint8_t BUTTON_PIN =                                              D5;
 const int16_t BUTTON_TIME_LONG_PRESS =                                  3000;
 
-// Firmware Update OTA
-const String FIRMWARE_UPDATE_OTA_BASE_URL =                             "http://airanalyzer.shadowmoses.ovh";
-constexpr uint16_t FIRMWARE_UPDATE_OTA_BASE_PORT =                      80;
-const String FIRMWARE_UPDATE_OTA_URI_GET_LATEST =                       "api/firmware/getLatest";
-
 // Screen
 const uint8_t SCREEN_PIN_SCL =                                          20;
 const uint8_t SCREEN_PIN_SDA =                                          19;
