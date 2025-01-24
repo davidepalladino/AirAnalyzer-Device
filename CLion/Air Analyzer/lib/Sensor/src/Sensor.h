@@ -26,7 +26,7 @@
 #include <AbstractObserver.h>
 #include <list>
 
-const uint16_t TIMEOUT_READ_HDC = 1000; /**< Timeout for reading data from the HDC sensor. */
+#include "SensorConst.h"
 
 /**
  * @class Sensor
