@@ -1,1 +1,0 @@
-const String FIRMWARE_UPDATE_OTA_URI_GET_LATEST = "api/firmware/getLatest";
