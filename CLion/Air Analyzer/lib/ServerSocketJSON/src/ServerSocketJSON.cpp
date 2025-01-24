@@ -67,7 +67,7 @@ bool ServerSocketJSON::isAttached() {
     return false;
 }
 
-StaticJsonDocument<512> ServerSocketJSON::listen() {
+uint8_t ServerSocketJSON::listen() {
     StaticJsonDocument<512> jsonDocumentRequest;
 
     if (server != nullptr && isConnected() && isAttached()) {
@@ -76,15 +76,17 @@ StaticJsonDocument<512> ServerSocketJSON::listen() {
 
             if (!jsonRequestSerialized.isEmpty()) {
                 /* Deserializing the JSON to get the request code. */
+                StaticJsonDocument<512> jsonDocumentRequest;
                 deserializeJson(jsonDocumentRequest, jsonRequestSerialized);
 
                 client.flush();
 
+                return jsonDocumentRequest[SERVER_SOCKET_FIELD_REQUEST_CODE];
             }
         }
     }
 
-    return jsonDocumentRequest;
+    return 0;
 }
 
 bool ServerSocketJSON::speak(const String &message) {
