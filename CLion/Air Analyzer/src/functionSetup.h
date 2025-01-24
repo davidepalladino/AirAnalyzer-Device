@@ -5,7 +5,7 @@
 
 #include <ArduinoJson.h>
 
-#include <ServerSocketJson.h>
+#include <ServerSocketJSON.h>
 #include <Button.h>
 #include <Sensor.h>
 #include <Screen.h>
@@ -14,10 +14,10 @@
 #include "../globalSettings.h"
 
 void configurationVersion1(Button &button, Screen &screen);
-void configurationVersion3(ServerSocketJson &serverSocket, Screen &screen, ApiManagement &apiManagement);
-void configurationLoad(FirmwareUpdateOta firmwareUpdateOta, ServerSocketJson &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword);
+void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiManagement &apiManagement);
+void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword);
 void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiManagement);
-void socketSendRoomID(ServerSocketJson &serverSocket, uint8_t roomID);
+void socketSendRoomID(ServerSocketJSON &serverSocket, uint8_t roomID);
 void showBrand(Button &button, Screen &screen, String &version);
 long calculateDelay(long timeStarted, long timeNecessary);
 void resetEEPROM(uint16_t sizeEEPROM);
@@ -97,7 +97,7 @@ void configurationVersion1(Button &button, Screen &screen) {
  * @param apiManagement API object to set the credentials.
  * @warning EEPROM must be already opened.
  */
-void configurationVersion3(ServerSocketJson &serverSocket, Screen &screen, ApiManagement &apiManagement) {
+void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiManagement &apiManagement) {
     char wifiSSID[SIZE_WIFI_SSID];
     char wifiPassword[SIZE_WIFI_PASSWORD];
     uint8_t roomID = 0;
@@ -167,7 +167,7 @@ void configurationVersion3(ServerSocketJson &serverSocket, Screen &screen, ApiMa
  * @param wifiPassword Object to store the password of WiFi.
  * @warning EEPROM must be already opened.
  */
-void configurationLoad(FirmwareUpdateOta firmwareUpdateOta, ServerSocketJson &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword) {
+void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword) {
     unsigned long timeStartedLoadingMessage;
     float percentageLoadingMessage = (float) 100 / (((float) sizeof(loadingPageMessages) / sizeof(loadingPageMessages[0])) - 1);
     uint8_t iLoadingMessages = 0;
@@ -282,7 +282,7 @@ void socketRetrieveCredentials(String jsonRequestSerialized, ApiManagement &apiM
  * @param roomID Room ID to send to the client socket.
  * @warning The server socket will have to be opened and the client will have to be connected too.
  */
-void socketSendRoomID(ServerSocketJson &serverSocket, uint8_t roomID) {
+void socketSendRoomID(ServerSocketJSON &serverSocket, uint8_t roomID) {
     if (serverSocket.isAttached()) {
         StaticJsonDocument<512> jsonDocumentRequest;
         jsonDocumentRequest["RoomID"] = roomID;

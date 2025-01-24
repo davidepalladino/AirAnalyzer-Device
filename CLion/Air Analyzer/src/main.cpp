@@ -21,18 +21,18 @@
 
 #include <NTPClient.h>
 
-#include <ServerSocketJson.h>
+#include <ServerSocketJSON.h>
 #include <Button.h>
 #include <Sensor.h>
 #include <Screen.h>
 #include <DatetimeInterval.h>
 #include <ApiManagement.h>
-#include <FirmwareUpdateOta.h>
+#include <FirmwareUpdateOTA.h>
 
 #include "functionSetup.h"  // This includes "globalSettings.h" too.
 
-FirmwareUpdateOta firmwareUpdate;
-ServerSocketJson serverSocket;
+FirmwareUpdateOTA firmwareUpdate;
+ServerSocketJSON serverSocket;
 Button button(BUTTON_PIN, B_PULLUP, BUTTON_TIME_LONG_PRESS);
 Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RESOLUTION);
 Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
