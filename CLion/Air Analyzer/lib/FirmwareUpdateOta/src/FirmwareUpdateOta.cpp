@@ -1,8 +1,8 @@
-#include "FirmwareUpdateOTA.h"
+#include "FirmwareUpdateOta.h"
 
-FirmwareUpdateOTA::FirmwareUpdateOTA() { }
+FirmwareUpdateOta::FirmwareUpdateOta() { }
 
-void FirmwareUpdateOTA::begin(const String &address, uint16_t port) {
+void FirmwareUpdateOta::begin(const String &address, uint16_t port) {
     Serial.println("\033[1;92m-------------------- [FIRMWARE] -------------------\033[0m");
 
     this->serverAddress = address;
@@ -11,7 +11,7 @@ void FirmwareUpdateOTA::begin(const String &address, uint16_t port) {
     ESPhttpUpdate.rebootOnUpdate(false);
 }
 
-bool FirmwareUpdateOTA::check(const String &version) {
+bool FirmwareUpdateOta::check(const String &version) {
     t_httpUpdate_return ret = ESPhttpUpdate.update(wifiClient, serverAddress + ":" + String(serverPort) + "/" + FIRMWARE_UPDATE_OTA_URI_GET_LATEST, version);
     switch (ret) {
         case HTTP_UPDATE_OK:

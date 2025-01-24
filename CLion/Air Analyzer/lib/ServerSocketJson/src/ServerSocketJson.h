@@ -1,5 +1,5 @@
 /**
- * @file ServerSocketJSON.h
+ * @file ServerSocketJson.h
  * @brief This library allows the device to function as a server socket, exchanging JSON messages.
  *
  * The structure of the JSON message is expected to be:
@@ -26,26 +26,26 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
-#include "ServerSocketJSONConsts.h"
+#include "ServerSocketJsonConsts.h"
 
 #ifndef ARDUINO_JSON
     #include "ArduinoJson.h"
 #endif
 
 /**
- * @class ServerSocketJSON
+ * @class ServerSocketJson
  * @brief A class that represents a server socket for handling JSON messages with a client.
  *
  * This class allows the device to act as a server, receiving and sending JSON messages to a client via Wi-Fi.
  * It provides methods for attaching/detaching clients, checking server/client status, and communicating using JSON format.
  */
-class ServerSocketJSON {
+class ServerSocketJson {
     public:
         /**
          * @brief Constructor to initialize the server socket with a specified port.
          * @param port The port to open for the server.
          */
-        ServerSocketJSON();
+        ServerSocketJson();
 
         /**
          * @brief Initializes the server socket and begins listening for clients.

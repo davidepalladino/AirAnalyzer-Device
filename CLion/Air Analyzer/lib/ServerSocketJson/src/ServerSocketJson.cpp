@@ -1,10 +1,10 @@
-#include "ServerSocketJSON.h"
+#include "ServerSocketJson.h"
 
-ServerSocketJSON::ServerSocketJSON() {
+ServerSocketJson::ServerSocketJson() {
     this->server = nullptr;
 }
 
-bool ServerSocketJSON::begin(uint16_t port) {
+bool ServerSocketJson::begin(uint16_t port) {
     if (!isConnected()) {
         server = new WiFiServer(port);
         server->begin();
@@ -15,7 +15,7 @@ bool ServerSocketJSON::begin(uint16_t port) {
     return false;
 }
 
-void ServerSocketJSON::end() {
+void ServerSocketJson::end() {
     if (isAttached()) {
         client.stop();
     }
@@ -23,7 +23,7 @@ void ServerSocketJSON::end() {
     server->stop();
 }
 
-bool ServerSocketJSON::attachClient() {
+bool ServerSocketJson::attachClient() {
     if (server != nullptr && isConnected() && !isAttached()) {
         client = server->available();
 
@@ -40,7 +40,7 @@ bool ServerSocketJSON::attachClient() {
     return false;
 }
 
-bool ServerSocketJSON::detachClient() {
+bool ServerSocketJson::detachClient() {
     if (isAttached()) {
         client.stop();
 
@@ -51,7 +51,7 @@ bool ServerSocketJSON::detachClient() {
     return false;
 }
 
-bool ServerSocketJSON::isConnected() {
+bool ServerSocketJson::isConnected() {
     if (WiFi.status() == WL_CONNECTED && server != nullptr && server->status() == LISTEN) {
         return true;
     }
@@ -59,7 +59,7 @@ bool ServerSocketJSON::isConnected() {
     return false;
 }
 
-bool ServerSocketJSON::isAttached() {
+bool ServerSocketJson::isAttached() {
     if (client) {
         return true;
     }
@@ -67,7 +67,7 @@ bool ServerSocketJSON::isAttached() {
     return false;
 }
 
-StaticJsonDocument<512> ServerSocketJSON::listen() {
+StaticJsonDocument<512> ServerSocketJson::listen() {
     StaticJsonDocument<512> jsonDocumentRequest;
 
     if (server != nullptr && isConnected() && isAttached()) {
@@ -87,7 +87,7 @@ StaticJsonDocument<512> ServerSocketJSON::listen() {
     return jsonDocumentRequest;
 }
 
-bool ServerSocketJSON::speak(const String &message) {
+bool ServerSocketJson::speak(const String &message) {
     if (server != nullptr && isConnected() && isAttached()) {
         client.println(message);
         client.flush();
@@ -97,6 +97,6 @@ bool ServerSocketJSON::speak(const String &message) {
     return false;
 }
 
-String ServerSocketJSON::getJsonRequestSerialized() {
+String ServerSocketJson::getJsonRequestSerialized() {
     return this->jsonRequestSerialized;
 }

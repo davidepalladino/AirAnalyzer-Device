@@ -1,5 +1,5 @@
 /**
- * @file FirmwareUpdateOTA.h
+ * @file FirmwareUpdateOta.h
  * @brief Provides functionality to update firmware over-the-air (OTA) at specified intervals.
  *
  * This library facilitates OTA firmware updates by connecting to a specified server and checking for new versions.
@@ -22,25 +22,25 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 
-#include "FirmwareUpdateOTAConsts.h"
+#include "FirmwareUpdateOtaConsts.h"
 
 /**
- * @class FirmwareUpdateOTA
+ * @class FirmwareUpdateOta
  * @brief Handles over-the-air firmware updates.
  *
  * This class allows an ESP8266-based system to check for and download firmware updates
  * from a specified server.
  */
-class FirmwareUpdateOTA {
+class FirmwareUpdateOta {
     public:
         /**
-         * @brief Constructs a FirmwareUpdateOTA object.
+         * @brief Constructs a FirmwareUpdateOta object.
          *
          * @param address The server address hosting the firmware.
          * @param port The server port to connect to.
          * @param uriGetLatest The URI path to check for updates.
          */
-        FirmwareUpdateOTA();
+        FirmwareUpdateOta();
 
         /**
          * @brief Initializes the connection settings for the update server.
