@@ -90,7 +90,7 @@ void loop() {
     if (serverSocket.isConnected()) {
         serverSocket.attachClient();
 
-        requestCodeSocket = serverSocket.listen()[SERVER_SOCKET_FIELD_REQUEST_CODE];
+        requestCodeSocket = serverSocket.listen();
         if (requestCodeSocket > 0) {
             unsigned long timeStartedMessage;
 

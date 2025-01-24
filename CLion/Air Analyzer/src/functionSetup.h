@@ -137,7 +137,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     while (!isCredentialsRetrieved) {
         serverSocket.attachClient();
 
-        requestCodeSocket = serverSocket.listen()[SERVER_SOCKET_FIELD_REQUEST_CODE];
+        requestCodeSocket = serverSocket.listen();
         switch (requestCodeSocket) {
             case 1:
                 socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
