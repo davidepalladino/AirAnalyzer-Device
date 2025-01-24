@@ -1,11 +1,10 @@
 #include "ServerSocketJSON.h"
 
-ServerSocketJSON::ServerSocketJSON(uint16_t port) {
+ServerSocketJSON::ServerSocketJSON() {
     this->server = nullptr;
-    this->port = port;
 }
 
-bool ServerSocketJSON::begin() {
+bool ServerSocketJSON::begin(uint16_t port) {
     if (!isConnected()) {
         server = new WiFiServer(port);
         server->begin();

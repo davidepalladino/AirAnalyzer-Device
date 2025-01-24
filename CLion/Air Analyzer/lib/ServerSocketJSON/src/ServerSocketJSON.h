@@ -26,6 +26,8 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
+#include "ServerSocketJSONConsts.h"
+
 #ifndef ARDUINO_JSON
     #include "ArduinoJson.h"
 #endif
@@ -43,7 +45,7 @@ class ServerSocketJSON {
          * @brief Constructor to initialize the server socket with a specified port.
          * @param port The port to open for the server.
          */
-        ServerSocketJSON(uint16_t port);
+        ServerSocketJSON();
 
         /**
          * @brief Initializes the server socket and begins listening for clients.
@@ -51,7 +53,7 @@ class ServerSocketJSON {
          * This method opens the server socket on the specified port and connects to Wi-Fi if not already connected.
          * @return True if the server was successfully opened, false if there was an issue (e.g., Wi-Fi not connected).
          */
-        bool begin();
+        bool begin(uint16_t port);
 
         /**
          * @brief Closes the server and any client connections.
@@ -115,7 +117,6 @@ class ServerSocketJSON {
         WiFiServer *server;           ///< Pointer to the WiFiServer instance.
         WiFiClient client;            ///< WiFiClient instance to interact with the client.
         String jsonRequestSerialized; ///< Holds the serialized JSON request.
-        uint16_t port;                ///< Port number for the server socket.
 };
 
 #endif
