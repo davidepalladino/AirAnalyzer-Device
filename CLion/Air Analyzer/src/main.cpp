@@ -38,7 +38,7 @@ Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RES
 Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-ApiManagement apiManagement(sensor,    *(new DatetimeInterval(ntpClient, DATE_INTERVAL_TIMEOUT_RTC_CHECK_DAY, DATE_INTERVAL_TIMEOUT_NTP_CHECK_MILLISECONDS)));
+ApiManagement apiManagement(sensor,    *(new DatetimeInterval(ntpClient)));  // TODO: MOVE to ApiManagement class
 
 String wifiSSID;
 String wifiPassword;

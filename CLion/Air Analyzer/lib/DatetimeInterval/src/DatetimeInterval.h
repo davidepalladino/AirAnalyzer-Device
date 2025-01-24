@@ -22,7 +22,9 @@
 #include <ESP8266WiFi.h>
 #include <NTPClient.h>
 #include <RTClib.h>
-#include <ctime>
+#include <DateTimeIntervalConsts.h>
+
+#include <Wire.h>
 
 /**
  * @class DatetimeInterval
@@ -36,11 +38,7 @@ class DatetimeInterval {
          * @param timeoutCheckRtcDay Timeout for RTC daily checks.
          * @param timeoutCheckNtpMilliseconds Timeout for NTP synchronization in milliseconds.
          */
-        explicit DatetimeInterval(
-            NTPClient ntpClient,
-            uint8_t timeoutCheckRtcDay,
-            uint16_t timeoutCheckNtpMilliseconds
-        );
+        explicit DatetimeInterval(NTPClient ntpClient);
 
         /**
          * @brief Initializes the RTC object and sets the next update time.
@@ -104,9 +102,6 @@ class DatetimeInterval {
         RTC_DS3231 rtc; /**< RTC module instance. */
         TimeSpan timespanDatetimeRTC; /**< RTC-based timespan for updates. */
         DateTime nextDatetimeRTC; /**< Next RTC-based update time. */
-        uint8_t totalMinuteUpdate; /**< Update interval in minutes. */
-        uint8_t timeoutCheckRtcDay; /**< Timeout for RTC daily checks. */
-        uint16_t timeoutCheckNtpMilliseconds; /**< Timeout for NTP sync. */
 
         /**
          * @brief Checks if the current RTC datetime exceeds the next scheduled update.

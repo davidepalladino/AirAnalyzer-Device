@@ -33,10 +33,6 @@ const uint8_t MAX_ROOM_NUMBER =                                         9;
 const uint8_t BUTTON_PIN =                                              D5;
 const int16_t BUTTON_TIME_LONG_PRESS =                                  3000;
 
-// Date Interval
-const uint8_t DATE_INTERVAL_TIMEOUT_RTC_CHECK_DAY =                     14;
-const uint16_t DATE_INTERVAL_TIMEOUT_NTP_CHECK_MILLISECONDS =           5000; // Timeout to check the datetime from NTP.
-
 // Firmware Update OTA
 const String FIRMWARE_UPDATE_OTA_BASE_URL =                             "http://airanalyzer.shadowmoses.ovh";
 constexpr uint16_t FIRMWARE_UPDATE_OTA_BASE_PORT =                      80;

@@ -1,18 +1,8 @@
 #include "DatetimeInterval.h"
 
-DatetimeInterval::DatetimeInterval(
-    NTPClient ntpClient,
-    uint8_t timeoutCheckRtcDay,
-    uint16_t timeoutCheckNtpMilliseconds
-) : ntpClient(ntpClient) {
-    this->timeoutCheckRtcDay = timeoutCheckRtcDay;
-    this->timeoutCheckNtpMilliseconds = timeoutCheckNtpMilliseconds;
-
-}
+DatetimeInterval::DatetimeInterval(NTPClient ntpClient) : ntpClient(ntpClient) { }
 
 void DatetimeInterval::begin(uint8_t totalMinuteUpdate) {
-    this->totalMinuteUpdate = totalMinuteUpdate;
-
     if (totalMinuteUpdate > 240) {
         totalMinuteUpdate = 240;
     }
@@ -20,7 +10,7 @@ void DatetimeInterval::begin(uint8_t totalMinuteUpdate) {
     rtc.begin();
 
     /* Calculating the datetime for next update about RTC. */
-    timespanDatetimeRTC = TimeSpan(timeoutCheckRtcDay, 0, 0, 0);
+    timespanDatetimeRTC = TimeSpan(DATE_INTERVAL_TIMEOUT_RTC_CHECK_DAY, 0, 0, 0);
     updateDatetimeRTC();
     configNextDatetimeRTC();
 
@@ -126,7 +116,7 @@ void DatetimeInterval::updateDatetimeRTC() {
         yield();
 
         Serial.println("\033[1;91m[NTP ERROR]\033[0m");
-        delay(timeoutCheckNtpMilliseconds);
+        delay(DATE_INTERVAL_TIMEOUT_NTP_CHECK_MILLISECONDS);
     }
 
     /* Updating the RTC. */
