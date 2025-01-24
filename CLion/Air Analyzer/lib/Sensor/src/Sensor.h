@@ -26,7 +26,7 @@
 #include <AbstractObserver.h>
 #include <list>
 
-#include "SensorConst.h"
+#include "SensorConsts.h"
 
 /**
  * @class Sensor
