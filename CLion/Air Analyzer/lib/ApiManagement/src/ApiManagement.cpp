@@ -1,6 +1,7 @@
 #include <ApiManagement.h>
 
 ApiManagement::ApiManagement(Sensor &sensor, DatetimeInterval &datetime) : sensor(sensor), datetime(datetime) {
+    // FIXME: Add this object as observer not here.
     this->sensor.addObserver(this);
 }
 

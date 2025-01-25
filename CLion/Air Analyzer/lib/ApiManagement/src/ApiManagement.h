@@ -12,7 +12,7 @@
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
  * @version 4.0.0
- * @date 23rd January 2025
+ * @date 25th January 2025
  */
 
 #ifndef APIMANAGEMENT_H
@@ -43,40 +43,46 @@
 
         public:
             /**
-             * @brief Constructs an ApiManagement object and sets the subject class.
-             * @param sensor Subject object that will notify.
-             * @param datetime Object to check and set the datetime.
-             */
+            * @brief Constructs an ApiManagement object and sets the subject class.
+            * @param sensor Subject object that will notify.
+            * @param datetime Object to check and set the datetime.
+            * // FIXME: Is wrong. `sensor` notify any change.
+            */
             ApiManagement(Sensor &sensor, DatetimeInterval &datetime);
 
             /**
              * @brief Initializes the API management system with update intervals.
-             * @warning Call "setCredentials()" first to store the room ID in the API.
+             * @param address Server address (e.g., "192.168.1.100" or "domain.com").
+             * @param port Server port number.
+             * @param maxAttempts Number of retry attempts if requests fail (default 0).
+             * @param minutesUpdateMeasures Interval for updating measures (default 10 minutes).
+             * @warning Call `setCredentials()` first to store the room ID in the API.
              */
             void begin(const String &address, uint16_t port, uint8_t maxAttempts = 0, uint8_t minutesUpdateMeasures = 10);
 
             /**
-             * @brief Sets user credentials.
-             * @param username User's username for API access.
-             * @param password User's password for API access.
+             * @brief Sets user credentials for API authentication.
+             * @param username User's API username.
+             * @param password User's API password.
              */
             void setCredentials(const String &username, const String &password);
 
             /**
              * @brief Sets the room ID without updating the API.
-             * @param roomNumber The room number.
+             * @param roomNumber The room number to be set.
              */
             void setRoomNumber(uint8_t roomNumber);
 
             /**
-             * @brief Gets the current room ID.
-             * @return The room number.
+             * @brief Gets the current room ID stored in the object.
+             * @return The stored room number.
              */
             uint8_t getRoomNumber() const;
 
             /**
              * @brief Checks if the last update was successful.
              * @return True if the update was successful, false otherwise.
+             * // FIXME: Provide right name.
              */
             bool getIsUpdated();
 
@@ -87,67 +93,70 @@
             bool updateRoom();
 
         private:
-            Sensor &sensor;
-            DatetimeInterval &datetime;
-            WiFiClient wifiClient;
-            HTTPClient httpClient;
-            StaticJsonDocument<512> jsonDocumentLogin;
-            StaticJsonDocument<768> jsonDocumentMeasures;
-            JsonArray jsonArrayMeasures;
-            String httpJsonResponse;
-            String serverAddress;
-            uint16_t serverPort;
-            String serverUsername;
-            String serverPassword;
-            String serverToken;
-            String serverTokenType;
-            uint8_t roomNumber;
-            uint8_t maxAttempts;
-            bool isUpdated;
+            Sensor &sensor;                                 ///< Reference to the Sensor object.
+            DatetimeInterval &datetime;                     ///< Reference to the DatetimeInterval object.
+            WiFiClient wifiClient;                          ///< WiFi client for network communication.
+            HTTPClient httpClient;                          ///< HTTP client for API requests.
+            StaticJsonDocument<512> jsonDocumentLogin;      ///< JSON document for login operations.
+            StaticJsonDocument<768> jsonDocumentMeasures;   ///< JSON document for measurement data.
+            JsonArray jsonArrayMeasures;                    ///< JSON array for storing measurement data.
+            String httpJsonResponse;                        ///< Holds server responses.
+            String serverAddress;                           ///< API server address.
+            uint16_t serverPort;                            ///< API server port.
+            String serverUsername;                          ///< API username.
+            String serverPassword;                          ///< API password.
+            String serverToken;                             ///< Token received after login.
+            String serverTokenType;                         ///< Type of token received (e.g., Bearer).
+            uint8_t roomNumber;                             ///< Room number identifier.
+            uint8_t maxAttempts;                            ///< Maximum retry attempts.
+            bool isUpdated;                                 ///< Indicates whether the last update was successful.
 
             /**
              * @brief Sends a login request to the server.
-             * @return HTTP status code.
+             * @return HTTP status code returned by the server.
              */
             int requestLogin();
 
             /**
              * @brief Sends a request to change the room activation status.
-             * @return HTTP status code.
+             * @return HTTP status code returned by the server.
              */
             int requestChangeStatusActivationRoom();
 
             /**
-             * @brief Sends a request to update the local IP of the room.
-             * @param localIP The current local IP address.
-             * @return HTTP status code.
+             * @brief Sends a request to update the room's local IP address.
+             * @param localIP The current local IP address of the device.
+             * @return HTTP status code returned by the server.
              */
             int requestChangeLocalIpRoom(const String &localIP);
 
             /**
              * @brief Sends measurement data to the server.
-             * @param jsonDocumentMeasuresSerialized Serialized JSON of measurements.
-             * @return HTTP status code.
+             * @param jsonDocumentMeasuresSerialized Serialized JSON string of the measurement data.
+             * @return HTTP status code returned by the server.
              */
             int requestSetMeasures(const String &jsonDocumentMeasuresSerialized);
 
             /**
-             * @brief Handles the login process.
-             * @return True if login was successful, false otherwise.
+             * @brief Handles the login process by authenticating with the API.
+             * @return HTTP status code indicating success or failure.
              */
             int login();
 
             /**
-             * @brief Adds measurement data.
-             * @param timestamp Measurement timestamp.
-             * @param temperature Temperature value.
-             * @param humidity Humidity value.
+             * @brief Adds measurement data to the JSON array.
+             * @param timestamp Measurement timestamp in ISO 8601 format.
+             * @param temperature Temperature value in Celsius.
+             * @param humidity Humidity value in percentage.
              * @return True if the data was successfully added, false otherwise.
              */
             bool addMeasures(const String &timestamp, double temperature, double humidity);
 
             /**
-             * @brief Updates the current status with new values.
+             * @brief Updates the current status with new values from the sensor.
+             *
+             * This function is called whenever the observed sensor provides new data.
+             * // FIXME: Is wrong. update receives values.
              */
             void update();
     };
