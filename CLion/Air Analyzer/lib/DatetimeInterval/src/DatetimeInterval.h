@@ -12,7 +12,7 @@
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
  * @version 4.0.0
- * @date 23rd January 2025
+ * @date 25th January 2025
  */
 
 #ifndef DATETIMEINTERVAL_H
@@ -22,21 +22,22 @@
     #include <ESP8266WiFi.h>
     #include <NTPClient.h>
     #include <RTClib.h>
-    #include <DateTimeIntervalConsts.h>
-
     #include <Wire.h>
 
+    #include <DateTimeIntervalConsts.h>
+
     /**
-     * @class DatetimeInterval
-     * @brief Manages time intervals using an RTC module and NTP synchronization.
-     */
+    * @class DatetimeInterval
+    * @brief Manages time intervals using an RTC module and NTP synchronization.
+    *
+    * This class provides functionality to synchronize time using an NTP server and an RTC module,
+    * allowing periodic updates based on configurable time intervals.
+    */
     class DatetimeInterval {
         public:
             /**
-             * @brief Constructs a DatetimeInterval object with NTP client and timeout settings.
+             * @brief Constructs a DatetimeInterval object with NTP client settings.
              * @param ntpClient Reference to the NTPClient object for time synchronization.
-             * @param timeoutCheckRtcDay Timeout for RTC daily checks.
-             * @param timeoutCheckNtpMilliseconds Timeout for NTP synchronization in milliseconds.
              */
             explicit DatetimeInterval(NTPClient ntpClient);
 
@@ -58,28 +59,46 @@
              */
             void configNextDatetime();
 
-            /** @brief Retrieves the current year from the RTC module. */
+            /**
+             * @brief Retrieves the current year from the RTC module.
+             * @return The current year as a 4-digit integer.
+             */
             uint16_t getActualYear();
 
-            /** @brief Retrieves the current month from the RTC module. */
+            /**
+             * @brief Retrieves the current month from the RTC module.
+             * @return The current month (1-12).
+             */
             uint8_t getActualMonth();
 
-            /** @brief Retrieves the current day from the RTC module. */
+            /**
+             * @brief Retrieves the current day from the RTC module.
+             * @return The current day (1-31).
+             */
             uint8_t getActualDay();
 
             /**
              * @brief Retrieves the current day of the week from the RTC module.
-             * @return Day of the week (0 = Sunday, 1 = Monday, etc.).
+             * @return Day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday).
              */
             uint8_t getActualDayWeek();
 
-            /** @brief Retrieves the current hour from the RTC module. */
+            /**
+             * @brief Retrieves the current hour from the RTC module.
+             * @return The current hour (0-23).
+             */
             uint8_t getActualHour();
 
-            /** @brief Retrieves the current minute from the RTC module. */
+            /**
+             * @brief Retrieves the current minute from the RTC module.
+             * @return The current minute (0-59).
+             */
             uint8_t getActualMinute();
 
-            /** @brief Retrieves the current second from the RTC module. */
+            /**
+             * @brief Retrieves the current second from the RTC module.
+             * @return The current second (0-59).
+             */
             uint8_t getActualSecond();
 
             /**
@@ -91,17 +110,17 @@
 
             /**
              * @brief Retrieves the current timestamp as a formatted string.
-             * @return String representation of the current timestamp.
+             * @return A string representing the current timestamp in format "YYYY-MM-DD HH:MM:SS".
              */
             String getActualTimestamp();
 
         private:
-            NTPClient ntpClient; /**< NTP client for time synchronization. */
-            TimeSpan timespanDatetime; /**< Timespan for next scheduled update. */
-            DateTime nextDatetime; /**< Stores the next update time. */
-            RTC_DS3231 rtc; /**< RTC module instance. */
-            TimeSpan timespanDatetimeRTC; /**< RTC-based timespan for updates. */
-            DateTime nextDatetimeRTC; /**< Next RTC-based update time. */
+            NTPClient ntpClient;             /**< NTP client for time synchronization. */
+            TimeSpan timespanDatetime;       /**< Timespan for next scheduled update. */
+            DateTime nextDatetime;           /**< Stores the next scheduled update time. */
+            RTC_DS3231 rtc;                  /**< RTC module instance. */
+            TimeSpan timespanDatetimeRTC;    /**< RTC-based timespan for updates. */
+            DateTime nextDatetimeRTC;        /**< Next RTC-based update time. */
 
             /**
              * @brief Checks if the current RTC datetime exceeds the next scheduled update.
@@ -115,7 +134,7 @@
             void configNextDatetimeRTC();
 
             /**
-             * @brief Updates the RTC module with the latest time.
+             * @brief Updates the RTC module with the latest synchronized time.
              */
             void updateDatetimeRTC();
     };
