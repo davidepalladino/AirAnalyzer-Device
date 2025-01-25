@@ -11,7 +11,7 @@
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
  * @version 2.0.0
- * @date 23rd January 2025
+ * @date 25th January 2025
  */
 
 #ifndef FIRMWAREUPDATEOTA_H
@@ -26,10 +26,10 @@
 
     /**
      * @class FirmwareUpdateOTA
-     * @brief Handles over-the-air firmware updates.
+     * @brief Handles over-the-air (OTA) firmware updates.
      *
-     * This class allows an ESP8266-based system to check for and download firmware updates
-     * from a specified server.
+     * This class enables an ESP8266-based system to connect to an update server,
+     * check for new firmware versions, and download updates if available.
      */
     class FirmwareUpdateOTA {
         public:
@@ -43,25 +43,27 @@
             FirmwareUpdateOTA();
 
             /**
-             * @brief Initializes the connection settings for the update server.
+             * @brief Constructs a FirmwareUpdateOTA object.
              *
-             * This method should be called before checking for updates.
+             * Initializes the class but does not connect to the update server.
+             * Use `begin()` to set up the connection details before checking for updates.
              */
             void begin(const String &address, uint16_t port);
 
             /**
              * @brief Checks for a new firmware version on the server.
              *
-             * Compares the current firmware version with the server version and determines if an update is available.
+             * This method sends a request to the update server, compares the current
+             * firmware version with the latest available version, and determines if an update is required.
              *
-             * @param version The current firmware version.
+             * @param version The current firmware version as a string.
              * @return True if an update is available, false otherwise.
              */
             bool check(const String &version);
 
         private:
-            WiFiClient wifiClient; /**< Client for handling HTTP connections. */
-            String serverAddress;
-            uint16_t serverPort;
+            WiFiClient wifiClient;      /**< Client for handling HTTP connections to the update server. */
+            String serverAddress;       /**< The address of the update server (e.g., "http://example.com"). */
+            uint16_t serverPort;        /**< The port used to connect to the update server (default: 80). */
     };
 #endif
