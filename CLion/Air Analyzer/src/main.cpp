@@ -1,35 +1,21 @@
 /**
  * This software allows to manage the hardware of "Air Analyzer". Specifically, you can read the values about temperature and humidity,
  *  storing them into apiManagement for extern analysis.
- * Copyright (c) 2020 Davide Palladino.
+ * Copyright (c) 2025 Davide Palladino.
  * All right reserved.
  *
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 4.0.1
- * @date 23rd January 2025
+ * @version 5.0.0
+ * @date 25th January 2025
  *
  */
 
-#include <Arduino.h>
+#include <Configuration.h>
 
-#include <ESP8266WiFi.h>
-
-#include <WiFiUdp.h>
-#include <EEPROM.h>
-
-#include <NTPClient.h>
-
-#include <ServerSocketJSON.h>
-#include <Button.h>
-#include <Sensor.h>
-#include <Screen.h>
-#include <DatetimeInterval.h>
-#include <ApiManagement.h>
-#include <FirmwareUpdateOTA.h>
-
-#include "functionSetup.h"  // This includes "globalSettings.h" too.
+#include "utils.h"
+#include "settings.h"
 
 FirmwareUpdateOTA firmwareUpdate;
 ServerSocketJSON serverSocket;
@@ -57,7 +43,7 @@ void setup() {
     uint8_t actualVersionEEPROM = 0;
 
     /* Showing brand, with version, and checking if is requested of reset. */
-    showBrand(button, screen, (String&) VERSION_FIRMWARE);
+    showBrand(button, screen, const_cast<String&>(VERSION_FIRMWARE), ADDRESS_VERSION_EEPROM, TIME_LOGO, TIME_MESSAGE);
     Serial.println("\nVersion firmware: " + VERSION_FIRMWARE);
 
     /* Checking the version of data on EEPROM, to execute the right update of EEPROM and/or system. */
