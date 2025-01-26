@@ -10,7 +10,7 @@ void DatetimeInterval::begin(uint8_t totalMinuteUpdate) {
     rtc.begin();
 
     /* Calculating the datetime for next update about RTC. */
-    timespanDatetimeRTC = TimeSpan(TIMEOUT_CHECK_RTC_DAY, 0, 0, 0);
+    timespanDatetimeRTC = TimeSpan(DATE_INTERVAL_TIMEOUT_RTC_CHECK_DAY, 0, 0, 0);
     updateDatetimeRTC();
     configNextDatetimeRTC();
 
@@ -116,7 +116,7 @@ void DatetimeInterval::updateDatetimeRTC() {
         yield();
 
         Serial.println("\033[1;91m[NTP ERROR]\033[0m");
-        delay(TIMEOUT_CHECK_NTP_MILLISECONDS);
+        delay(DATE_INTERVAL_TIMEOUT_NTP_CHECK_MILLISECONDS);
     }
 
     /* Updating the RTC. */

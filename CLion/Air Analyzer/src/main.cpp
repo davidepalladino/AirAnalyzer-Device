@@ -1,44 +1,30 @@
- /**
-  * This software allows to manage the hardware of "Air Analyzer". Specifically, you can read the values about temperature and humidity, 
-  *  storing them into apiManagement for extern analysis.
-  * Copyright (c) 2020 Davide Palladino. 
-  * All right reserved.
-  * 
-  * @author Davide Palladino
-  * @contact davidepalladino@hotmail.com
-  * @website https://davidepalladino.github.io/
-  * @version 4.1.0
-  * @date 8th October, 2022
-  * 
-  */
+/**
+ * This software allows to manage the hardware of "Air Analyzer". Specifically, you can read the values about temperature and humidity,
+ *  storing them into apiManagement for extern analysis.
+ * Copyright (c) 2025 Davide Palladino.
+ * All right reserved.
+ *
+ * @author Davide Palladino
+ * @contact davidepalladino@hotmail.com
+ * @website https://davidepalladino.github.io/
+ * @version 5.0.0
+ * @date 25th January 2025
+ *
+ */
 
-#include <Arduino.h>
+#include <Configuration.h>
 
-#include <ESP8266WiFi.h>
-
-#include <WiFiUdp.h>
-#include <EEPROM.h>
-
-#include <NTPClient.h>
-
-#include <ServerSocketJSON.h>
-#include <Button.h>
-#include <Sensor.h>
-#include <Screen.h>
-#include <DatetimeInterval.h>
-#include <ApiManagement.h>
-#include <FirmwareUpdateOTA.h>
-
-#include "functionSetup.h"  // This includes "globalSettings.h" too.
+#include "utils.h"
+#include "settings.h"
 
 FirmwareUpdateOTA firmwareUpdate;
 ServerSocketJSON serverSocket;
-Button button(PIN_BUTTON, B_PULLUP, TIME_LONG_PRESS);
-Sensor sensor(ADDRESS_SENSOR, HUMIDITY_RESOLUTION, TEMPERATURE_RESOLUTION);
-Screen screen(sensor, PIN_SCL, PIN_SDA);
+Button button(BUTTON_PIN, B_PULLUP, BUTTON_TIME_LONG_PRESS);
+Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RESOLUTION);
+Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-ApiManagement apiManagement(sensor, *(new DatetimeInterval(ntpClient)));
+ApiManagement apiManagement(sensor, *(new DatetimeInterval(ntpClient)));  // TODO: MOVE to ApiManagement class
 
 String wifiSSID;
 String wifiPassword;
@@ -57,7 +43,7 @@ void setup() {
     uint8_t actualVersionEEPROM = 0;
 
     /* Showing brand, with version, and checking if is requested of reset. */
-    showBrand(button, screen, (String&) VERSION_FIRMWARE);
+    showBrand(button, screen, const_cast<String&>(VERSION_FIRMWARE), ADDRESS_VERSION_EEPROM, TIME_LOGO, TIME_MESSAGE);
     Serial.println("\nVersion firmware: " + VERSION_FIRMWARE);
 
     /* Checking the version of data on EEPROM, to execute the right update of EEPROM and/or system. */
@@ -112,7 +98,7 @@ void loop() {
         }
     } else {
         serverSocket.end();
-        serverSocket.begin(PORT_SERVER_SOCKET);
+        serverSocket.begin(SERVER_SOCKET_PORT);
     }
 
     /* 
