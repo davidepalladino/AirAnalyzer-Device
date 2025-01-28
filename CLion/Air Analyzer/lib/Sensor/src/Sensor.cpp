@@ -94,15 +94,15 @@ bool Sensor::checkHumidity(double humidity) {
     }
 }
 
-void Sensor::addObserver(AbstractObserver* observer) { observers.push_back(observer); }
+void Sensor::addObserver(SensorObserver* observer) { observers.push_back(observer); }
 
-void Sensor::removeObserver(AbstractObserver* observer) { observers.remove(observer); }
+void Sensor::removeObserver(SensorObserver* observer) { observers.remove(observer); }
 
 void Sensor::notify() {
-    std::list<AbstractObserver* >::iterator iteratorObservers = observers.begin();
+    std::list<SensorObserver* >::iterator iteratorObservers = observers.begin();
     
     while (iteratorObservers != observers.end()) {
-        (*iteratorObservers)->update();
+        (*iteratorObservers)->update(temperature, humidity);
         iteratorObservers++;
     }
 }
