@@ -11,8 +11,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 2.0.0
- * @date 25th January 2025
+ * @version 3.0.0
+ * @date 28th January 2025
  */
 
 #ifndef SENSOR_H
@@ -22,10 +22,10 @@
     #include <DHT.h>
     #include <DHT_U.h>
     #include <ClosedCube_HDC1080.h>
-    #include <AbstractSubject.h>
-    #include <AbstractObserver.h>
+    #include <SensorObserver.h>
     #include <list>
 
+    #include "SensorSubject.h"
     #include "SensorConsts.h"
 
     /**
@@ -34,12 +34,12 @@
      *
      * The Sensor class supports DHT and HDC sensor types and acts as a subject in an observer pattern.
      */
-    class Sensor : private AbstractSubject {
-        public:
-            friend class Screen;
-            friend class ApiManagement;
+    class Sensor : public SensorSubject {
+        friend class Screen;
+        friend class ApiManagement;
 
-            /**
+        public:
+        /**
              * @brief Constructs a Sensor object using a DHT sensor type.
              *
              * @param pin The GPIO pin where the DHT sensor is connected.
@@ -84,8 +84,22 @@
              */
             double getHumidity();
 
+            /**
+             * @brief Adds an observer to the list of observers.
+             *
+             * @param observer Pointer to the observer object to be added.
+             */
+            void addObserver(SensorObserver* observer) override;
+
+            /**
+             * @brief Removes an observer from the list of observers.
+             *
+             * @param observer Pointer to the observer object to be removed.
+             */
+            void removeObserver(SensorObserver* observer) override;
+
         private:
-            std::list<AbstractObserver*> observers;                     /**< List of observer objects that get notified on data changes. */
+            std::list<SensorObserver*> observers;                       /**< List of observer objects that get notified on data changes. */
             DHT *sensorDHT;                                             /**< Pointer to an instance of a DHT sensor object. */
             ClosedCube_HDC1080 *sensorHDC;                              /**< Pointer to an instance of an HDC sensor object. */
             uint8_t address;                                            /**< I2C address of the HDC sensor. */
@@ -112,20 +126,6 @@
              * // FIXME: Is wrong. update receives values.
              */
             bool checkHumidity(double humidity);
-
-            /**
-             * @brief Adds an observer to the list of observers.
-             *
-             * @param observer Pointer to the observer object to be added.
-             */
-            void addObserver(AbstractObserver* observer) override;
-
-            /**
-             * @brief Removes an observer from the list of observers.
-             *
-             * @param observer Pointer to the observer object to be removed.
-             */
-            void removeObserver(AbstractObserver* observer) override;
 
             /**
              * @brief Notifies all registered observers of data updates.

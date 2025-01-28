@@ -10,8 +10,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 2.0.0
- * @date 25th January 2025
+ * @version 3.0.0
+ * @date 28th January 2025
  */
 
 #ifndef SCREEN_H
@@ -19,7 +19,6 @@
 
     #include <Arduino.h>
     #include <U8g2lib.h>
-    #include <AbstractObserver.h>
     #include <Sensor.h>
 
     #include "ScreenConsts.h"
@@ -32,19 +31,15 @@
      *
      * This class observes the Sensor class and updates the screen accordingly.
      */
-    class Screen : private AbstractObserver {
-        friend class AbstractSubject;
-
+    class Screen : public SensorObserver {
         public:
             /**
              * @brief Constructs a Screen object.
              *
-             * @param sensor Reference to the Sensor object to observe.
              * @param pinSCL SCL pin connected to the screen (for I2C communication).
              * @param pinSDA SDA pin connected to the screen (for I2C communication).
-             * // FIXME: Is wrong. `sensor` notify any change.
              */
-            Screen(Sensor &sensor, uint8_t pinSCL, uint8_t pinSDA);
+            Screen(uint8_t pinSCL, uint8_t pinSDA);
 
             /**
              * @brief Initializes the screen display.
@@ -150,8 +145,19 @@
              */
             void showLoadingPage(const String &message, float percentage);
 
-            /** @brief Displays the main screen page with sensor data. */
-            void showMainPage();
+            /**
+             * @brief Displays the main screen page with the current sensor data.
+             *
+             * This method updates the main screen to show the latest temperature and humidity readings.
+             * It is typically called when new sensor data is available and needs to be presented
+             * to the user in a clear and user-friendly format.
+             *
+             * @param temperature The current temperature value to be displayed (in degrees Celsius).
+             * @param humidity The current humidity value to be displayed (as a percentage).
+             *
+             * @note This method assumes the screen has already been initialized and is ready for updates.
+             */
+            void showMainPage(double temperature, double humidity);
 
             /** @brief Clears the screen display. */
             void clear();
@@ -172,7 +178,6 @@
 
         private:
             U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C *screen;         /**< Pointer to the screen object. */
-            Sensor &sensor;                                         /**< Reference to the Sensor object. */
             uint8_t roomNumber;                                     /**< Stores the room number. */
             bool isConnected;                                       /**< Stores the Wi-Fi connection status. */
             bool isUpdated;                                         /**< Stores the update status. */
@@ -207,11 +212,29 @@
             /** @brief Draws the room ID on the screen. */
             void drawRoomID();
 
-            /** @brief Draws the current temperature on the screen. */
-            void drawTemperature();
+            /**
+            * @brief Draws the current temperature value on the screen.
+            *
+            * This method updates the specific area of the screen dedicated to displaying the temperature.
+            * The temperature is typically presented in degrees Celsius, formatted for readability.
+            *
+            * @param temperature The temperature value to be displayed (in degrees Celsius).
+            *
+            * @note The screen must be initialized and set to the appropriate display page before calling this method.
+            */
+            void drawTemperature(double temperature);
 
-            /** @brief Draws the current humidity on the screen. */
-            void drawHumidity();
+            /**
+             * @brief Draws the current humidity value on the screen.
+             *
+             * This method updates the specific area of the screen dedicated to displaying the humidity.
+             * The humidity is typically presented as a percentage.
+             *
+             * @param humidity The humidity value to be displayed (as a percentage).
+             *
+             * @note The screen must be initialized and set to the appropriate display page before calling this method.
+             */
+            void drawHumidity(double humidity);
 
             /** @brief Draws the Wi-Fi connection status icon. */
             void drawWiFiStatus();
@@ -220,10 +243,19 @@
             void drawUpdateStatus();
 
             /**
-             * @brief Updates the screen content based on the observed changes.
-             * // FIXME: Is wrong. update receives values.
+             * @brief Updates the screen content based on the latest sensor data.
+             *
+             * This method refreshes the display to show the updated temperature and humidity values.
+             * It is typically invoked when the observed sensor detects changes in its readings.
+             *
+             * @param temperature The updated temperature value (in degrees Celsius).
+             * @param humidity The updated humidity value (as a percentage).
+             *
+             * @note
+             * - The screen must be initialized and displaying the appropriate page before calling this method.
+             * - Call this method only when new data is available from the sensor to avoid unnecessary updates.
              */
-            void update();
+            void update(double temperature, double humidity) override;
     };
 
 #endif // SCREEN_H
