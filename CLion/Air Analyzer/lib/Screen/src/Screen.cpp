@@ -1,7 +1,6 @@
 #include <Screen.h>
 
-Screen::Screen(Sensor& sensor, uint8_t pinSCL, uint8_t pinSDA) : sensor(sensor) {
-    sensor.addObserver(this);
+Screen::Screen(uint8_t pinSCL, uint8_t pinSDA) {
     screen = new U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C (U8G2_R0, pinSCL, pinSDA);
 
     roomNumber = 0;
@@ -89,12 +88,12 @@ void Screen::showLoadingPage(const String &message, float percentage) {
     } while (screen->nextPage());
 }
 
-void Screen::showMainPage() {
+void Screen::showMainPage(double temperature, double humidity) {
     screen->firstPage();
     do {
         drawRoomID();
-        drawTemperature();
-        drawHumidity();
+        drawTemperature(temperature);
+        drawHumidity(humidity);
         drawWiFiStatus();
         drawUpdateStatus();
     } while (screen->nextPage());
@@ -151,20 +150,20 @@ void Screen::drawRoomID() {
     screen->print(roomNumber);
 }
 
-void Screen::drawTemperature() {
+void Screen::drawTemperature(double temperature) {
     screen->drawXBMP(positionLogoTemperature[0], positionLogoTemperature[1], logoTemperatureWidth, logoTemperatureHeight, logoTemperature);
     screen->setFont(u8g2_font_smart_patrol_nbp_tf);
     screen->setCursor(positionValueTemperature[0], positionValueTemperature[1]);
-    screen->print(sensor.getTemperature(), 1);
+    screen->print(temperature, 1);
     screen->setCursor(positionUnitTemperature[0], positionUnitTemperature[1]);
     screen->print(String((char) 176) + "C");
 }
 
-void Screen::drawHumidity() {
+void Screen::drawHumidity(double humidity) {
     screen->drawXBMP(positionLogoHumidity[0], positionLogoHumidity[1], logoHumidityWidth, logoHumidityHeight, logoHumidity);
     screen->setFont(u8g2_font_smart_patrol_nbp_tf);
     screen->setCursor(positionValueHumidity[0], positionValueHumidity[1]);
-    screen->print(sensor.getHumidity(), 1);
+    screen->print(humidity, 1);
     screen->setCursor(positionUnitHumidity[0], positionUnitHumidity[1]);
     screen->print(" %");   
 }
@@ -183,8 +182,8 @@ void Screen::drawUpdateStatus() {
     }
 }
 
-void Screen::update() {
+void Screen::update(double temperature, double humidity) {
     if (isViewable) {
-        showMainPage();
+        showMainPage(temperature, humidity);
     }
 }

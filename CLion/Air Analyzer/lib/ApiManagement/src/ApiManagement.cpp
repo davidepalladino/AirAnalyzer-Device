@@ -1,9 +1,6 @@
 #include <ApiManagement.h>
 
-ApiManagement::ApiManagement(Sensor &sensor, DatetimeInterval &datetime) : sensor(sensor), datetime(datetime) {
-    // FIXME: Add this object as observer not here.
-    this->sensor.addObserver(this);
-}
+ApiManagement::ApiManagement(DatetimeInterval &datetime) : datetime(datetime) { }
 
 void ApiManagement::begin(const String &address, uint16_t port, uint8_t maxAttempts, uint8_t minutesUpdateMeasures) {
     Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
@@ -131,11 +128,11 @@ bool ApiManagement::addMeasures(const String &timestamp, double temperature, dou
     return isUpdated;
 }
 
-void ApiManagement::update() {
+void ApiManagement::update(double temperature, double humidity) {
     if (datetime.checkDatetime()) {
         Serial.println("\033[1;92m-------------------- [DATABASE] -------------------\033[0m");
 
-        addMeasures(datetime.getActualTimestamp(), sensor.getTemperature(), sensor.getHumidity());
+        addMeasures(datetime.getActualTimestamp(), temperature, humidity);
         datetime.configNextDatetime();
 
         Serial.println("\033[1;96m[FREE HEAP SIZE: " + String(ESP.getFreeHeap()) + "]\033[0m");

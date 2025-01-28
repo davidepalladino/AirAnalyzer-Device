@@ -11,8 +11,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 4.0.0
- * @date 25th January 2025
+ * @version 5.0.0
+ * @date 28th January 2025
  */
 
 #ifndef APIMANAGEMENT_H
@@ -23,7 +23,6 @@
     #include <ESP8266WiFi.h>
     #include <ESP8266HTTPClient.h>
     #include <ArduinoJson.h>
-    #include <AbstractObserver.h>
     #include <DatetimeInterval.h>
     #include <Sensor.h>
 
@@ -38,17 +37,13 @@
      * This class connects to a REST API server, performing operations such as user login,
      * updating room status, and sending measurement data.
      */
-    class ApiManagement : private AbstractObserver {
-        friend class AbstractSubject;
-
+    class ApiManagement : public SensorObserver {
         public:
             /**
             * @brief Constructs an ApiManagement object and sets the subject class.
-            * @param sensor Subject object that will notify.
             * @param datetime Object to check and set the datetime.
-            * // FIXME: Is wrong. `sensor` notify any change.
             */
-            ApiManagement(Sensor &sensor, DatetimeInterval &datetime);
+            ApiManagement(DatetimeInterval &datetime);
 
             /**
              * @brief Initializes the API management system with update intervals.
@@ -92,8 +87,22 @@
              */
             bool updateRoom();
 
+            /**
+             * @brief Updates the system status with new sensor values.
+             *
+             * This method is invoked whenever the observed sensor provides updated data.
+             * It processes the temperature and humidity readings, updates internal states,
+             * and triggers any dependent actions based on the new values.
+             *
+             * @param temperature The updated temperature value reported by the sensor (in degrees Celsius).
+             * @param humidity The updated humidity value reported by the sensor (as a percentage).
+             *
+             * @note This method is marked `override` to ensure it implements a virtual function
+             *       from a base class.
+             */
+            void update(double temperature, double humidity) override;
+
         private:
-            Sensor &sensor;                                 ///< Reference to the Sensor object.
             DatetimeInterval &datetime;                     ///< Reference to the DatetimeInterval object.
             WiFiClient wifiClient;                          ///< WiFi client for network communication.
             HTTPClient httpClient;                          ///< HTTP client for API requests.
@@ -151,14 +160,6 @@
              * @return True if the data was successfully added, false otherwise.
              */
             bool addMeasures(const String &timestamp, double temperature, double humidity);
-
-            /**
-             * @brief Updates the current status with new values from the sensor.
-             *
-             * This function is called whenever the observed sensor provides new data.
-             * // FIXME: Is wrong. update receives values.
-             */
-            void update();
     };
 
 #endif // APIMANAGEMENT_H
