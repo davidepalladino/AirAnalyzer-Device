@@ -196,8 +196,8 @@ void loop() {
     if ((timeoutStandbyScreen < millis()) && (timeoutStandbyScreen != 0)) {
         timeoutStandbyScreen = 0;
 
-        // screen.clear();
-        // screen.setIsViewable(false);
+        screen.clear();
+        screen.setIsViewable(false);
     }
 
     /* Waiting the first measure to set the first standby. */
