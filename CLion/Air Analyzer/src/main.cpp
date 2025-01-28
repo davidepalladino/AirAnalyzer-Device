@@ -7,12 +7,13 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 5.0.0
- * @date 25th January 2025
+ * @version 6.0.0
+ * @date 28th January 2025
  *
  */
 
 #include <Configuration.h>
+#include <SensorObserver.h>
 
 #include "utils.h"
 #include "settings.h"
@@ -21,10 +22,10 @@ FirmwareUpdateOTA firmwareUpdate;
 ServerSocketJSON serverSocket;
 Button button(BUTTON_PIN, B_PULLUP, BUTTON_TIME_LONG_PRESS);
 Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RESOLUTION);
-Screen screen(sensor, SCREEN_PIN_SCL, SCREEN_PIN_SDA);
+Screen screen(SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-ApiManagement apiManagement(sensor, *(new DatetimeInterval(ntpClient)));  // TODO: MOVE to ApiManagement class
+ApiManagement apiManagement(*(new DatetimeInterval(ntpClient)));  // TODO: MOVE to ApiManagement class
 
 String wifiSSID;
 String wifiPassword;
@@ -41,6 +42,10 @@ void setup() {
     EEPROM.begin(SIZE_EEPROM);
 
     uint8_t actualVersionEEPROM = 0;
+
+    /* Adding observers to Sensor. */
+    sensor.addObserver(&apiManagement);
+    sensor.addObserver(&screen);
 
     /* Showing brand, with version, and checking if is requested of reset. */
     showBrand(button, screen, const_cast<String&>(VERSION_FIRMWARE), ADDRESS_VERSION_EEPROM, TIME_LOGO, TIME_MESSAGE);
@@ -145,13 +150,13 @@ void loop() {
                 apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
             }
             screen.setRoomNumber(apiManagement.getRoomNumber());
-            screen.showMainPage();
+            screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
 
             timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
             timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
         } else {
             screen.setIsViewable(true);
-            screen.showMainPage();
+            screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
 
             timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
         }
@@ -174,12 +179,12 @@ void loop() {
     /* Updating the status icons on the screen if there is a change. */
     if (screen.getIsUpdated() != apiManagement.getIsUpdated()) {
         screen.setIsUpdated(apiManagement.getIsUpdated());
-        screen.showMainPage();
+        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     }  
 
     if (screen.getIsConnected() != WiFi.isConnected()) {
         screen.setIsConnected(WiFi.isConnected());
-        screen.showMainPage();
+        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     } 
 
     /* If there was an error on previous saving of the new room ID into apiManagement, there will be a new attempt. */
@@ -191,8 +196,8 @@ void loop() {
     if ((timeoutStandbyScreen < millis()) && (timeoutStandbyScreen != 0)) {
         timeoutStandbyScreen = 0;
 
-        screen.clear();
-        screen.setIsViewable(false);
+        // screen.clear();
+        // screen.setIsViewable(false);
     }
 
     /* Waiting the first measure to set the first standby. */
