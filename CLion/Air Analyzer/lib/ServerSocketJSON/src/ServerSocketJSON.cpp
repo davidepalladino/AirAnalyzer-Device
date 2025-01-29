@@ -25,7 +25,7 @@ void ServerSocketJSON::end() {
 
 bool ServerSocketJSON::attachClient() {
     if (server != nullptr && isConnected() && !isAttached()) {
-        client = server->available();
+        client = server->accept();
 
         if (client) {
             Serial.println("Client connected.");
