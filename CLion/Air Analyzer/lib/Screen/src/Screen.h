@@ -10,7 +10,7 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 3.0.0
+ * @version 4.0.0
  * @date 29th January 2025
  */
 
