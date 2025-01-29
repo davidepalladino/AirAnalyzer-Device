@@ -11,7 +11,7 @@
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
  * @version 3.0.0
- * @date 28th January 2025
+ * @date 29th January 2025
  */
 
 #ifndef SCREEN_H
@@ -59,49 +59,43 @@
              * @brief Sets the Wi-Fi connection status.
              *
              * @param isConnected True if connected, false otherwise.
-             * // FIXME: Provide right name.
              */
-            void setIsConnected(bool isConnected);
+            void isConnected(bool isConnected);
 
             /**
              * @brief Gets the Wi-Fi connection status.
              *
              * @return True if connected, false otherwise.
-             * // FIXME: Provide right name.
              */
-            bool getIsConnected();
+            bool isConnected();
 
             /**
              * @brief Sets the update status of the system.
              * 
              * @param isUpdated True if updated, false otherwise.
-             * // FIXME: Provide right name.
              */
-            void setIsUpdated(bool isUpdated);
+            void isUpdated(bool isUpdated);
 
             /**
              * @brief Gets the update status of the system.
              * 
              * @return True if updated, false otherwise.
-             * // FIXME: Provide right name.
              */
-            bool getIsUpdated();
+            bool isUpdated();
 
             /**
              * @brief Sets the screen visibility status.
              * 
              * @param isViewable True if the screen should be visible, false otherwise.
-             * // FIXME: Provide right name.
              */
-            void setIsViewable(bool isViewable);
+            void isDisplayable(bool isViewable);
 
             /**
              * @brief Gets the screen visibility status.
              * 
              * @return True if the screen is viewable, false otherwise.
-             * // FIXME: Provide right name.
              */
-            bool getIsViewable();
+            bool isDisplayable();
 
         
             // VIEWS for installation and configuration
@@ -179,9 +173,9 @@
         private:
             U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C *screen;         /**< Pointer to the screen object. */
             uint8_t roomNumber;                                     /**< Stores the room number. */
-            bool isConnected;                                       /**< Stores the Wi-Fi connection status. */
-            bool isUpdated;                                         /**< Stores the update status. */
-            bool isViewable;                                        /**< Stores the screen visibility status. */
+            bool connectionState;                                   /**< Stores the Wi-Fi connection status. */
+            bool updateState;                                       /**< Stores the update status. */
+            bool displayState;                                      /**< Stores the screen visibility status. */
 
             /** @brief Draws the brand logo on the screen. */
             void drawBrand();

@@ -143,7 +143,7 @@ void loop() {
             }
         }
     } else if (resultButton == 1) {
-        if (screen.getIsViewable()) {
+        if (screen.isDisplayable()) {
             if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
                 apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
             } else {
@@ -155,7 +155,7 @@ void loop() {
             timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
             timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
         } else {
-            screen.setIsViewable(true);
+            screen.isDisplayable(true);
             screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
 
             timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
@@ -177,13 +177,13 @@ void loop() {
     }
 
     /* Updating the status icons on the screen if there is a change. */
-    if (screen.getIsUpdated() != apiManagement.isUpdated()) {
-        screen.setIsUpdated(apiManagement.isUpdated());
+    if (screen.isUpdated() != apiManagement.isUpdated()) {
+        screen.isUpdated(apiManagement.isUpdated());
         screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     }  
 
-    if (screen.getIsConnected() != WiFi.isConnected()) {
-        screen.setIsConnected(WiFi.isConnected());
+    if (screen.isConnected() != WiFi.isConnected()) {
+        screen.isConnected(WiFi.isConnected());
         screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     } 
 
@@ -197,7 +197,7 @@ void loop() {
         timeoutStandbyScreen = 0;
 
         screen.clear();
-        screen.setIsViewable(false);
+        screen.isDisplayable(false);
     }
 
     /* Waiting the first measure to set the first standby. */

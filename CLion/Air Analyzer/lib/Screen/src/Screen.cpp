@@ -5,26 +5,26 @@ Screen::Screen(uint8_t pinSCL, uint8_t pinSDA) {
 
     roomNumber = 0;
 
-    isConnected = true;
-    isUpdated = false;
-    isViewable = true;
+    connectionState = true;
+    updateState = false;
+    displayState = true;
 }
 
 void Screen::begin() { screen->begin(); }
 
 void Screen::setRoomNumber(uint8_t roomNumber) { this->roomNumber = roomNumber; }
 
-void Screen::setIsConnected(bool isConnected) { this->isConnected = isConnected; }
+void Screen::isConnected(bool isConnected) { this->connectionState = isConnected; }
 
-bool Screen::getIsConnected() { return isConnected; }
+bool Screen::isConnected() { return connectionState; }
 
-void Screen::setIsUpdated(bool isUpdated) { this->isUpdated = isUpdated; }
+void Screen::isUpdated(bool isUpdated) { this->updateState = isUpdated; }
 
-bool Screen::getIsUpdated() { return isUpdated; }
+bool Screen::isUpdated() { return updateState; }
 
-void Screen::setIsViewable(bool isViewable) { this->isViewable = isViewable; }
+void Screen::isDisplayable(bool isViewable) { this->displayState = isViewable; }
 
-bool Screen::getIsViewable() { return isViewable; }
+bool Screen::isDisplayable() { return displayState; }
 
 
 // INSTALLATION and CONFIGURATION VIEWS
@@ -169,21 +169,21 @@ void Screen::drawHumidity(double humidity) {
 }
 
 void Screen::drawWiFiStatus() {
-    if (isConnected) {
+    if (connectionState) {
         screen->setFont(u8g2_font_open_iconic_www_1x_t);
         screen->drawGlyph(positionLogoWiFi[0], positionLogoWiFi[1], 0x0048); 
     }
 }
 
 void Screen::drawUpdateStatus() {
-    if (!isUpdated) {
+    if (!updateState) {
         screen->setFont(u8g2_font_open_iconic_embedded_1x_t);
         screen->drawGlyph(positionLogoError[0], positionLogoError[1], 0x0047); 
     }
 }
 
 void Screen::update(double temperature, double humidity) {
-    if (isViewable) {
+    if (displayState) {
         showMainPage(temperature, humidity);
     }
 }
