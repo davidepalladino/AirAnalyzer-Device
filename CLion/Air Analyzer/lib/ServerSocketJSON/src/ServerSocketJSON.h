@@ -14,8 +14,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 2.0.1
- * @date 25th January 2025
+ * @version 3.0.0
+ * @date 28th January 2025
  *
  * @include ArduinoJson v6.18.2.
  */
