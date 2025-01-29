@@ -12,7 +12,7 @@
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
  * @version 3.0.0
- * @date 28th January 2025
+ * @date 29th January 2025
  */
 
 #ifndef SENSOR_H
@@ -114,7 +114,6 @@
              *
              * @param temperature The new temperature reading to compare.
              * @return True if a significant change is detected, false otherwise.
-             * // FIXME: Is wrong. update receives values.
              */
             bool checkTemperature(double temperature);
 
@@ -123,7 +122,6 @@
              *
              * @param humidity The new humidity reading to compare.
              * @return True if a significant change is detected, false otherwise.
-             * // FIXME: Is wrong. update receives values.
              */
             bool checkHumidity(double humidity);
 
