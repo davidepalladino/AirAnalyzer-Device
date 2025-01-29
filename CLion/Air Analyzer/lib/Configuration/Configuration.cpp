@@ -99,8 +99,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     while (!isCredentialsRetrieved) {
         serverSocket.attachClient();
 
-        requestCodeSocket = serverSocket.listen();
-        if (requestCodeSocket == 1) {
+        if (serverSocket.listen() == 1) {
             socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
             isCredentialsRetrieved = true;
         }
