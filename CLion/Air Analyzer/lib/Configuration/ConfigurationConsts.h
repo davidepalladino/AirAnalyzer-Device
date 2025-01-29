@@ -2,7 +2,7 @@
 
 // ### MAIN ###
 // Versions
-const String VERSION_FIRMWARE =                                         "6.0.0";
+const String VERSION_FIRMWARE =                                         "6.0.1";
 constexpr uint8_t VERSION_EEPROM =                                      3;
 
 // EEPROM
