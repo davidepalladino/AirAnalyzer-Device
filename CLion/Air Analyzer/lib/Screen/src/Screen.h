@@ -23,8 +23,6 @@
 
     #include "ScreenConsts.h"
 
-    class Sensor;
-
     /**
      * @class Screen
      * @brief Manages screen operations and updates for the Air Analyzer system.
