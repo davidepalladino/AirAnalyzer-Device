@@ -53,7 +53,8 @@ int ApiManagement::login() {
     do {
         yield();
 
-        if (const uint16_t resultStatusCode = requestLogin()) {
+        const uint16_t resultStatusCode = requestLogin();
+        if (resultStatusCode == 200) {
             /* Storing the token for next purposes. */
             jsonDocumentLogin["token"]["tokenType"] = true;
             deserializeJson(jsonDocumentLogin, httpJsonResponse);
