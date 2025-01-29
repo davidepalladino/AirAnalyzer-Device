@@ -11,8 +11,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 4.0.0
- * @date 25th January 2025
+ * @version 5.0.0
+ * @date 29th January 2025
  */
 
 #ifndef DATETIMEINTERVAL_H
@@ -106,7 +106,7 @@
              * @param datetime Reference to the DateTime object.
              * @return Struct tm representing the datetime.
              */
-            struct tm getTmDatetime(DateTime &datetime);
+            struct tm getTmDatetime(const DateTime &datetime);
 
             /**
              * @brief Retrieves the current timestamp as a formatted string.
