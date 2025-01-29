@@ -11,8 +11,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 5.0.0
- * @date 28th January 2025
+ * @version 6.0.0
+ * @date 29th January 2025
  */
 
 #ifndef APIMANAGEMENT_H
