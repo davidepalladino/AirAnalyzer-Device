@@ -25,7 +25,7 @@ Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RES
 Screen screen(SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-ApiManagement apiManagement(*(new DatetimeInterval(ntpClient)));  // TODO: MOVE to ApiManagement class
+ApiManagement apiManagement(*(new DatetimeInterval(ntpClient)));
 
 String wifiSSID;
 String wifiPassword;
@@ -94,7 +94,7 @@ void loop() {
                     socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
                     EEPROM.end();
 
-                    delay(calculateDelay((long) timeStartedMessage, TIME_MESSAGE));
+                    delay(calculateDelay(static_cast<long>(timeStartedMessage), TIME_MESSAGE));
                     break;
 
                 default:
@@ -113,14 +113,13 @@ void loop() {
      */
     resultButton = button.checkPress();
     if (resultButton == -1) {
-        char c_wifiSSID[SIZE_WIFI_SSID];
-        char c_wifiPassword[SIZE_WIFI_PASSWORD];
-
         screen.showMessagePage(messagePageSearchingMessage);
 
-        bool result = WiFi.beginWPSConfig();
-        if (result) {
+        if (WiFi.beginWPSConfig()) {
             if (WiFi.SSID().length() > 0) {
+                char c_wifiPassword[SIZE_WIFI_PASSWORD];
+                char c_wifiSSID[SIZE_WIFI_SSID];
+
                 wifiSSID = WiFi.SSID();
                 wifiSSID.toCharArray(c_wifiSSID, SIZE_WIFI_SSID);
                 wifiPassword = WiFi.psk();
