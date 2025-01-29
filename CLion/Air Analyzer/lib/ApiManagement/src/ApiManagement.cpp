@@ -12,7 +12,7 @@ void ApiManagement::begin(const String &address, uint16_t port, uint8_t maxAttem
 
     this->maxAttempts = maxAttempts;
 
-    this->isUpdated = true;
+    this->updateState = true;
 
     while (!updateRoom()) { delay(1000); };
 }
@@ -26,26 +26,24 @@ void ApiManagement::setRoomNumber(uint8_t roomNumber) { this->roomNumber = roomN
 
 uint8_t ApiManagement::getRoomNumber() const { return roomNumber; }
 
-bool ApiManagement::getIsUpdated() { return isUpdated; }
+bool ApiManagement::isUpdated() { return updateState; }
 
 bool ApiManagement::updateRoom() {
     if (WiFi.status() == WL_CONNECTED) {
         if (login() == 200) {
-            if (requestChangeStatusActivationRoom() == 200 && requestChangeLocalIpRoom(WiFi.localIP().toString()) == 200) {
-                isUpdated = true;
+            if (requestRoomChangeStateActivation() == 200 && requestRoomChangeLocalIp(WiFi.localIP().toString()) == 200) {
+                updateState = true;
             } else {
-                isUpdated = false;
+                updateState = false;
             }
         } else {
-            isUpdated = false;
+            updateState = false;
         }
-    } else if (WiFi.status() == WL_DISCONNECTED) {
-        isUpdated = false;
     } else {
-        isUpdated = false;
+        updateState = false;
     }
 
-    return isUpdated;
+    return updateState;
 }
 
 int ApiManagement::login() {
@@ -55,16 +53,14 @@ int ApiManagement::login() {
     do {
         yield();
 
-        uint16_t resultStatusCode = requestLogin();
-        switch (resultStatusCode) {
-            case 200:
-                /* Storing the token for next purposes. */
-                jsonDocumentLogin["token"]["tokenType"] = true;
-                deserializeJson(jsonDocumentLogin, httpJsonResponse);
-                serverToken = (String) jsonDocumentLogin["token"];
-                serverTokenType = (String) jsonDocumentLogin["tokenType"];
+        if (const uint16_t resultStatusCode = requestLogin()) {
+            /* Storing the token for next purposes. */
+            jsonDocumentLogin["token"]["tokenType"] = true;
+            deserializeJson(jsonDocumentLogin, httpJsonResponse);
+            serverToken = static_cast<String>(jsonDocumentLogin["token"]);
+            serverTokenType = static_cast<String>(jsonDocumentLogin["tokenType"]);
 
-                return resultStatusCode;
+            return resultStatusCode;
         }
     } while (countAttempts++ < maxAttempts);
 
@@ -77,7 +73,7 @@ bool ApiManagement::addMeasures(const String &timestamp, double temperature, dou
         jsonArrayMeasures.remove(0);
     }
 
-    JsonObject measures = jsonArrayMeasures.createNestedObject();
+    const JsonObject measures = jsonArrayMeasures.createNestedObject();
     measures["when"] = timestamp;
     measures["room_number"] = roomNumber;
     measures["temperature"] = String(temperature, 2);
@@ -92,18 +88,18 @@ bool ApiManagement::addMeasures(const String &timestamp, double temperature, dou
      */
     if (WiFi.status() == WL_CONNECTED) {
         if (login() == 200) {
-            if (isUpdated) {
-                requestChangeLocalIpRoom(WiFi.localIP().toString());
+            if (updateState) {
+                requestRoomChangeLocalIp(WiFi.localIP().toString());
             }
 
-            requestSetMeasures(jsonDocumentMeasuresSerialized);
+            requestMeasuresSet(jsonDocumentMeasuresSerialized);
 
             Serial.println("\033[1;92m---------------- [TRANSACTION JSON] ---------------\033[0m");
             for (auto && jsonArrayMeasure : jsonArrayMeasures) {
                 yield();
 
                 JsonObject measure = jsonArrayMeasure.as<JsonObject>();
-                Serial.println("\033[1;92mVALUES AT " + (String) measure["when"] + "\033[0m");
+                Serial.println("\033[1;92mVALUES AT " + static_cast<String>(measure["when"]) + "\033[0m");
                 Serial.println("\t\033[1;97mTEMPERATURE:   " + String(measure["temperature"]) + "\033[0m");
                 Serial.println("\t\033[1;97mHUMIDITY:      " + String(measure["humidity"]) + "\033[0m");
             }
@@ -112,20 +108,20 @@ bool ApiManagement::addMeasures(const String &timestamp, double temperature, dou
             jsonArrayMeasures.clear();
             jsonDocumentMeasures.garbageCollect();
 
-            isUpdated = true;
-            return isUpdated;
+            updateState = true;
+        } else {
+            updateState = false;
         }
 
-        isUpdated = false;
-        return isUpdated;
+        return updateState;
     }
 
     if (WiFi.status() == WL_DISCONNECTED) {
         Serial.println("\033[1;91m[WIFI ERROR FROM ApiManagement]\033[0m");
     }
 
-    isUpdated = false;
-    return isUpdated;
+    updateState = false;
+    return updateState;
 }
 
 void ApiManagement::update(double temperature, double humidity) {
@@ -142,7 +138,7 @@ void ApiManagement::update(double temperature, double humidity) {
 int ApiManagement::requestLogin() {
     httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_USER_LOGIN);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    int responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
+    const int responseCode = httpClient.POST("username=" + serverUsername + "&password=" + serverPassword);
     httpJsonResponse = httpClient.getString();
     httpClient.end();
 
@@ -151,23 +147,23 @@ int ApiManagement::requestLogin() {
     return responseCode;
 }
 
-int ApiManagement::requestChangeStatusActivationRoom() {
-    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION);
+int ApiManagement::requestRoomChangeStateActivation() {
+    httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_ROOM_CHANGE_STATE_ACTIVATION);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
+    const int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&is_active=1");
     httpClient.end();
 
-    Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_ROOM_CHANGE_STATUS_ACTIVATION + ": " + String(responseCode) + "]\033[0m\n");
+    Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_ROOM_CHANGE_STATE_ACTIVATION + ": " + String(responseCode) + "]\033[0m\n");
 
     return responseCode;
 }
 
-int ApiManagement::requestChangeLocalIpRoom(const String &localIP) {
+int ApiManagement::requestRoomChangeLocalIp(const String &localIP) {
     httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/x-www-form-urlencoded");
-    int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
+    const int responseCode = httpClient.PATCH("number=" + String(roomNumber) + "&local_ip=" + localIP);
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_ROOM_API_CHANGE_LOCAL_IP + ": " + String(responseCode) + "]\033[0m\n");
@@ -175,12 +171,12 @@ int ApiManagement::requestChangeLocalIpRoom(const String &localIP) {
     return responseCode;
 }
 
-int ApiManagement::requestSetMeasures(const String &jsonDocumentMeasuresSerialized) {
+int ApiManagement::requestMeasuresSet(const String &jsonDocumentMeasuresSerialized) {
     httpClient.begin(wifiClient, serverAddress + ":" + serverPort + "/" + API_MANAGEMENT_URI_MEASURE_SET);
     httpClient.addHeader("Authorization", serverTokenType + " " + serverToken);
     httpClient.addHeader("Content-Type", "application/json");
     httpClient.addHeader("Accept", "application/json");
-    int responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
+    const int responseCode = httpClient.POST(jsonDocumentMeasuresSerialized);
     httpClient.end();
 
     Serial.println("\033[1;96m[RESPONSE FOR " + API_MANAGEMENT_URI_MEASURE_SET + ": " + String(responseCode) + "]\033[0m\n");

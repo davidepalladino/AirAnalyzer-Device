@@ -181,5 +181,5 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
     screen.setRoomNumber(roomID);
     screen.setIsConnected(WiFi.isConnected());
-    screen.setIsUpdated(apiManagement.getIsUpdated());
+    screen.setIsUpdated(apiManagement.isUpdated());
 }

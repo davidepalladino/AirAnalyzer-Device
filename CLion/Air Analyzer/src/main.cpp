@@ -177,8 +177,8 @@ void loop() {
     }
 
     /* Updating the status icons on the screen if there is a change. */
-    if (screen.getIsUpdated() != apiManagement.getIsUpdated()) {
-        screen.setIsUpdated(apiManagement.getIsUpdated());
+    if (screen.getIsUpdated() != apiManagement.isUpdated()) {
+        screen.setIsUpdated(apiManagement.isUpdated());
         screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     }  
 
