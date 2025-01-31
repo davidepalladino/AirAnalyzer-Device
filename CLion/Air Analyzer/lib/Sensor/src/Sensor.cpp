@@ -2,7 +2,7 @@
 
 Sensor::Sensor(uint8_t pin, uint8_t type) {
     sensorDHT = new DHT(pin, type);
-    sensorHDC = NULL;
+    sensorHDC = nullptr;
 
     temperature = 0;
     humidity = 0;
@@ -11,7 +11,7 @@ Sensor::Sensor(uint8_t pin, uint8_t type) {
 }
 
 Sensor::Sensor(uint8_t address, HDC1080_MeasurementResolution humidityResolution, HDC1080_MeasurementResolution temperatureResolution) {
-    sensorDHT = NULL;
+    sensorDHT = nullptr;
     sensorHDC = new ClosedCube_HDC1080();
 
     this->address = address;
@@ -23,9 +23,9 @@ Sensor::Sensor(uint8_t address, HDC1080_MeasurementResolution humidityResolution
 }
 
 void Sensor::begin() { 
-    if (sensorDHT != NULL) {
+    if (sensorDHT != nullptr) {
         sensorDHT->begin();
-    } else if (sensorHDC != NULL) {
+    } else if (sensorHDC != nullptr) {
         sensorHDC->begin(address);
         sensorHDC->setResolution(humidityResolution, temperatureResolution);
     }
@@ -34,18 +34,18 @@ void Sensor::begin() {
 bool Sensor::check() {
     bool changed = false;
 
-    if (sensorDHT != NULL) {
+    if (sensorDHT != nullptr) {
         if (checkTemperature(sensorDHT->readTemperature()) || checkHumidity(sensorDHT->readHumidity())) {
             changed = true;
         } else {
             changed = false;
         }
-    } else if (sensorHDC != NULL) {
+    } else if (sensorHDC != nullptr) {
         /* 
          * There is a case where "timeout" will go to overflow and the result of "millis()" not. 
          * In this case the sensor will be read every time until the result of "millis()" will go to overflow, too. 
          */
-        if ((long) (endTimeoutHDC - millis()) <= 0) {
+        if (static_cast<long>(endTimeoutHDC - millis()) <= 0) {
             endTimeoutHDC = millis() + TIMEOUT_READ_HDC;
 
             if (checkTemperature(sensorHDC->readTemperature()) || checkHumidity(sensorHDC->readHumidity())) {
@@ -63,13 +63,13 @@ bool Sensor::check() {
         if ((getTemperature() >= 1) && (getHumidity() >= 1) && (getTemperature() <= 124) && (getHumidity() <= 99)) {
             notify();
             return true;
-        } else {
-            Serial.println("\033[1;91m[SENSOR ERROR]\033[0m");
-            return false;
         }
-    } else {
+
+        Serial.println("\033[1;91m[SENSOR ERROR]\033[0m");
         return false;
     }
+
+    return false;
 }
 
 double Sensor::getTemperature() { return temperature; }
@@ -80,18 +80,18 @@ bool Sensor::checkTemperature(double temperature) {
     if (getTemperature() != temperature) {
         this->temperature = temperature;
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 bool Sensor::checkHumidity(double humidity) {
     if (getHumidity() != humidity) {
         this->humidity = humidity;
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 void Sensor::addObserver(SensorObserver* observer) { observers.push_back(observer); }
@@ -103,6 +103,6 @@ void Sensor::notify() {
     
     while (iteratorObservers != observers.end()) {
         (*iteratorObservers)->update(temperature, humidity);
-        iteratorObservers++;
+        ++iteratorObservers;
     }
 }

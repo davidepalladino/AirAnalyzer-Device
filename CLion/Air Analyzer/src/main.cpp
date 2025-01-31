@@ -7,7 +7,7 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 6.0.0
+ * @version 6.0.1
  * @date 28th January 2025
  *
  */
@@ -25,7 +25,7 @@ Sensor sensor(SENSOR_ADDRESS, SENSOR_HUMIDITY_RESOLUTION, SENSOR_TEMPERATURE_RES
 Screen screen(SCREEN_PIN_SCL, SCREEN_PIN_SDA);
 
 NTPClient ntpClient(*new WiFiUDP(), (long) 0);
-ApiManagement apiManagement(*(new DatetimeInterval(ntpClient)));  // TODO: MOVE to ApiManagement class
+ApiManagement apiManagement(*(new DatetimeInterval(ntpClient)));
 
 String wifiSSID;
 String wifiPassword;
@@ -94,7 +94,7 @@ void loop() {
                     socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
                     EEPROM.end();
 
-                    delay(calculateDelay((long) timeStartedMessage, TIME_MESSAGE));
+                    delay(calculateDelay(static_cast<long>(timeStartedMessage), TIME_MESSAGE));
                     break;
 
                 default:
@@ -113,14 +113,13 @@ void loop() {
      */
     resultButton = button.checkPress();
     if (resultButton == -1) {
-        char c_wifiSSID[SIZE_WIFI_SSID];
-        char c_wifiPassword[SIZE_WIFI_PASSWORD];
-
         screen.showMessagePage(messagePageSearchingMessage);
 
-        bool result = WiFi.beginWPSConfig();
-        if (result) {
+        if (WiFi.beginWPSConfig()) {
             if (WiFi.SSID().length() > 0) {
+                char c_wifiPassword[SIZE_WIFI_PASSWORD];
+                char c_wifiSSID[SIZE_WIFI_SSID];
+
                 wifiSSID = WiFi.SSID();
                 wifiSSID.toCharArray(c_wifiSSID, SIZE_WIFI_SSID);
                 wifiPassword = WiFi.psk();
@@ -143,7 +142,7 @@ void loop() {
             }
         }
     } else if (resultButton == 1) {
-        if (screen.getIsViewable()) {
+        if (screen.isDisplayable()) {
             if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
                 apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
             } else {
@@ -155,7 +154,7 @@ void loop() {
             timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
             timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
         } else {
-            screen.setIsViewable(true);
+            screen.isDisplayable(true);
             screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
 
             timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
@@ -177,13 +176,13 @@ void loop() {
     }
 
     /* Updating the status icons on the screen if there is a change. */
-    if (screen.getIsUpdated() != apiManagement.getIsUpdated()) {
-        screen.setIsUpdated(apiManagement.getIsUpdated());
+    if (screen.isUpdated() != apiManagement.isUpdated()) {
+        screen.isUpdated(apiManagement.isUpdated());
         screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     }  
 
-    if (screen.getIsConnected() != WiFi.isConnected()) {
-        screen.setIsConnected(WiFi.isConnected());
+    if (screen.isConnected() != WiFi.isConnected()) {
+        screen.isConnected(WiFi.isConnected());
         screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     } 
 
@@ -197,7 +196,7 @@ void loop() {
         timeoutStandbyScreen = 0;
 
         screen.clear();
-        screen.setIsViewable(false);
+        screen.isDisplayable(false);
     }
 
     /* Waiting the first measure to set the first standby. */

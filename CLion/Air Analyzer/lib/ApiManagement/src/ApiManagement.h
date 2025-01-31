@@ -11,8 +11,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 5.0.0
- * @date 28th January 2025
+ * @version 6.0.0
+ * @date 29th January 2025
  */
 
 #ifndef APIMANAGEMENT_H
@@ -43,7 +43,7 @@
             * @brief Constructs an ApiManagement object and sets the subject class.
             * @param datetime Object to check and set the datetime.
             */
-            ApiManagement(DatetimeInterval &datetime);
+            explicit ApiManagement(DatetimeInterval &datetime);
 
             /**
              * @brief Initializes the API management system with update intervals.
@@ -77,9 +77,8 @@
             /**
              * @brief Checks if the last update was successful.
              * @return True if the update was successful, false otherwise.
-             * // FIXME: Provide right name.
-             */
-            bool getIsUpdated();
+=             */
+            bool isUpdated();
 
             /**
              * @brief Updates the room with the stored ID and current local IP.
@@ -118,7 +117,7 @@
             String serverTokenType;                         ///< Type of token received (e.g., Bearer).
             uint8_t roomNumber;                             ///< Room number identifier.
             uint8_t maxAttempts;                            ///< Maximum retry attempts.
-            bool isUpdated;                                 ///< Indicates whether the last update was successful.
+            bool updateState;                              ///< Indicates whether the last update was successful.
 
             /**
              * @brief Sends a login request to the server.
@@ -130,21 +129,21 @@
              * @brief Sends a request to change the room activation status.
              * @return HTTP status code returned by the server.
              */
-            int requestChangeStatusActivationRoom();
+            int requestRoomChangeStateActivation();
 
             /**
              * @brief Sends a request to update the room's local IP address.
              * @param localIP The current local IP address of the device.
              * @return HTTP status code returned by the server.
              */
-            int requestChangeLocalIpRoom(const String &localIP);
+            int requestRoomChangeLocalIp(const String &localIP);
 
             /**
              * @brief Sends measurement data to the server.
              * @param jsonDocumentMeasuresSerialized Serialized JSON string of the measurement data.
              * @return HTTP status code returned by the server.
              */
-            int requestSetMeasures(const String &jsonDocumentMeasuresSerialized);
+            int requestMeasuresSet(const String &jsonDocumentMeasuresSerialized);
 
             /**
              * @brief Handles the login process by authenticating with the API.

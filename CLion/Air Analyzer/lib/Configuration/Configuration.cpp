@@ -37,17 +37,16 @@ void configurationVersion1(Button &button, Screen &screen) {
 
         screen.showInstallationWiFiPage(installationRoomWiFiPageMessages, 2);
 
-        bool result = WiFi.beginWPSConfig();
-        if (result) {
+        if (WiFi.beginWPSConfig()) {
             if (WiFi.SSID().length() > 0) {
                 WiFi.SSID().toCharArray(wifiSSID, SIZE_WIFI_SSID);
                 WiFi.psk().toCharArray(wifiPassword, SIZE_WIFI_PASSWORD);
 
                 break;
-            } else {
-                screen.showInstallationWiFiPage(installationRoomWiFiPageMessages, 3);
-                delay(TIME_MESSAGE);
             }
+
+            screen.showInstallationWiFiPage(installationRoomWiFiPageMessages, 3);
+            delay(TIME_MESSAGE);
         }
 
     } while (WiFi.status() != WL_CONNECTED);
@@ -70,9 +69,9 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     /* If the EEPROM version of device is set to 2, it means that must be remapped. */
     if (EEPROM.read(ADDRESS_VERSION_EEPROM) == 2) {
         /* Defining the old address of EEPROM. */
-        const uint8_t OLD_ADDRESS_WIFI_SSID = 1;
-        const uint8_t OLD_ADDRESS_WIFI_PASSWORD = 34;
-        const uint8_t OLD_ADDRESS_ROOM_ID = 99;
+        constexpr uint8_t OLD_ADDRESS_WIFI_SSID = 1;
+        constexpr uint8_t OLD_ADDRESS_WIFI_PASSWORD = 34;
+        constexpr uint8_t OLD_ADDRESS_ROOM_ID = 99;
 
         /* Getting the values stored and resetting the EEPROM. */
         EEPROM.get(OLD_ADDRESS_WIFI_SSID, wifiSSID);
@@ -92,7 +91,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     EEPROM.get(ADDRESS_WIFI_PASSWORD, wifiPassword);
     EEPROM.get(ADDRESS_ROOM_ID, roomID);
 
-    /* Forcing WiFi and server connection and showing an instruction message. */
+    /* Forcing Wi-Fi and server connection and showing an instruction message. */
     forceConnectWiFi(String(wifiSSID), String(wifiPassword), roomID);
     screen.showUpgradeVersionThreePage(upgradeConfigurationToVersionTwoMessages, WiFi.localIP().toString());
 
@@ -100,15 +99,9 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
     while (!isCredentialsRetrieved) {
         serverSocket.attachClient();
 
-        requestCodeSocket = serverSocket.listen();
-        switch (requestCodeSocket) {
-            case 1:
-                socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
-                isCredentialsRetrieved = true;
-                break;
-
-            default:
-                break;
+        if (serverSocket.listen() == 1) {
+            socketRetrieveCredentials(serverSocket.getJsonRequestSerialized(), apiManagement);
+            isCredentialsRetrieved = true;
         }
 
     }
@@ -120,8 +113,7 @@ void configurationVersion3(ServerSocketJSON &serverSocket, Screen &screen, ApiMa
 }
 
 void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &serverSocket, Sensor &sensor, Screen &screen, ApiManagement &apiManagement, String &wifiSSID, String &wifiPassword) {
-    unsigned long timeStartedLoadingMessage;
-    float percentageLoadingMessage = (float) 100 / (((float) sizeof(loadingPageMessages) / sizeof(loadingPageMessages[0])) - 1);
+    constexpr float percentageLoadingMessage = static_cast<float>(100) / ((static_cast<float>(sizeof(loadingPageMessages)) / sizeof(loadingPageMessages[0])) - 1);
     uint8_t iLoadingMessages = 0;
 
     uint8_t roomID = MIN_ROOM_NUMBER;
@@ -131,8 +123,8 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     char c_credentialPassword[SERVER_SOCKET_SIZE_PASSWORD];
 
     // EEPROM
-    timeStartedLoadingMessage = millis();
-    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
+    unsigned long timeStartedLoadingMessage = millis();
+    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * static_cast<float>(iLoadingMessages)));
     EEPROM.get(ADDRESS_WIFI_SSID, c_wifiSSID);
     EEPROM.get(ADDRESS_WIFI_PASSWORD, c_wifiPassword);
     EEPROM.get(ADDRESS_ROOM_ID, roomID);
@@ -140,46 +132,46 @@ void configurationLoad(FirmwareUpdateOTA firmwareUpdateOta, ServerSocketJSON &se
     EEPROM.get(ADDRESS_CREDENTIAL_PASSWORD, c_credentialPassword);
     wifiSSID = c_wifiSSID;
     wifiPassword = c_wifiPassword;
-    delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
+    delay(calculateDelay(static_cast<long>(timeStartedLoadingMessage), TIME_LOADING_MESSAGE));
 
     // WiFi
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
-    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
+    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * static_cast<float>(iLoadingMessages)));
     forceConnectWiFi(wifiSSID, wifiPassword, roomID);
     serverSocket.begin(SERVER_SOCKET_PORT);
-    delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
+    delay(calculateDelay(static_cast<long>(timeStartedLoadingMessage), TIME_LOADING_MESSAGE));
 
     // FIRMWARE
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
-    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
+    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * static_cast<float>(iLoadingMessages)));
     firmwareUpdateOta.begin(FIRMWARE_UPDATE_OTA_BASE_ADDRESS, FIRMWARE_UPDATE_OTA_BASE_PORT);
     if (firmwareUpdateOta.check(VERSION_FIRMWARE)) {
         screen.showMessagePage(messagePageFirmwareUpdated);
-        ESP.restart();
+        EspClass::restart();
     }
-    delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
+    delay(calculateDelay(static_cast<long>(timeStartedLoadingMessage), TIME_LOADING_MESSAGE));
 
     // API
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
-    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
+    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * static_cast<float>(iLoadingMessages)));
     apiManagement.setRoomNumber(roomID);
     apiManagement.setCredentials(String(c_credentialUsername), String(c_credentialPassword));
     apiManagement.begin(API_MANAGEMENT_BASE_ADDRESS, API_MANAGEMENT_BASE_PORT, API_MANAGEMENT_MAX_ATTEMPTS, API_MANAGEMENT_MINUTES_UPDATE_MEASURES);
-    delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
+    delay(calculateDelay(static_cast<long>(timeStartedLoadingMessage), TIME_LOADING_MESSAGE));
 
     // Sensor
     iLoadingMessages++;
     timeStartedLoadingMessage = millis();
-    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
+    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * static_cast<float>(iLoadingMessages)));
     sensor.begin();
-    delay(calculateDelay((long) timeStartedLoadingMessage, TIME_LOADING_MESSAGE));
+    delay(calculateDelay(static_cast<long>(timeStartedLoadingMessage), TIME_LOADING_MESSAGE));
 
     // Screen
-    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * (float) iLoadingMessages));
+    screen.showLoadingPage(loadingPageMessages[iLoadingMessages], (percentageLoadingMessage * static_cast<float>(iLoadingMessages)));
     screen.setRoomNumber(roomID);
-    screen.setIsConnected(WiFi.isConnected());
-    screen.setIsUpdated(apiManagement.getIsUpdated());
+    screen.isConnected(WiFi.isConnected());
+    screen.isUpdated(apiManagement.isUpdated());
 }

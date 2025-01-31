@@ -1,7 +1,7 @@
 #include "utils.h"
 
 void showBrand(Button &button, Screen &screen, String &version, uint8_t addressVersionEEPROM, uint16_t timeLogo, uint16_t timeMessageReset) {
-    unsigned long timeoutLogo = millis() + timeLogo;
+    const unsigned long timeoutLogo = millis() + timeLogo;
     int8_t resultButton = 0;
 
     screen.showBrand(version);

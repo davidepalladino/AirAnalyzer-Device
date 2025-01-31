@@ -1,6 +1,8 @@
 #include "DatetimeInterval.h"
 
-DatetimeInterval::DatetimeInterval(NTPClient ntpClient) : ntpClient(ntpClient) { }
+#include <utility>
+
+DatetimeInterval::DatetimeInterval(NTPClient ntpClient) : ntpClient(std::move(ntpClient)) { }
 
 void DatetimeInterval::begin(uint8_t totalMinuteUpdate) {
     if (totalMinuteUpdate > 240) {
@@ -15,8 +17,8 @@ void DatetimeInterval::begin(uint8_t totalMinuteUpdate) {
     configNextDatetimeRTC();
 
     /* Calculating the datetime for next update. */
-    uint8_t updateHour = totalMinuteUpdate / 60;
-    uint8_t updateMinute = totalMinuteUpdate - (updateHour * 60);
+    const uint8_t updateHour = totalMinuteUpdate / 60;
+    const uint8_t updateMinute = totalMinuteUpdate - (updateHour * 60);
     timespanDatetime = TimeSpan(0, updateHour, updateMinute, 0);
     configNextDatetime();
 }
@@ -45,7 +47,7 @@ uint8_t DatetimeInterval::getActualMinute() { return DateTime(rtc.now()).minute(
 
 uint8_t DatetimeInterval::getActualSecond() { return DateTime(rtc.now()).second(); }
 
-struct tm DatetimeInterval::getTmDatetime(DateTime &datetime) {
+struct tm DatetimeInterval::getTmDatetime(const DateTime &datetime) {
     struct tm actualDatetime_tm{};
     actualDatetime_tm.tm_year = datetime.year();
     actualDatetime_tm.tm_mon = datetime.month();
@@ -61,8 +63,8 @@ struct tm DatetimeInterval::getTmDatetime(DateTime &datetime) {
 String DatetimeInterval::getActualTimestamp() {
     char timestamp[26];
 
-    DateTime actualDatetime = DateTime(rtc.now());
-    struct tm actualDatetime_tm = getTmDatetime(actualDatetime);
+    const DateTime actualDatetime = DateTime(rtc.now());
+    const struct tm actualDatetime_tm = getTmDatetime(actualDatetime);
 
     sprintf(
             timestamp,
@@ -75,14 +77,14 @@ String DatetimeInterval::getActualTimestamp() {
             actualDatetime_tm.tm_sec
     );
 
-    return String(timestamp);
+    return {timestamp};
 }
 
 void DatetimeInterval::configNextDatetime() {
-    String daysOfTheWeek[7] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+    const String daysOfTheWeek[7] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
 
     DateTime actualDatetime = DateTime(rtc.now());
-    struct tm actualDatetime_tm = getTmDatetime(actualDatetime);
+    const struct tm actualDatetime_tm = getTmDatetime(actualDatetime);
 
     nextDatetime = DateTime(actualDatetime + timespanDatetime);
 

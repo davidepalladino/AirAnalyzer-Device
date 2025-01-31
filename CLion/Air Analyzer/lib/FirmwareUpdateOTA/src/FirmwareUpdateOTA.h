@@ -10,8 +10,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 2.0.0
- * @date 25th January 2025
+ * @version 3.0.0
+ * @date 29th January 2025
  */
 
 #ifndef FIRMWAREUPDATEOTA_H
@@ -36,9 +36,7 @@
             /**
              * @brief Constructs a FirmwareUpdateOTA object.
              *
-             * @param address The server address hosting the firmware.
-             * @param port The server port to connect to.
-             * @param uriGetLatest The URI path to check for updates.
+
              */
             FirmwareUpdateOTA();
 
@@ -47,6 +45,10 @@
              *
              * Initializes the class but does not connect to the update server.
              * Use `begin()` to set up the connection details before checking for updates.
+             *
+             * @param address The server address hosting the firmware.
+             * @param port The server port to connect to.
+             * @param uriGetLatest The URI path to check for updates.
              */
             void begin(const String &address, uint16_t port);
 

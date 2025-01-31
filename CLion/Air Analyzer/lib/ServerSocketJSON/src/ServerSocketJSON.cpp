@@ -25,7 +25,7 @@ void ServerSocketJSON::end() {
 
 bool ServerSocketJSON::attachClient() {
     if (server != nullptr && isConnected() && !isAttached()) {
-        client = server->available();
+        client = server->accept();
 
         if (client) {
             Serial.println("Client connected.");
@@ -68,8 +68,6 @@ bool ServerSocketJSON::isAttached() {
 }
 
 uint8_t ServerSocketJSON::listen() {
-    StaticJsonDocument<512> jsonDocumentRequest;
-
     if (server != nullptr && isConnected() && isAttached()) {
         if (client.connected() && client.available() > 0) {
             jsonRequestSerialized = client.readString();
