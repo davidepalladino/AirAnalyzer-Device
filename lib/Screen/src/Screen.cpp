@@ -7,7 +7,6 @@ Screen::Screen(uint8_t pinSCL, uint8_t pinSDA) {
 
     connectionState = true;
     updateState = false;
-    displayState = true;
 }
 
 void Screen::begin() { screen->begin(); }
@@ -179,7 +178,5 @@ void Screen::drawUpdateStatus() {
 }
 
 void Screen::update(double temperature, double humidity) {
-    if (displayState) {
-        showMainPage(temperature, humidity);
-    }
+    showMainPage(temperature, humidity);
 }
