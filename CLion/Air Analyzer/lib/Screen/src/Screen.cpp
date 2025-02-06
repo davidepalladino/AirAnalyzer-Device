@@ -22,10 +22,6 @@ void Screen::isUpdated(bool isUpdated) { this->updateState = isUpdated; }
 
 bool Screen::isUpdated() { return updateState; }
 
-void Screen::isDisplayable(bool isViewable) { this->displayState = isViewable; }
-
-bool Screen::isDisplayable() { return displayState; }
-
 
 // INSTALLATION and CONFIGURATION VIEWS
 void Screen::showInstallationRoomIDPage(const String messages[3]) {

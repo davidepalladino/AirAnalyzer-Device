@@ -10,8 +10,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 4.0.0
- * @date 29th January 2025
+ * @version 5.0.0
+ * @date 6th February 2025
  */
 
 #ifndef SCREEN_H
@@ -81,21 +81,6 @@
              */
             bool isUpdated();
 
-            /**
-             * @brief Sets the screen visibility status.
-             * 
-             * @param isViewable True if the screen should be visible, false otherwise.
-             */
-            void isDisplayable(bool isViewable);
-
-            /**
-             * @brief Gets the screen visibility status.
-             * 
-             * @return True if the screen is viewable, false otherwise.
-             */
-            bool isDisplayable();
-
-        
             // VIEWS for installation and configuration
             /**
              * @brief Displays the installation page for room ID setup.
@@ -173,7 +158,6 @@
             uint8_t roomNumber;                                     /**< Stores the room number. */
             bool connectionState;                                   /**< Stores the Wi-Fi connection status. */
             bool updateState;                                       /**< Stores the update status. */
-            bool displayState;                                      /**< Stores the screen visibility status. */
 
             /** @brief Draws the brand logo on the screen. */
             void drawBrand();
