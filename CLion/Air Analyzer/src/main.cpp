@@ -188,12 +188,10 @@ void loop() {
     /* Protecting the screen by applying standby and recovering after certain time. */
     if ((timeoutTurnOffScreen < millis()) && (timeoutTurnOffScreen != 0)) {
         screen.clear();
-        screen.isDisplayable(false);
 
         timeoutTurnOffScreen = 0;
         timeoutTurnOnScreen = millis() + TIME_TURN_ON;
     } else if ((timeoutTurnOnScreen < millis()) && (timeoutTurnOnScreen != 0)) {
-        screen.isDisplayable(true);
         screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
 
         timeoutTurnOffScreen = millis() + TIME_TURN_OFF;
