@@ -36,6 +36,9 @@ unsigned long timeoutTurnOffScreen = 0;
 unsigned long timeoutTurnOnScreen = 0;
 bool errorSavingDatabase = false;
 
+constexpr uint16_t TIME_TURN_OFF = 3000;  // Don't change this value.
+constexpr uint16_t TIME_TURN_ON = 100;    // Don't change this value.
+
 void setup() {
     Serial.begin(BAUDRATE);
     screen.begin();

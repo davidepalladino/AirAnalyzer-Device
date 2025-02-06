@@ -18,8 +18,6 @@
     // Screen
     constexpr uint8_t SCREEN_PIN_SCL =                                          20;
     constexpr uint8_t SCREEN_PIN_SDA =                                          19;
-    constexpr uint16_t TIME_TURN_OFF =                                          3000;
-    constexpr uint16_t TIME_TURN_ON =                                           100;
     constexpr uint16_t TIME_LOGO =                                              BUTTON_TIME_LONG_PRESS + 1000;
 
     // Sensor
