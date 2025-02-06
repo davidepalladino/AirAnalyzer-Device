@@ -7,8 +7,8 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 6.0.1
- * @date 28th January 2025
+ * @version 6.1.0
+ * @date 6th February 2025
  *
  */
 
@@ -32,9 +32,9 @@ String wifiPassword;
 uint8_t requestCodeSocket = 0;
 int8_t resultButton = 0;
 unsigned long timeoutSaveEEPROM = 0;
-unsigned long timeoutStandbyScreen = 0;
+unsigned long timeoutTurnOffScreen = 0;
+unsigned long timeoutTurnOnScreen = 0;
 bool errorSavingDatabase = false;
-bool isNextMeasure = false;
 
 void setup() {
     Serial.begin(BAUDRATE);
@@ -74,6 +74,8 @@ void setup() {
             configurationLoad(firmwareUpdate, serverSocket, sensor, screen, apiManagement, wifiSSID, wifiPassword);
     }
     EEPROM.end();
+
+    timeoutTurnOffScreen = millis() + TIME_TURN_OFF;
 }
 
 void loop() {
@@ -138,27 +140,16 @@ void loop() {
 
                 screen.showMessagePage(messagePageErrorMessages);
                 delay(TIME_MESSAGE);
-                timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
             }
         }
     } else if (resultButton == 1) {
-        if (screen.isDisplayable()) {
-            if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
-                apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
-            } else {
-                apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
-            }
-            screen.setRoomNumber(apiManagement.getRoomNumber());
-            screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
-
-            timeoutSaveEEPROM = millis() + TIME_SAVE_EEPROM;
-            timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
+        if (apiManagement.getRoomNumber() == MAX_ROOM_NUMBER) {
+            apiManagement.setRoomNumber(MIN_ROOM_NUMBER);
         } else {
-            screen.isDisplayable(true);
-            screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
-
-            timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
+            apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
         }
+        screen.setRoomNumber(apiManagement.getRoomNumber());
+        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
     }
 
     /* Saving on EEPROM and updating the apiManagement only if the time is elapsed. */
@@ -191,19 +182,20 @@ void loop() {
         errorSavingDatabase = !apiManagement.updateRoom();
     }
 
-    /* Clearing the screen only if the time is elapsed. */
-    if ((timeoutStandbyScreen < millis()) && (timeoutStandbyScreen != 0)) {
-        timeoutStandbyScreen = 0;
-
+    /* Protecting the screen by applying standby and recovering after certain time. */
+    if ((timeoutTurnOffScreen < millis()) && (timeoutTurnOffScreen != 0)) {
         screen.clear();
         screen.isDisplayable(false);
+
+        timeoutTurnOffScreen = 0;
+        timeoutTurnOnScreen = millis() + TIME_TURN_ON;
+    } else if ((timeoutTurnOnScreen < millis()) && (timeoutTurnOnScreen != 0)) {
+        screen.isDisplayable(true);
+        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
+
+        timeoutTurnOffScreen = millis() + TIME_TURN_OFF;
+        timeoutTurnOnScreen = 0;
     }
 
-    /* Waiting the first measure to set the first standby. */
-    if (sensor.check() && !isNextMeasure) {
-        isNextMeasure = true;
-
-        /* Preparing the next standby for the screen. */
-        timeoutStandbyScreen = millis() + TIME_TO_STANDBY;
-    }
+    sensor.check();
 }
