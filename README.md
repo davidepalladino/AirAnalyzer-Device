@@ -29,12 +29,16 @@ To set up the AirAnalyzer-Device software:
    git clone https://github.com/davidepalladino/AirAnalyzer-Device.git
    ```
 2. **Install PlatformIO**:
+   
    Follow the instructions on the [PlatformIO website](https://platformio.org/install) to install the PlatformIO IDE.
-3. **Open the Project**:
+4. **Open the Project**:
+   
    Launch PlatformIO and open the cloned project directory.
-4. **Configure the Environment**:
+6. **Configure the Environment**:
+   
    Ensure that the `platformio.ini` file is set up correctly for the NodeMCU ESP8266 board.
-5. **Upload the Firmware**:
+8. **Upload the Firmware**:
+   
    Connect your NodeMCU board to your computer and upload the firmware using PlatformIO.
 
 ## Usage
