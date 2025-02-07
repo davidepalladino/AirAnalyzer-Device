@@ -7,7 +7,7 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 6.1.0
+ * @version 5.0.0
  * @date 6th February 2025
  *
  */
@@ -77,6 +77,8 @@ void setup() {
             configurationLoad(firmwareUpdate, serverSocket, sensor, screen, apiManagement, wifiSSID, wifiPassword);
     }
     EEPROM.end();
+
+    screen.showMainPage();
 
     timeoutTurnOffScreen = millis() + TIME_TURN_OFF;
 }
@@ -152,7 +154,7 @@ void loop() {
             apiManagement.setRoomNumber(apiManagement.getRoomNumber() + 1);
         }
         screen.setRoomNumber(apiManagement.getRoomNumber());
-        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
+        screen.showMainPage();
     }
 
     /* Saving on EEPROM and updating the apiManagement only if the time is elapsed. */
@@ -172,12 +174,12 @@ void loop() {
     /* Updating the status icons on the screen if there is a change. */
     if (screen.isUpdated() != apiManagement.isUpdated()) {
         screen.isUpdated(apiManagement.isUpdated());
-        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
+        screen.showMainPage();
     }  
 
     if (screen.isConnected() != WiFi.isConnected()) {
         screen.isConnected(WiFi.isConnected());
-        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
+        screen.showMainPage();
     } 
 
     /* If there was an error on previous saving of the new room ID into apiManagement, there will be a new attempt. */
@@ -192,7 +194,7 @@ void loop() {
         timeoutTurnOffScreen = 0;
         timeoutTurnOnScreen = millis() + TIME_TURN_ON;
     } else if ((timeoutTurnOnScreen < millis()) && (timeoutTurnOnScreen != 0)) {
-        screen.showMainPage(sensor.getTemperature(), sensor.getHumidity());
+        screen.showMainPage();
 
         timeoutTurnOffScreen = millis() + TIME_TURN_OFF;
         timeoutTurnOnScreen = 0;
