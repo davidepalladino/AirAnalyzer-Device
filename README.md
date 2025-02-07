@@ -44,8 +44,8 @@ Once the device is set up:
 
 ## Related Resources
 For more information, you can refer to the following resources:
-- **[Air Analyzer v2.0.3](https://davidepalladino.github.io/2021/07/12/Air-Analyzer-v2-0-3/)**
-- **[Air Analyzer v3.0.0](https://davidepalladino.github.io/2022/02/13/Air-Analyzer-v3-0-0/)**
+- **[Air Analyzer v2.0.3](https://davidepalladino.github.io/2021/07/12/Air-Analyzer-v2-0-3/)**;
+- **[Air Analyzer v3.0.0](https://davidepalladino.github.io/2022/02/13/Air-Analyzer-v3-0-0/)**.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
