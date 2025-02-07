@@ -10,7 +10,7 @@
  * @author Davide Palladino
  * @contact davidepalladino@hotmail.com
  * @website https://davidepalladino.github.io/
- * @version 5.0.1
+ * @version 6.0.0
  * @date 6th February 2025
  */
 
@@ -129,12 +129,10 @@
              * It is typically called when new sensor data is available and needs to be presented
              * to the user in a clear and user-friendly format.
              *
-             * @param temperature The current temperature value to be displayed (in degrees Celsius).
-             * @param humidity The current humidity value to be displayed (as a percentage).
-             *
              * @note This method assumes the screen has already been initialized and is ready for updates.
              */
-            void showMainPage(double temperature, double humidity);
+            void showMainPage();
+
 
             /** @brief Clears the screen display. */
             void clear();
@@ -158,6 +156,9 @@
             uint8_t roomNumber;                                     /**< Stores the room number. */
             bool connectionState;                                   /**< Stores the Wi-Fi connection status. */
             bool updateState;                                       /**< Stores the update status. */
+            double temperature;                                     /**< Stores the temperature value. */
+            double humidity;                                        /**< Stores the humidity value. */
+            bool areValuesEmpty;                                    /**< Stores the values status, if are empty or not. */
 
             /** @brief Draws the brand logo on the screen. */
             void drawBrand();
@@ -194,11 +195,9 @@
             * This method updates the specific area of the screen dedicated to displaying the temperature.
             * The temperature is typically presented in degrees Celsius, formatted for readability.
             *
-            * @param temperature The temperature value to be displayed (in degrees Celsius).
-            *
             * @note The screen must be initialized and set to the appropriate display page before calling this method.
             */
-            void drawTemperature(double temperature);
+            void drawTemperature();
 
             /**
              * @brief Draws the current humidity value on the screen.
@@ -206,11 +205,9 @@
              * This method updates the specific area of the screen dedicated to displaying the humidity.
              * The humidity is typically presented as a percentage.
              *
-             * @param humidity The humidity value to be displayed (as a percentage).
-             *
              * @note The screen must be initialized and set to the appropriate display page before calling this method.
              */
-            void drawHumidity(double humidity);
+            void drawHumidity();
 
             /** @brief Draws the Wi-Fi connection status icon. */
             void drawWiFiStatus();
