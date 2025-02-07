@@ -7,6 +7,8 @@ Screen::Screen(uint8_t pinSCL, uint8_t pinSDA) {
 
     connectionState = true;
     updateState = false;
+
+    areValuesEmpty = true;
 }
 
 void Screen::begin() { screen->begin(); }
@@ -83,12 +85,12 @@ void Screen::showLoadingPage(const String &message, float percentage) {
     } while (screen->nextPage());
 }
 
-void Screen::showMainPage(double temperature, double humidity) {
+void Screen::showMainPage() {
     screen->firstPage();
     do {
         drawRoomID();
-        drawTemperature(temperature);
-        drawHumidity(humidity);
+        drawTemperature();
+        drawHumidity();
         drawWiFiStatus();
         drawUpdateStatus();
     } while (screen->nextPage());
@@ -145,20 +147,32 @@ void Screen::drawRoomID() {
     screen->print(roomNumber);
 }
 
-void Screen::drawTemperature(double temperature) {
+void Screen::drawTemperature() {
     screen->drawXBMP(positionLogoTemperature[0], positionLogoTemperature[1], logoTemperatureWidth, logoTemperatureHeight, logoTemperature);
     screen->setFont(u8g2_font_smart_patrol_nbp_tf);
     screen->setCursor(positionValueTemperature[0], positionValueTemperature[1]);
-    screen->print(temperature, 1);
+
+    if (areValuesEmpty) {
+        screen->print("-");
+    } else {
+        screen->print(temperature, 1);
+    }
+
     screen->setCursor(positionUnitTemperature[0], positionUnitTemperature[1]);
     screen->print(String((char) 176) + "C");
 }
 
-void Screen::drawHumidity(double humidity) {
+void Screen::drawHumidity() {
     screen->drawXBMP(positionLogoHumidity[0], positionLogoHumidity[1], logoHumidityWidth, logoHumidityHeight, logoHumidity);
     screen->setFont(u8g2_font_smart_patrol_nbp_tf);
     screen->setCursor(positionValueHumidity[0], positionValueHumidity[1]);
-    screen->print(humidity, 1);
+
+    if (areValuesEmpty) {
+        screen->print("-");
+    } else {
+        screen->print(humidity, 1);
+    }
+
     screen->setCursor(positionUnitHumidity[0], positionUnitHumidity[1]);
     screen->print(" %");   
 }
@@ -178,5 +192,10 @@ void Screen::drawUpdateStatus() {
 }
 
 void Screen::update(double temperature, double humidity) {
-    showMainPage(temperature, humidity);
+    this->temperature = temperature;
+    this->humidity = humidity;
+
+    this->areValuesEmpty = false;
+
+    showMainPage();
 }
