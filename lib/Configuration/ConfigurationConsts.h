@@ -27,7 +27,7 @@ constexpr uint8_t MAX_ROOM_NUMBER =                                     9;
 // ### LIBRARIES ###
 // Api Management
 const String API_MANAGEMENT_BASE_ADDRESS =                              "http://airanalyzer.shadowmoses.ovh";
-constexpr uint8_t API_MANAGEMENT_BASE_PORT =                            80;
+constexpr uint16_t API_MANAGEMENT_BASE_PORT =                           80;
 constexpr uint8_t API_MANAGEMENT_MAX_ATTEMPTS =                         3;
 constexpr uint8_t API_MANAGEMENT_MINUTES_UPDATE_MEASURES =              10;
 
