@@ -2,7 +2,7 @@
 
 // ### MAIN ###
 // Versions
-const String VERSION_FIRMWARE =                                         "6.0.1";
+const String VERSION_FIRMWARE =                                         "6.0.2";
 constexpr uint8_t VERSION_EEPROM =                                      3;
 
 // EEPROM
@@ -27,7 +27,7 @@ constexpr uint8_t MAX_ROOM_NUMBER =                                     9;
 // ### LIBRARIES ###
 // Api Management
 const String API_MANAGEMENT_BASE_ADDRESS =                              "http://airanalyzer.shadowmoses.ovh";
-constexpr uint8_t API_MANAGEMENT_BASE_PORT =                            80;
+constexpr uint16_t API_MANAGEMENT_BASE_PORT =                           80;
 constexpr uint8_t API_MANAGEMENT_MAX_ATTEMPTS =                         3;
 constexpr uint8_t API_MANAGEMENT_MINUTES_UPDATE_MEASURES =              10;
 
